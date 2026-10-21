@@ -1,0 +1,4259 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.4 2390de5a",
+  "osm3s": {
+    "timestamp_osm_base": "117851",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 25654732,
+  "lat": 46.2105434,
+  "lon": 6.1419879,
+  "tags": {
+    "level": "2",
+    "local_ref": "5",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 297914745,
+  "lat": 46.2008469,
+  "lon": 6.1436417,
+  "tags": {
+    "ele": "382",
+    "name": "Place de Neuve (I)",
+    "network": "Unireso",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "tram": "yes",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 335557842,
+  "lat": 46.2102513,
+  "lon": 6.1428501,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:postcode": "1211",
+    "amenity": "car_sharing",
+    "capacity": "15",
+    "layer": "-1",
+    "mobility:station_id": "2886",
+    "name": "Genève Gare Cornavin",
+    "opening_hours": "24/7",
+    "operator": "Mobility Société Coopérative",
+    "operator:wikidata": "Q692400",
+    "operator:wikipedia": "fr:Mobility CarSharing",
+    "website": "https://www.mobility.ch/",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 428678599,
+  "lat": 46.2097820,
+  "lon": 6.1414636,
+  "tags": {
+    "ele": "327",
+    "local_ref": "I",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "tram": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 768498764,
+  "lat": 46.2102560,
+  "lon": 6.1430977,
+  "tags": {
+    "bus": "yes",
+    "ele": "327",
+    "local_ref": "B",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 768498777,
+  "lat": 46.2104867,
+  "lon": 6.1435440,
+  "tags": {
+    "access": "yes",
+    "amenity": "parking_entrance",
+    "capacity": "841",
+    "fee": "yes",
+    "lit": "yes",
+    "maxheight": "2",
+    "name": "Place de Cornavin",
+    "operator": "Fondation des Parkings",
+    "parking": "underground",
+    "smoothness": "excellent",
+    "surface": "concrete",
+    "website": "https://www.geneve-parking.ch/fr/parkings/place-de-cornavin",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 770503589,
+  "lat": 46.2014504,
+  "lon": 6.1439934,
+  "tags": {
+    "bus": "yes",
+    "ele": "382",
+    "highway": "bus_stop",
+    "name": "Place de Neuve (M)",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885"
+  }
+},
+{
+  "type": "node",
+  "id": 770503643,
+  "lat": 46.2001240,
+  "lon": 6.1486423,
+  "tags": {
+    "bus": "yes",
+    "ele": "384",
+    "highway": "bus_stop",
+    "name": "Bourg-de-Four",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "uic_name": "Genève, Bourg-de-Four",
+    "uic_ref": "8592792",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 770503655,
+  "lat": 46.2014801,
+  "lon": 6.1478589,
+  "tags": {
+    "bus": "yes",
+    "ele": "385",
+    "highway": "bus_stop",
+    "name": "Cathédrale",
+    "network": "Unireso",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "uic_name": "Genève, Cathédrale",
+    "uic_ref": "8592799"
+  }
+},
+{
+  "type": "node",
+  "id": 915082476,
+  "lat": 46.2050627,
+  "lon": 6.1510344,
+  "tags": {
+    "amenity": "ferry_terminal",
+    "ele": "373",
+    "ferry": "yes",
+    "name": "Genève-Jardin-Anglais (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "official_name": "Débarcadère du Baromètre",
+    "operator": "CGN",
+    "public_transport": "stop_position",
+    "ref": "3",
+    "uic_name": "Genève-Jardin-Anglais (lac)",
+    "uic_ref": "8501236"
+  }
+},
+{
+  "type": "node",
+  "id": 915082478,
+  "lat": 46.2052136,
+  "lon": 6.1502636,
+  "tags": {
+    "amenity": "ferry_terminal",
+    "cargo": "passengers",
+    "ele": "373",
+    "ferry": "yes",
+    "name": "Genève-Jardin-Anglais",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "official_name": "Débarcadère du Jardin-Anglais",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport": "stop_position",
+    "ref": "3",
+    "ref:CH-GE:CODE_VOIE": "66648",
+    "uic_name": "Genève-Jardin-Anglais (lac)",
+    "uic_ref": "8501236",
+    "website": "https://www.cgn.ch/fr/"
+  }
+},
+{
+  "type": "node",
+  "id": 963382003,
+  "lat": 46.2099979,
+  "lon": 6.1436200,
+  "tags": {
+    "access": "yes",
+    "amenity": "parking_entrance",
+    "capacity": "841",
+    "fee": "yes",
+    "lit": "yes",
+    "maxheight": "2",
+    "name": "Place de Cornavin",
+    "operator": "Fondation des Parkings",
+    "parking": "underground",
+    "smoothness": "excellent",
+    "surface": "concrete",
+    "website": "https://www.geneve-parking.ch/fr/parkings/place-de-cornavin",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 964847282,
+  "lat": 46.2086019,
+  "lon": 6.1384666,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:housenumber": "1",
+    "addr:postcode": "1201",
+    "addr:street": "Rue du Jura",
+    "amenity": "doctors",
+    "emergency": "yes",
+    "healthcare": "doctor",
+    "name": "Centre Médico-Chirurgical de Cornavin",
+    "name:en": "Medicine and Surgery Centre Cornavin",
+    "name:fr": "Centre Médico-Chirurgical de Cornavin",
+    "opening_hours": "Jan-Dec: Mo-Fr 07:30-20:00; Jan-Dec: Sa 08:00-20:00; Apr-Sep: Su 10:00-20:00; Oct-Mar: Su 10:00-18:00",
+    "phone": "+41 22 595 11 11",
+    "website": "http://cmccornavin.ch/"
+  }
+},
+{
+  "type": "node",
+  "id": 1054174215,
+  "lat": 46.2093119,
+  "lon": 6.1423873,
+  "tags": {
+    "bench": "yes",
+    "bus": "yes",
+    "covered": "no",
+    "ele": "327",
+    "highway": "bus_stop",
+    "name": "Gare Cornavin",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "ref": "F",
+    "shelter": "yes",
+    "trolleybus": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "node",
+  "id": 1541473508,
+  "lat": 46.2103166,
+  "lon": 6.1435155,
+  "tags": {
+    "bus": "yes",
+    "ele": "327",
+    "name": "Gare Cornavin",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "E",
+    "tram": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1541473538,
+  "lat": 46.2100399,
+  "lon": 6.1431393,
+  "tags": {
+    "bus": "yes",
+    "ele": "327",
+    "name": "Gare Cornavin",
+    "opening_hours": "Mo-Fr 07:00-19:00; Sa 09:00-18:00",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "D",
+    "tram": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1549433444,
+  "lat": 46.2098507,
+  "lon": 6.1415250,
+  "tags": {
+    "ele": "327",
+    "local_ref": "H",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "tram": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1588234221,
+  "lat": 46.2009026,
+  "lon": 6.1436088,
+  "tags": {
+    "ele": "382",
+    "name": "Place de Neuve (J)",
+    "network": "Unireso",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "tram": "yes",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2163784183,
+  "lat": 46.2004672,
+  "lon": 6.1490445,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:postcode": "1204",
+    "addr:street": "Place du Bourg-de-Four",
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Pharmacie du Bourg-de-Four",
+    "opening_hours": "Mo-Fr 08:00-18:30; Sa 09:00-18:00"
+  }
+},
+{
+  "type": "node",
+  "id": 2169156852,
+  "lat": 46.2007081,
+  "lon": 6.1445561,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:housenumber": "1",
+    "addr:postcode": "1204",
+    "addr:street": "Promenade des Bastions",
+    "amenity": "restaurant",
+    "capacity": "200",
+    "cuisine": "regional;french",
+    "delivery": "no",
+    "email": "contact@bastions.ch",
+    "internet_access": "wlan",
+    "name": "Kiosque des Bastions",
+    "opening_hours": "Mo-Sa 10:00-22:00, Su 10:00-18:30",
+    "outdoor_seating": "yes",
+    "phone": "+41 22 310 86 66",
+    "smoking": "outside",
+    "source": "local_knowledge",
+    "takeaway": "no",
+    "website": "https://bastions.ch/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2237426533,
+  "lat": 46.2092721,
+  "lon": 6.1423240,
+  "tags": {
+    "bench": "yes",
+    "bus": "yes",
+    "covered": "no",
+    "ele": "327",
+    "highway": "bus_stop",
+    "name": "Gare Cornavin",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "ref": "G",
+    "shelter": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "node",
+  "id": 2388447154,
+  "lat": 46.2104230,
+  "lon": 6.1422130,
+  "tags": {
+    "level": "2",
+    "local_ref": "4",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 2388447156,
+  "lat": 46.2105620,
+  "lon": 6.1419408,
+  "tags": {
+    "level": "2",
+    "local_ref": "6",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 2388447157,
+  "lat": 46.2106710,
+  "lon": 6.1418150,
+  "tags": {
+    "level": "2",
+    "local_ref": "7",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 3677265401,
+  "lat": 46.2129097,
+  "lon": 6.1420875,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:housenumber": "16",
+    "addr:street": "Rue des Gares",
+    "name": "Office de Poste Cornavin-Montbrillant"
+  }
+},
+{
+  "type": "node",
+  "id": 3677306904,
+  "lat": 46.2118684,
+  "lon": 6.1444300,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:housenumber": "19bis",
+    "addr:street": "Rue de Lausanne",
+    "healthcare": "physiotherapist",
+    "name": "Physio Cornavin"
+  }
+},
+{
+  "type": "node",
+  "id": 3790832523,
+  "lat": 46.2104867,
+  "lon": 6.1414729,
+  "tags": {
+    "bus": "yes",
+    "local_ref": "J",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "node",
+  "id": 5553178203,
+  "lat": 46.2009490,
+  "lon": 6.1434318,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Place de Neuve",
+    "public_transport": "stop_position"
+  }
+},
+{
+  "type": "node",
+  "id": 5553178208,
+  "lat": 46.2010356,
+  "lon": 6.1446271,
+  "tags": {
+    "bus": "yes",
+    "ele": "382",
+    "highway": "bus_stop",
+    "name": "Place de Neuve",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "trolleybus": "yes",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885"
+  }
+},
+{
+  "type": "node",
+  "id": 5738113106,
+  "lat": 46.2098316,
+  "lon": 6.1410308,
+  "tags": {
+    "access": "yes",
+    "amenity": "bicycle_parking",
+    "bicycle_parking": "building",
+    "capacity": "148",
+    "covered": "yes",
+    "fee": "yes",
+    "name": "Vélostation CFF Cornavin",
+    "network": "Velocity",
+    "opening_hours": "24/7",
+    "operator": "CFF",
+    "surveillance": "yes",
+    "website": "https://www.velocity.ch"
+  }
+},
+{
+  "type": "node",
+  "id": 5817900372,
+  "lat": 46.1990401,
+  "lon": 6.1443962,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housenumber": "5",
+    "addr:postcode": "1205",
+    "addr:street": "Rue de-Candolle",
+    "contact:email": "biblio-bastions-info@unige.ch",
+    "contact:phone": "+41 22 379 13 13",
+    "contact:website": "https://www.unige.ch/biblio/fr/infos/sites/bastions/",
+    "disused:amenity": "library",
+    "name": "Bibliothèque Uni Bastions - Espace Central"
+  }
+},
+{
+  "type": "node",
+  "id": 5817924454,
+  "lat": 46.1960104,
+  "lon": 6.1473775,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housenumber": "22",
+    "addr:postcode": "1205",
+    "addr:street": "Boulevard des Philosophes",
+    "disused:amenity": "library",
+    "email": "biblio-bastions-info@unige.ch",
+    "name": "Bibliothèque Uni Bastions - Espace Philosophes",
+    "note": "closed, moved back to Bastions",
+    "phone": "+41 22 379 13 15",
+    "website": "https://www.unige.ch/biblio/fr/infos/sites/bastions/"
+  }
+},
+{
+  "type": "node",
+  "id": 5933376634,
+  "lat": 46.2012032,
+  "lon": 6.1442695,
+  "tags": {
+    "bus": "yes",
+    "ele": "382",
+    "highway": "bus_stop",
+    "name": "Place de Neuve",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "trolleybus": "yes",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885"
+  }
+},
+{
+  "type": "node",
+  "id": 5933380554,
+  "lat": 46.2013446,
+  "lon": 6.1441489,
+  "tags": {
+    "amenity": "shelter",
+    "bench": "yes",
+    "bin": "yes",
+    "lit": "yes",
+    "name": "Place Neuve",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6349212795,
+  "lat": 46.2097922,
+  "lon": 6.1407980,
+  "tags": {
+    "bus": "yes",
+    "fixme": "What is the local_ref= of this stop? And where is the platform? Mapiliry imagery is too blury to confirm the former",
+    "highway": "bus_stop",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "node",
+  "id": 6354869867,
+  "lat": 46.2087832,
+  "lon": 6.1402209,
+  "tags": {
+    "bus": "yes",
+    "ele": "381",
+    "highway": "bus_stop",
+    "name": "Gare Cornavin (K)",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "ref": "K",
+    "trolleybus": "yes",
+    "uic_name": "Genève, Gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "node",
+  "id": 6354869868,
+  "lat": 46.2090486,
+  "lon": 6.1397353,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Gare Cornavin (L)",
+    "public_transport": "stop_position",
+    "ref": "L",
+    "trolleybus": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6564243453,
+  "lat": 46.2014908,
+  "lon": 6.1478229,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "check_date:shelter": "2024-10-01",
+    "name": "Cathédrale",
+    "public_transport": "platform",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6574411585,
+  "lat": 46.2078914,
+  "lon": 6.1422199,
+  "tags": {
+    "female": "yes",
+    "male": "yes",
+    "name": "Salon Cornavin",
+    "shop": "hairdresser"
+  }
+},
+{
+  "type": "node",
+  "id": 7079478871,
+  "lat": 46.2103204,
+  "lon": 6.1424332,
+  "tags": {
+    "level": "2",
+    "local_ref": "1",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 7079478882,
+  "lat": 46.2103407,
+  "lon": 6.1423854,
+  "tags": {
+    "level": "2",
+    "local_ref": "2",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 7185444024,
+  "lat": 46.2104002,
+  "lon": 6.1422567,
+  "tags": {
+    "level": "2",
+    "local_ref": "3",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 8440333151,
+  "lat": 46.2105141,
+  "lon": 6.1433927,
+  "tags": {
+    "bus": "yes",
+    "ele": "327",
+    "local_ref": "C",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "ref": "C",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 9456587509,
+  "lat": 46.2051895,
+  "lon": 6.1604550,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "italian;italian_pizza",
+    "name": "Café Le Jet d’Eau",
+    "opening_hours": "Mo-Sa 11:30-15:00, 18:30-00:00",
+    "phone": "+41227360572",
+    "website": "https://www.restaurant-pizzeria-jetdeau.ch/"
+  }
+},
+{
+  "type": "node",
+  "id": 9868078431,
+  "lat": 46.2096765,
+  "lon": 6.1412294,
+  "tags": {
+    "level": "2",
+    "local_ref": "10",
+    "name": "Genève-Cornavin",
+    "name:de": "Genf",
+    "network": "Unireso",
+    "operator": "CFF",
+    "public_transport": "stop_position",
+    "railway": "stop",
+    "train": "yes",
+    "uic_ref": "8501008"
+  }
+},
+{
+  "type": "node",
+  "id": 11113936314,
+  "lat": 46.2101073,
+  "lon": 6.1429279,
+  "tags": {
+    "bus": "yes",
+    "local_ref": "A",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "route_ref": "EV",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 11113936315,
+  "lat": 46.2103296,
+  "lon": 6.1435304,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "local_ref": "E",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "route_ref": "1 -> Jardin Botanique, ND -> Gland Gare",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "node",
+  "id": 11113936316,
+  "lat": 46.2100256,
+  "lon": 6.1431240,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "local_ref": "D",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_position",
+    "route_ref": "1 -> Hôpital Trois-Chêne, 25 -> Thônex, Vallard",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 11207655921,
+  "lat": 46.2105529,
+  "lon": 6.1432971,
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "covered": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "local_ref": "C",
+    "name": "Genève, Gare Cornavin",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "tactile_paving": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 11207655922,
+  "lat": 46.2102891,
+  "lon": 6.1430038,
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "covered": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "local_ref": "B",
+    "name": "Genève, Gare Cornavin",
+    "public_transport": "platform",
+    "ref": "B",
+    "shelter": "yes",
+    "tactile_paving": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 11207655923,
+  "lat": 46.2101405,
+  "lon": 6.1428393,
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "covered": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "local_ref": "A",
+    "name": "Genève, Gare Cornavin",
+    "public_transport": "platform",
+    "ref": "A",
+    "shelter": "yes",
+    "tactile_paving": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12244404004,
+  "lat": 46.2080957,
+  "lon": 6.1416603,
+  "tags": {
+    "addr:postcode": "1201",
+    "check_date": "2025-07-21",
+    "contact:facebook": "PapeterieDeCornavin",
+    "level": "0",
+    "name": "Pellaton Papeterie Cornavin",
+    "opening_hours": "Mo-Fr 08:00-11:45, 13:00-18:30",
+    "shop": "stationery",
+    "website": "https://www.papeterie-cornavin.ch/"
+  }
+},
+{
+  "type": "node",
+  "id": 12504358915,
+  "lat": 46.2078908,
+  "lon": 6.1407067,
+  "tags": {
+    "check_date:opening_hours": "2025-01-15",
+    "craft": "key_cutter",
+    "name": "Clés Cornavin",
+    "opening_hours:signed": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 13103628422,
+  "lat": 46.2138606,
+  "lon": 6.1456664,
+  "tags": {
+    "amenity": "music_school",
+    "name": "Centre musical de Cornavin"
+  }
+},
+{
+  "type": "node",
+  "id": 13273574765,
+  "lat": 46.2085849,
+  "lon": 6.1386188,
+  "tags": {
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "healthcare:speciality": "surgery",
+    "name": "Centre médico-chirurgical de Cornavin"
+  }
+},
+{
+  "type": "node",
+  "id": 13577504713,
+  "lat": 46.1996316,
+  "lon": 6.1444396,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housename": "Uni Bastions Aile Jura",
+    "addr:housenumber": "4",
+    "addr:postcode": "1205",
+    "addr:street": "Promenade des Bastions",
+    "amenity": "library",
+    "name": "Bibliothèque Uni Bastions - Espace Jura",
+    "network": "Swisscovery",
+    "network:wikidata": "Q108672093",
+    "opening_hours": "Mo-Fr 08:00-22:00; Sa-Su 09:00-18:00",
+    "opening_hours:url": "https://www.unige.ch/biblio/fr/infos/sites/bastions/",
+    "operator": "Bibliothèque de l'Université de Genève",
+    "operator:ref:CH:UID": "CHE-114.927.636",
+    "operator:type": "university",
+    "ref:isil": "CH-001765-5",
+    "website": "https://www.unige.ch/biblio/fr/infos/sites/bastions/",
+    "website:catalogue": "https://unige.swisscovery.slsp.ch/discovery/search?vid=41SLSP_UGE:VU1"
+  }
+},
+{
+  "type": "node",
+  "id": 13606660238,
+  "lat": 46.1961518,
+  "lon": 6.1472982,
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:floor": "Rez",
+    "addr:housename": "Bâtiment des Philosophes",
+    "addr:housenumber": "22",
+    "addr:postcode": "1205",
+    "addr:room": "021",
+    "addr:street": "Boulevard des Philosophes",
+    "alt_name": "Bibliothèque du Musée historique de la Réforme (MHR)",
+    "amenity": "library",
+    "name": "Bibliothèque Institut d'histoire de la Réformation",
+    "network": "Swisscovery",
+    "network:wikidata": "Q108672093",
+    "old_name": "Bibliothèque Tronchin;Bibliothèque Marignac-Lullin",
+    "opening_hours": "Mo,We,Fr 08:00-12:00 \"sur rendez-vous\"",
+    "opening_hours:url": "https://www.unige.ch/biblio/fr/disciplines/histoire-de-la-reforme/services-et-collections/",
+    "operator": "Bibliothèque de l'Université de Genève;Musée historique de la Réforme (MHR)",
+    "operator:type": "university",
+    "ref:isil": "CH-001162-0;CH-001152-4",
+    "short_name": "Bibliothèque IHR",
+    "website": "https://www.unige.ch/biblio/fr/disciplines/histoire-de-la-reforme/services-et-collections/",
+    "website:catalogue": "https://www.unige.ch/ihr/fr/aide-a-la-recherche/bibliotheque/catalogue-numerise/;https://unige.swisscovery.slsp.ch/discovery/search?vid=41SLSP_UGE:VU1",
+    "wikidata": "Q29700225",
+    "wikimedia_commons": "Category:Bibliothèque Institut d'histoire de la Réformation - Musée Historique de la Réformation (Geneva)"
+  }
+},
+{
+  "type": "node",
+  "id": 13960553118,
+  "lat": 46.2050499,
+  "lon": 6.1504558,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Petit Train Jardin Anglais",
+    "network": "Petit Train Genève-Rive Gauche",
+    "operator": "Trans Eaux-Viviens Sàrl",
+    "operator:ref:CH:UID": "CHE-108.647.594",
+    "public_transport": "platform",
+    "seasonal": "yes",
+    "shelter": "no",
+    "website": "https://www.petit-train.ch/parcours/"
+  }
+},
+{
+  "type": "node",
+  "id": 13960553119,
+  "lat": 46.2056750,
+  "lon": 6.1575016,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Petit Train Jet d'Eau",
+    "network": "Petit Train Genève-Rive Gauche",
+    "operator": "Trans Eaux-Viviens Sàrl",
+    "operator:ref:CH:UID": "CHE-108.647.594",
+    "public_transport": "platform",
+    "seasonal": "yes",
+    "shelter": "no",
+    "website": "https://www.petit-train.ch/parcours/"
+  }
+},
+{
+  "type": "node",
+  "id": 14299703160,
+  "lat": 46.2103027,
+  "lon": 6.1414155,
+  "tags": {
+    "highway": "bus_stop",
+    "local_ref": "J",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 4272831,
+  "center": {
+    "lat": 46.2042963,
+    "lon": 6.1524005
+  },
+  "tags": {
+    "alt_name": "Parc Jardin Anglais",
+    "leisure": "park",
+    "name": "Jardin Anglais",
+    "name:zh": "英国公园",
+    "name:zh-Hans": "英国公园",
+    "name:zh-Hant": "英國公園",
+    "ref:CH-GE:archi": "voies/jardin-anglais/",
+    "ref:CH-GE:noms": "voie/geneve/jardin-anglais",
+    "start_date": "1855",
+    "website": "https://www.geneve.com/en/see-do/jardin-anglais",
+    "wikimedia_commons": "Category:English Garden of Geneva",
+    "wikipedia": "fr:Jardin anglais (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 5073078,
+  "center": {
+    "lat": 46.1993968,
+    "lon": 6.1453467
+  },
+  "tags": {
+    "leisure": "park",
+    "name": "Parc des Bastions",
+    "wikidata": "Q3364247"
+  }
+},
+{
+  "type": "way",
+  "id": 5130785,
+  "center": {
+    "lat": 46.2107592,
+    "lon": 6.1436959
+  },
+  "tags": {
+    "highway": "living_street",
+    "lit": "yes",
+    "motor_vehicle": "no",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "parking:lane:both": "no",
+    "psv": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5130788,
+  "center": {
+    "lat": 46.2103975,
+    "lon": 6.1438863
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "3",
+    "lanes:forward": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "maxspeed:type": "sign",
+    "name": "Place de Cornavin",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5156316,
+  "center": {
+    "lat": 46.2000502,
+    "lon": 6.1492131
+  },
+  "tags": {
+    "highway": "living_street",
+    "maxspeed": "20",
+    "motor_vehicle": "yes",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "yes",
+    "oneway:bicycle": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5197280,
+  "center": {
+    "lat": 46.1996996,
+    "lon": 6.1483720
+  },
+  "tags": {
+    "cycleway:left": "opposite_lane",
+    "highway": "living_street",
+    "maxspeed": "20",
+    "motor_vehicle": "yes",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "yes",
+    "oneway:bicycle": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 8161109,
+  "center": {
+    "lat": 46.2001104,
+    "lon": 6.1487741
+  },
+  "tags": {
+    "foot": "yes",
+    "highway": "living_street",
+    "lit": "yes",
+    "maxspeed": "20",
+    "motor_vehicle": "yes",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "yes",
+    "oneway:bicycle": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 8367387,
+  "center": {
+    "lat": 46.2014278,
+    "lon": 6.1436652
+  },
+  "tags": {
+    "cycleway:right": "lane",
+    "cycleway:right:start_date": "2020-06-01",
+    "highway": "tertiary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 8367389,
+  "center": {
+    "lat": 46.2010038,
+    "lon": 6.1429387
+  },
+  "tags": {
+    "cycleway:right": "lane",
+    "highway": "tertiary",
+    "lane_markings": "no",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "sidewalk": "separate",
+    "surface": "asphalt",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 15243993,
+  "center": {
+    "lat": 46.1995080,
+    "lon": 6.1442708
+  },
+  "tags": {
+    "amenity": "university",
+    "building": "yes",
+    "check_date": "2024-10-14",
+    "name": "Université de Genève - Uni Bastions (aile Jura)"
+  }
+},
+{
+  "type": "way",
+  "id": 15256736,
+  "center": {
+    "lat": 46.2017795,
+    "lon": 6.1426279
+  },
+  "tags": {
+    "addr:city": "Genève",
+    "addr:housenumber": "3",
+    "addr:postcode": "1204",
+    "addr:street": "Place de Neuve",
+    "amenity": "theatre",
+    "building": "retail",
+    "building:levels": "4",
+    "check_date": "2025-12-23",
+    "name": "Grand Théâtre de Genève",
+    "name:zh": "日内瓦大剧院",
+    "ref:CH:pcp": "02530",
+    "roof:shape": "gabled",
+    "website": "https://www.gtg.ch/",
+    "wheelchair": "limited",
+    "wikidata": "Q555398",
+    "wikimedia_commons": "Category:Grand Théâtre de Genève",
+    "wikipedia": "en:Grand Théâtre de Genève"
+  }
+},
+{
+  "type": "way",
+  "id": 47187567,
+  "center": {
+    "lat": 46.2008622,
+    "lon": 6.1432708
+  },
+  "tags": {
+    "busway:right": "lane",
+    "cycleway:right": "share_busway",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 47187569,
+  "center": {
+    "lat": 46.2013424,
+    "lon": 6.1436035
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "psv:lanes": "yes|designated",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "turn:lanes": "through;left|through",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 48564632,
+  "center": {
+    "lat": 46.2012074,
+    "lon": 6.1426939
+  },
+  "tags": {
+    "cycleway:right": "lane",
+    "cycleway:right:start_date": "2020-06-01",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Neuve",
+    "note": "Ce court tronçon est à double sens, notamment pour liaison Théâtre vers Place de Neuve!",
+    "oneway": "no",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "paving_stones",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 48915997,
+  "center": {
+    "lat": 46.2032520,
+    "lon": 6.1493876
+  },
+  "tags": {
+    "alt_name": "Rue Neuve du Molard",
+    "bicycle": "yes",
+    "highway": "pedestrian",
+    "name": "Rue Neuve-du-Molard",
+    "official_name": "Rue Neuve-du-Molard",
+    "ref:CH-GE:CODE_VOIE": "16934",
+    "ref:CH-GE:noms": "voie/geneve/rue-neuve-du-molard",
+    "segregated": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 49015881,
+  "center": {
+    "lat": 46.1996350,
+    "lon": 6.1455214
+  },
+  "tags": {
+    "bicycle": "designated",
+    "highway": "pedestrian",
+    "lit": "yes",
+    "name": "Promenade des Bastions",
+    "oneway": "no",
+    "segregated": "no",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 49015883,
+  "center": {
+    "lat": 46.1995573,
+    "lon": 6.1454142
+  },
+  "tags": {
+    "bicycle": "designated",
+    "highway": "pedestrian",
+    "lit": "yes",
+    "name": "Promenade des Bastions",
+    "oneway": "no",
+    "segregated": "no",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 50278951,
+  "center": {
+    "lat": 46.2013222,
+    "lon": 6.1430915
+  },
+  "tags": {
+    "cycleway:left": "lane",
+    "cycleway:left:oneway": "yes",
+    "cycleway:left:start_date": "2020-06-01",
+    "cycleway:right": "lane",
+    "cycleway:right:start_date": "2020-06-01",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "paving_stones",
+    "surface": "asphalt",
+    "turn:lanes": "left|through;right",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 50278953,
+  "center": {
+    "lat": 46.2013448,
+    "lon": 6.1438532
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 56054668,
+  "center": {
+    "lat": 46.2106442,
+    "lon": 6.1439838
+  },
+  "tags": {
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "maxspeed:type": "sign",
+    "name": "Place de Cornavin",
+    "psv:lanes:forward": "designated|yes",
+    "sidewalk": "separate",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|through"
+  }
+},
+{
+  "type": "way",
+  "id": 61720552,
+  "center": {
+    "lat": 46.2095925,
+    "lon": 6.1422043
+  },
+  "tags": {
+    "highway": "footway",
+    "indoor": "yes",
+    "level": "-1",
+    "name": "Place de Cornavin",
+    "tunnel": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 76565891,
+  "center": {
+    "lat": 46.2107673,
+    "lon": 6.1438705
+  },
+  "tags": {
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "maxspeed:type": "sign",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "psv:lanes:forward": "designated|yes",
+    "sidewalk": "both",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|through"
+  }
+},
+{
+  "type": "way",
+  "id": 76857200,
+  "center": {
+    "lat": 46.1965068,
+    "lon": 6.1502025
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 77839863,
+  "center": {
+    "lat": 46.2050123,
+    "lon": 6.1510073
+  },
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "ferry": "yes",
+    "lit": "yes",
+    "man_made": "pier",
+    "name": "Genève Jardin Anglais",
+    "official_name": "Débarcadère du Baromètre",
+    "public_transport": "platform",
+    "ref:CH-GE:CODE_VOIE": "66656",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 77839869,
+  "center": {
+    "lat": 46.2051331,
+    "lon": 6.1502739
+  },
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "ferry": "yes",
+    "highway": "footway",
+    "lit": "no",
+    "name": "Genève-Jardin-Anglais",
+    "official_name": "Débarcadère du Jardin-Anglais",
+    "public_transport": "platform",
+    "ref:CH-GE:CODE_VOIE": "66648",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 79746979,
+  "center": {
+    "lat": 46.2098939,
+    "lon": 6.1433706
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "horse": "no",
+    "lanes": "3",
+    "lanes:forward": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Cornavin",
+    "oneway": "no",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 79747005,
+  "center": {
+    "lat": 46.1999234,
+    "lon": 6.1488175
+  },
+  "tags": {
+    "highway": "living_street",
+    "maxspeed": "20",
+    "motor_vehicle": "yes",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "yes",
+    "oneway:bicycle": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 81995114,
+  "center": {
+    "lat": 46.1980405,
+    "lon": 6.1477419
+  },
+  "tags": {
+    "highway": "residential",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions"
+  }
+},
+{
+  "type": "way",
+  "id": 81995115,
+  "center": {
+    "lat": 46.1981289,
+    "lon": 6.1478628
+  },
+  "tags": {
+    "highway": "residential",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions"
+  }
+},
+{
+  "type": "way",
+  "id": 82133240,
+  "center": {
+    "lat": 46.2001293,
+    "lon": 6.1482998
+  },
+  "tags": {
+    "highway": "living_street",
+    "lit": "yes",
+    "maxspeed": "20",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "yes",
+    "oneway:bicycle": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 82683735,
+  "center": {
+    "lat": 46.2093450,
+    "lon": 6.1416549
+  },
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housenumber": "23",
+    "addr:postcode": "1201",
+    "addr:street": "Boulevard James-Fazy",
+    "brand": "fassbind hotels",
+    "building": "yes",
+    "check_date": "2025-04-24",
+    "construction_date": "1932",
+    "internet_access": "wlan",
+    "name": "Hôtel Cornavin",
+    "operator": "Crige SA",
+    "phone": "+41 22 716 12 12",
+    "rooms": "164",
+    "stars": "4",
+    "tourism": "hotel",
+    "website": "https://fassbindhotels.ch/hotel/cornavin-geneve/",
+    "wikidata": "Q3145463",
+    "wikipedia": "fr:Hôtel Cornavin"
+  }
+},
+{
+  "type": "way",
+  "id": 82753315,
+  "center": {
+    "lat": 46.2102024,
+    "lon": 6.1432504
+  },
+  "tags": {
+    "amenity": "shelter",
+    "bench": "yes",
+    "bin": "yes",
+    "building": "roof",
+    "bus": "yes",
+    "lit": "yes",
+    "local_ref": "D",
+    "name": "Gare Cornavin",
+    "public_transport": "platform",
+    "railway": "platform",
+    "ref": "D",
+    "shelter": "yes",
+    "shelter_type": "public_transport",
+    "tactile_paving": "yes",
+    "tram": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 82753325,
+  "center": {
+    "lat": 46.2101304,
+    "lon": 6.1433835
+  },
+  "tags": {
+    "amenity": "shelter",
+    "bench": "yes",
+    "bin": "yes",
+    "building": "roof",
+    "bus": "yes",
+    "lit": "yes",
+    "local_ref": "E",
+    "name": "Gare Cornavin",
+    "public_transport": "platform",
+    "railway": "platform",
+    "ref": "E",
+    "shelter": "yes",
+    "shelter_type": "public_transport",
+    "tactile_paving": "yes",
+    "tram": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 84095127,
+  "center": {
+    "lat": 46.2005789,
+    "lon": 6.1492917
+  },
+  "tags": {
+    "bicycle": "yes",
+    "highway": "pedestrian",
+    "lit": "yes",
+    "motor_vehicle": "private",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "no",
+    "oneway:bicycle": "no",
+    "oneway:motor_vehicle": "yes",
+    "segregated": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 87560693,
+  "center": {
+    "lat": 46.2075808,
+    "lon": 6.1423000
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "highway": "residential",
+    "lit": "yes",
+    "name": "Rue de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 96092239,
+  "center": {
+    "lat": 46.1971533,
+    "lon": 6.1490488
+  },
+  "tags": {
+    "change:lanes": "no|no",
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "turn:bus:lanes": "through;left|through",
+    "turn:lanes": "through;left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 96092452,
+  "center": {
+    "lat": 46.1971106,
+    "lon": 6.1493718
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "separate",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 122846183,
+  "center": {
+    "lat": 46.1989431,
+    "lon": 6.1444214
+  },
+  "tags": {
+    "amenity": "university",
+    "building": "yes",
+    "name": "Université de Genève - Uni Bastions (bâtiment principal)"
+  }
+},
+{
+  "type": "way",
+  "id": 122846214,
+  "center": {
+    "lat": 46.1995966,
+    "lon": 6.1453212
+  },
+  "tags": {
+    "bicycle": "yes",
+    "highway": "pedestrian",
+    "lit": "yes",
+    "name": "Promenade des Bastions",
+    "segregated": "no",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 182665471,
+  "center": {
+    "lat": 46.2093907,
+    "lon": 6.1428769
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Cornavin",
+    "oneway": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 214484447,
+  "center": {
+    "lat": 46.1970201,
+    "lon": 6.1492437
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "separate",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 214484448,
+  "center": {
+    "lat": 46.1973560,
+    "lon": 6.1490126
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "psv:lanes": "designated|yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "turn:lanes": "right|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 214484449,
+  "center": {
+    "lat": 46.1965657,
+    "lon": 6.1498633
+  },
+  "tags": {
+    "cycleway": "lane",
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "psv:lanes": "yes|designated",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 219720963,
+  "center": {
+    "lat": 46.2087832,
+    "lon": 6.1427041
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Cornavin",
+    "oneway": "no",
+    "sidewalk": "right",
+    "sidewalk:right:surface": "asphalt",
+    "smoothness": "good",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 276063679,
+  "center": {
+    "lat": 46.2076144,
+    "lon": 6.1421886
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "highway": "residential",
+    "lit": "yes",
+    "name": "Rue de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 279555357,
+  "center": {
+    "lat": 46.2008956,
+    "lon": 6.1495754
+  },
+  "tags": {
+    "bicycle": "yes",
+    "highway": "pedestrian",
+    "lit": "yes",
+    "motor_vehicle": "private",
+    "name": "Place du Bourg-de-Four",
+    "oneway": "no",
+    "oneway:motor_vehicle": "yes",
+    "segregated": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 279555358,
+  "center": {
+    "lat": 46.2033944,
+    "lon": 6.1484894
+  },
+  "tags": {
+    "alt_name": "Rue Neuve du Molard",
+    "bicycle": "yes",
+    "highway": "pedestrian",
+    "name": "Rue Neuve-du-Molard",
+    "official_name": "Rue Neuve-du-Molard",
+    "ref:CH-GE:CODE_VOIE": "16934",
+    "ref:CH-GE:noms": "voie/geneve/rue-neuve-du-molard",
+    "segregated": "no",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 294164794,
+  "center": {
+    "lat": 46.2095976,
+    "lon": 6.1423304
+  },
+  "tags": {
+    "highway": "living_street",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "smoothness": "excellent",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 322253539,
+  "center": {
+    "lat": 46.2069139,
+    "lon": 6.1507321
+  },
+  "tags": {
+    "bicycle": "yes",
+    "foot": "yes",
+    "motor_vehicle": "no",
+    "name": "Jardin Anglais - Pâquis",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "route": "ferry",
+    "vehicle": "no",
+    "website": "https://cgn.ch/"
+  }
+},
+{
+  "type": "way",
+  "id": 397737238,
+  "center": {
+    "lat": 46.2010953,
+    "lon": 6.1484955
+  },
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housenumber": "8",
+    "addr:postcode": "1204",
+    "addr:street": "Cour de Saint-Pierre",
+    "amenity": "place_of_worship",
+    "building": "cathedral",
+    "denomination": "reformed",
+    "name": "Cathédrale Saint-Pierre",
+    "name:be": "Сабор Святога Пятра",
+    "name:de": "Kathedrale St. Peter",
+    "name:en": "St. Pierre Cathedral",
+    "name:es": "Catedral de San Pedro",
+    "name:fr": "Cathédrale Saint-Pierre",
+    "name:hu": "Szent Péter-katedrális",
+    "name:it": "Cattedrale di San Pietro",
+    "name:ja": "サン＝ピエール大聖堂",
+    "name:ko": "생 피에르 교회",
+    "name:nl": "Sint-Pieterskathedraal",
+    "name:pl": "Katedra św. Piotra",
+    "name:pt": "Catedral de São Pedro",
+    "name:ru": "Кафедральный собор Святого Петра",
+    "name:uk": "Собор святого Петра",
+    "name:zh": "圣皮埃尔大教堂",
+    "name:zh-Hans": "圣皮埃尔大教堂",
+    "name:zh-Hant": "聖彼得大教堂",
+    "religion": "christian",
+    "tourism": "attraction",
+    "wheelchair": "limited",
+    "wikidata": "Q666516",
+    "wikipedia": "fr:Cathédrale Saint-Pierre de Genève"
+  }
+},
+{
+  "type": "way",
+  "id": 493192346,
+  "center": {
+    "lat": 46.2088118,
+    "lon": 6.1403890
+  },
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "covered": "yes",
+    "footway": "sidewalk",
+    "highway": "platform",
+    "layer": "-1",
+    "level": "0",
+    "lit": "yes",
+    "local_ref": "K",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "K",
+    "surface": "asphalt",
+    "tactile_paving": "no",
+    "trolleybus": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 579957208,
+  "center": {
+    "lat": 46.2012500,
+    "lon": 6.1438964
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lane_markings": "no",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Place de Neuve",
+    "oneway": "yes",
+    "psv:lanes": "yes|designated",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 579957210,
+  "center": {
+    "lat": 46.2012833,
+    "lon": 6.1441366
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "highway": "service",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "psv": "designated",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 579985974,
+  "center": {
+    "lat": 46.1968097,
+    "lon": 6.1498013
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "residential",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 583876551,
+  "center": {
+    "lat": 46.2282667,
+    "lon": 6.1423008
+  },
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housenumber": "8 - 14",
+    "addr:street": "Avenue de la Paix",
+    "building": "yes",
+    "int_name": "Palais des Nations",
+    "name": "Palais des Nations",
+    "name:ar": "قصر الأمم",
+    "name:de": "Völkerbundpalast",
+    "name:en": "Palace of Nations",
+    "name:es": "Palacio de las Naciones",
+    "name:fa": "کاخ ملل",
+    "name:fr": "Palais des Nations",
+    "name:ru": "ООН. Дворец наций",
+    "name:sk": "Palác národov",
+    "name:zh": "万国宫/断腿木椅",
+    "operator": "Organisation des Nations Unies",
+    "operator:ar": "الأمم المتحدة",
+    "ref": "Building E",
+    "start_date": "1936",
+    "tourism": "attraction",
+    "website": "https://www.unog.ch/",
+    "wikipedia": "en:Palace of Nations"
+  }
+},
+{
+  "type": "way",
+  "id": 626089991,
+  "center": {
+    "lat": 46.2097339,
+    "lon": 6.1416198
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "no",
+    "bin": "yes",
+    "covered": "yes",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "I",
+    "name": "Gare Cornavin",
+    "public_transport": "platform",
+    "railway": "platform",
+    "ref": "I",
+    "route_ref": "14;18",
+    "tactile_paving": "yes",
+    "tram": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 626112129,
+  "center": {
+    "lat": 46.2093122,
+    "lon": 6.1424433
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "check_date:shelter": "2023-05-08",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "F",
+    "name": "Gare Cornavin",
+    "public_transport": "platform",
+    "ref": "F",
+    "shelter": "yes",
+    "tactile_paving": "no",
+    "trolleybus": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 626112130,
+  "center": {
+    "lat": 46.2092567,
+    "lon": 6.1424022
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "G",
+    "name": "Gare Cornavin (G)",
+    "public_transport": "platform",
+    "ref": "G",
+    "shelter": "yes",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 626112131,
+  "center": {
+    "lat": 46.2102328,
+    "lon": 6.1429390
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "highway": "platform",
+    "lit": "yes",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "A;B",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 626323134,
+  "center": {
+    "lat": 46.2081311,
+    "lon": 6.1425377
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "cycleway:right": "lane",
+    "highway": "residential",
+    "lanes": "2",
+    "lit": "yes",
+    "name": "Rue de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 626323135,
+  "center": {
+    "lat": 46.2082764,
+    "lon": 6.1425776
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "highway": "residential",
+    "lit": "yes",
+    "name": "Rue de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 626323137,
+  "center": {
+    "lat": 46.2070621,
+    "lon": 6.1420402
+  },
+  "tags": {
+    "access": "no",
+    "highway": "residential",
+    "lit": "yes",
+    "name": "Rue de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 628485133,
+  "center": {
+    "lat": 46.2009544,
+    "lon": 6.1446230
+  },
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "lit": "yes",
+    "name": "Place de Neuve",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "L",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885"
+  }
+},
+{
+  "type": "way",
+  "id": 628485135,
+  "center": {
+    "lat": 46.2011993,
+    "lon": 6.1443913
+  },
+  "tags": {
+    "bench": "yes",
+    "bus": "yes",
+    "name": "Place de Neuve",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "M",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885"
+  }
+},
+{
+  "type": "way",
+  "id": 628485137,
+  "center": {
+    "lat": 46.2014336,
+    "lon": 6.1439542
+  },
+  "tags": {
+    "foot": "no",
+    "highway": "living_street",
+    "maxspeed": "20",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 628485140,
+  "center": {
+    "lat": 46.2008352,
+    "lon": 6.1436595
+  },
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "lit": "yes",
+    "name": "Place Neuve",
+    "public_transport": "platform",
+    "railway": "platform",
+    "ref": "I",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "yes",
+    "tram": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 628485145,
+  "center": {
+    "lat": 46.2009085,
+    "lon": 6.1435432
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "lit": "yes",
+    "name": "Place Neuve",
+    "public_transport": "platform",
+    "railway": "platform",
+    "ref": "J;K",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "yes",
+    "tram": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 664908158,
+  "center": {
+    "lat": 46.2003001,
+    "lon": 6.1491362
+  },
+  "tags": {
+    "amenity": "fountain",
+    "bottle": "yes",
+    "dog": "no",
+    "drinking_water": "yes",
+    "fountain": "water",
+    "name": "Fontaine du Bourg-de-Four",
+    "natural": "water",
+    "ref:CH:pcp": "2523",
+    "swimming_pool": "no",
+    "website": "https://www.geneve.ch/fontaine-bourg-four",
+    "wheelchair": "no",
+    "wikidata": "Q98554398",
+    "wikimedia_commons": "Category:Fontaine du Bourg-de-Four"
+  }
+},
+{
+  "type": "way",
+  "id": 678101354,
+  "center": {
+    "lat": 46.2103209,
+    "lon": 6.1413543
+  },
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "covered": "yes",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "J",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "J",
+    "surface": "asphalt",
+    "tactile_paving": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 678101357,
+  "center": {
+    "lat": 46.2097033,
+    "lon": 6.1408020
+  },
+  "tags": {
+    "bench": "no",
+    "bin": "yes",
+    "bus": "yes",
+    "covered": "yes",
+    "footway": "sidewalk",
+    "highway": "platform",
+    "lit": "yes",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "surface": "asphalt",
+    "tactile_paving": "no",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 678691728,
+  "center": {
+    "lat": 46.2089668,
+    "lon": 6.1396593
+  },
+  "tags": {
+    "bench": "no",
+    "bin": "yes",
+    "bus": "yes",
+    "footway": "sidewalk",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "L",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "L",
+    "shelter": "no",
+    "surface": "concrete",
+    "tactile_paving": "no",
+    "trolleybus": "yes",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 687920478,
+  "center": {
+    "lat": 46.2084165,
+    "lon": 6.1426150
+  },
+  "tags": {
+    "cycleway:right": "lane",
+    "highway": "secondary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "smoothness": "excellent",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 697115698,
+  "center": {
+    "lat": 46.2105477,
+    "lon": 6.1439788
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "3",
+    "lanes:forward": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "maxspeed:type": "sign",
+    "name": "Place de Cornavin",
+    "sidewalk": "both",
+    "sidewalk:left:surface": "asphalt",
+    "sidewalk:right:surface": "paving_stones",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 698683066,
+  "center": {
+    "lat": 46.2081999,
+    "lon": 6.1423569
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "highway": "residential",
+    "lit": "yes",
+    "name": "Rue de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 699026094,
+  "center": {
+    "lat": 46.2001578,
+    "lon": 6.1486275
+  },
+  "tags": {
+    "footway": "sidewalk",
+    "highway": "platform",
+    "name": "Bourg-de-Four",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 737546191,
+  "center": {
+    "lat": 46.2103850,
+    "lon": 6.1432452
+  },
+  "tags": {
+    "highway": "living_street",
+    "motor_vehicle": "no",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 792157805,
+  "center": {
+    "lat": 46.2091321,
+    "lon": 6.1427915
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Cornavin",
+    "oneway": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 806059088,
+  "center": {
+    "lat": 46.1968033,
+    "lon": 6.1495643
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "psv:lanes": "yes|designated",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 809476504,
+  "center": {
+    "lat": 46.2099740,
+    "lon": 6.1427704
+  },
+  "tags": {
+    "highway": "living_street",
+    "lit": "yes",
+    "motor_vehicle": "no",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 840318947,
+  "center": {
+    "lat": 46.2010925,
+    "lon": 6.1436962
+  },
+  "tags": {
+    "access": "no",
+    "bicycle": "yes",
+    "highway": "service",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "psv": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 840318948,
+  "center": {
+    "lat": 46.2011109,
+    "lon": 6.1436117
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "turn:lanes": "through;left|right",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 865485436,
+  "center": {
+    "lat": 46.2015337,
+    "lon": 6.1440158
+  },
+  "tags": {
+    "bench": "yes",
+    "bin": "no",
+    "bus": "yes",
+    "highway": "platform",
+    "lit": "no",
+    "name": "Place de Neuve",
+    "public_transport": "platform",
+    "ref": "N",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 895196505,
+  "center": {
+    "lat": 46.2094853,
+    "lon": 6.1422058
+  },
+  "tags": {
+    "highway": "living_street",
+    "lit": "yes",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "psv": "yes",
+    "smoothness": "excellent",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 909010962,
+  "center": {
+    "lat": 46.2105481,
+    "lon": 6.1432915
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "C",
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "platform",
+    "ref": "C",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "way",
+  "id": 910728086,
+  "center": {
+    "lat": 46.2106033,
+    "lon": 6.1434901
+  },
+  "tags": {
+    "highway": "living_street",
+    "lit": "yes",
+    "motor_vehicle": "no",
+    "name": "Place de Cornavin",
+    "oneway": "yes",
+    "parking:lane:both": "no",
+    "psv": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 963128047,
+  "center": {
+    "lat": 46.2062329,
+    "lon": 6.1494861
+  },
+  "tags": {
+    "bicycle": "yes",
+    "foot": "yes",
+    "motor_vehicle": "no",
+    "name": "Jardin Anglais - Mont-Blanc",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "route": "ferry",
+    "vehicle": "no",
+    "website": "https://cgn.ch/"
+  }
+},
+{
+  "type": "way",
+  "id": 980256078,
+  "center": {
+    "lat": 46.2014530,
+    "lon": 6.1438996
+  },
+  "tags": {
+    "access": "destination",
+    "bicycle": "yes",
+    "bus": "yes",
+    "cycleway": "lane",
+    "electrified": "contact_line",
+    "frequency": "0",
+    "gauge": "1000",
+    "highway": "residential",
+    "lane_markings": "no",
+    "name": "Place Neuve",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "official_name": "Place de Neuve",
+    "oneway": "yes",
+    "psv": "yes",
+    "railway": "tram",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "voltage": "600",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 1031829456,
+  "center": {
+    "lat": 46.2092412,
+    "lon": 6.1428193
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "lane",
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Place de Cornavin",
+    "oneway": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1204850778,
+  "center": {
+    "lat": 46.2257099,
+    "lon": 6.1408637
+  },
+  "tags": {
+    "addr:city": "Genève",
+    "addr:country": "CH",
+    "addr:housenumber": "8 - 14",
+    "addr:street": "Avenue de la Paix",
+    "architect": "Julien Flegenheimer",
+    "architect:wikipedia": "fr:Julien Flegenheimer",
+    "building": "public",
+    "country": "UN",
+    "government": "administrative",
+    "int_name": "Palais des Nations",
+    "name": "Palais des Nations",
+    "name:ar": "قصر الأمم",
+    "name:de": "Völkerbundpalast",
+    "name:en": "Palace of Nations",
+    "name:es": "Palacio de las Naciones",
+    "name:fa": "کاخ ملل",
+    "name:fr": "Palais des Nations",
+    "name:ru": "ООН. Дворец наций",
+    "name:sk": "Palác národov",
+    "name:zh": "万国宫",
+    "office": "government",
+    "operator": "Organisation des Nations Unies",
+    "operator:ar": "الأمم المتحدة",
+    "start_date": "1936",
+    "website": "https://www.unog.ch/",
+    "wikipedia": "en:Palace of Nations",
+    "year_of_construction": "1929-1938"
+  }
+},
+{
+  "type": "way",
+  "id": 1264828952,
+  "center": {
+    "lat": 46.2097453,
+    "lon": 6.1416319
+  },
+  "tags": {
+    "area": "yes",
+    "bench": "no",
+    "bin": "yes",
+    "covered": "yes",
+    "highway": "platform",
+    "lit": "yes",
+    "local_ref": "H",
+    "name": "Gare Cornavin",
+    "public_transport": "platform",
+    "railway": "platform",
+    "ref": "H",
+    "route_ref": "14;18",
+    "tactile_paving": "yes",
+    "tram": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1354136276,
+  "center": {
+    "lat": 46.2106947,
+    "lon": 6.1439489
+  },
+  "tags": {
+    "cycleway:right:lane": "advisory",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "maxspeed:type": "sign",
+    "name": "Place de Cornavin",
+    "psv:lanes:forward": "designated|yes",
+    "sidewalk": "separate",
+    "surface": "asphalt",
+    "turn:lanes:forward": "left|through"
+  }
+},
+{
+  "type": "way",
+  "id": 1354172547,
+  "center": {
+    "lat": 46.1964555,
+    "lon": 6.1499193
+  },
+  "tags": {
+    "cycleway": "lane",
+    "foot": "no",
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "psv:lanes": "yes|designated",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1355188441,
+  "center": {
+    "lat": 46.1974986,
+    "lon": 6.1485355
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1355188442,
+  "center": {
+    "lat": 46.1976336,
+    "lon": 6.1486025
+  },
+  "tags": {
+    "change:lanes": "no|no",
+    "cycleway:both": "no",
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "psv:lanes": "designated|yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "turn:lanes": "right|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 1355188443,
+  "center": {
+    "lat": 46.1973096,
+    "lon": 6.1488182
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "lanes:psv": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Cours des Bastions",
+    "official_name": "Cours des Bastions",
+    "oneway": "yes",
+    "ref:CH-GE:CODE_VOIE": "1406",
+    "ref:CH-GE:noms": "voie/geneve/cours-des-bastions",
+    "sidewalk": "right",
+    "surface": "asphalt",
+    "trolley_wire": "yes",
+    "turn:bus:lanes": "through;left|through",
+    "turn:lanes": "through;left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1510745708,
+  "center": {
+    "lat": 46.2096880,
+    "lon": 6.1429926
+  },
+  "tags": {
+    "alt_name": "Place Cornavin",
+    "name": "Place de Cornavin",
+    "name:etymology": "Cornavin;Gare de Cornavin",
+    "official_name": "Place de Cornavin",
+    "place": "square",
+    "ref:CH-GE:CODE_VOIE": "7110",
+    "ref:CH-GE:archi": "voies/place-de-cornavin/",
+    "ref:CH-GE:icono-lieu": "13229",
+    "ref:CH-GE:noms": "voie/geneve/place-de-cornavin",
+    "short_name": "Cornavin",
+    "wikidata": "Q124150443",
+    "wikimedia_commons": "Category:Place Cornavin (Geneva)"
+  }
+},
+{
+  "type": "way",
+  "id": 1511645040,
+  "center": {
+    "lat": 46.2003273,
+    "lon": 6.1489989
+  },
+  "tags": {
+    "alt_name": "Bourg-de-Four",
+    "name": "Place du Bourg-de-Four",
+    "name:fr": "Place du Bourg-de-Four",
+    "place": "square",
+    "ref:CH-GE:CODE_VOIE": "3140",
+    "ref:CH-GE:archi": "voies/place-du-bourg-de-four/",
+    "ref:CH-GE:icono-lieu": "7084",
+    "ref:CH-GE:noms": "voie/geneve/place-du-bourg-de-four",
+    "wikidata": "Q7200245",
+    "wikimedia_commons": "Category:Place du Bourg-de-Four",
+    "wikipedia": "fr:Place du Bourg-de-Four"
+  }
+},
+{
+  "type": "way",
+  "id": 1513907815,
+  "center": {
+    "lat": 46.2010619,
+    "lon": 6.1433108
+  },
+  "tags": {
+    "alt_name": "Place de Neuve;Pl. Neuve",
+    "name": "Place Neuve",
+    "name:etymology": "Porte Neuve",
+    "name:etymology:wikimedia_commons": "Category:Porte Neuve (Genève, 1740-1853)",
+    "name:fr": "Place Neuve",
+    "name:pt": "Praça Nova",
+    "name:signed": "yes",
+    "not:name": "Place Deneuve",
+    "official_name": "Place de Neuve",
+    "official_name:signed": "yes",
+    "old_name": "Place de la Porte Neuve",
+    "place": "square",
+    "ref:CH-GE:CODE_VOIE": "16926",
+    "ref:CH-GE:archi": "voies/place-de-neuve/",
+    "ref:CH-GE:icono-lieu": "6944",
+    "ref:CH-GE:noms": "voie/geneve/place-de-neuve",
+    "ref:CH:pcp": "2485",
+    "ref:ESID": "10047858",
+    "short_name": "Neuve",
+    "wikidata": "Q3390017",
+    "wikimedia_commons": "Category:Place Neuve (Geneva)",
+    "wikipedia": "fr:Place Neuve (Genève)"
+  }
+},
+{
+  "type": "way",
+  "id": 1561090925,
+  "center": {
+    "lat": 46.2062789,
+    "lon": 6.1571134
+  },
+  "tags": {
+    "bridge": "movable",
+    "bridge:movable": "yes",
+    "highway": "footway",
+    "layer": "1",
+    "name": "Passerelle du Jet d'Eau",
+    "name:en": "Jet d'Eau mobile walkway",
+    "name:fr": "Passerelle du Jet d'Eau",
+    "start_date": "2016",
+    "website:architect": "https://www.ingeni.ch/fr/projects/passerelle-du-jet-d-eau/",
+    "wikimedia_commons": "Category:Pont du Goléron (Eaux-Vives)"
+  }
+},
+{
+  "type": "relation",
+  "id": 1178421,
+  "center": {
+    "lat": 46.2007003,
+    "lon": 6.1481617
+  },
+  "tags": {
+    "colour": "#7d7d7d",
+    "from": "Place de Neuve",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:route_id": "92-36-D-j22-1",
+    "gtfs:trip_id:like": "%92-36-D-j22-1.2.H",
+    "gtfs:trip_id:sample": "100.TA.92-36-D-j22-1.2.H",
+    "name": "Bus 92: Place de Neuve → Cathédrale → Place de Neuve",
+    "nat_ref": "11.036",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "network:wikipedia": "fr:Unireso",
+    "operator": "TPG: Globe Limo",
+    "public_transport:version": "2",
+    "ref": "92",
+    "ref_trips": "100.TA.92-36-D-j22-1.2.H",
+    "roundtrip": "yes",
+    "route": "bus",
+    "to": "Place de Neuve",
+    "type": "route",
+    "via": "Cathédrale",
+    "website": "https://www.tpg.ch/fr/lignes/92"
+  }
+},
+{
+  "type": "relation",
+  "id": 1287595,
+  "center": {
+    "lat": 46.2740453,
+    "lon": 6.0982074
+  },
+  "tags": {
+    "colour": "#ec619f",
+    "contractor": "RDTA",
+    "from": "Genève, Gare Cornavin",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2025-12-18",
+    "gtfs:route_id": "92-60-E-j26-1",
+    "gtfs:trip_id:like": "%92-60-E-j26-1.9.H",
+    "gtfs:trip_id:sample": "203.TA.92-60-E-j26-1.9.H",
+    "name": "Bus 60: Gare Cornavin → Ferney-Mairie → Gex-L'Aiglette",
+    "nat_ref": "11.060",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "note": "trips skipping Ferney-Mairie (%92-60-E-j26-1.3.H)",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "60",
+    "ref_trips": "92-60-E-j26-1.9.H",
+    "route": "bus",
+    "to": "Gex-L'Aiglette",
+    "type": "route",
+    "via": "Ferney-Mairie"
+  }
+},
+{
+  "type": "relation",
+  "id": 3908125,
+  "center": {
+    "lat": 46.2740929,
+    "lon": 6.0992384
+  },
+  "tags": {
+    "colour": "#f5b5d2",
+    "contractor": "RDTA",
+    "from": "Gex-L'Aiglette",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2025-12-18",
+    "gtfs:route_id": "92-61-F-j26-1",
+    "gtfs:trip_id:like": "%92-61-F-j26-1.2.R",
+    "gtfs:trip_id:sample": "33.TA.92-61-F-j26-1.2.R",
+    "name": "Bus 61: Gex-L'Aiglette → Ferney-Mairie → Gare Cornavin",
+    "nat_ref": "11.061",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "61",
+    "ref_trips": "92-61-F-j26-1.2.R",
+    "route": "bus",
+    "to": "Genève, Gare Cornavin",
+    "type": "route",
+    "via": "Ferney-Mairie"
+  }
+},
+{
+  "type": "relation",
+  "id": 8074805,
+  "center": {
+    "lat": 46.2011743,
+    "lon": 6.1434411
+  },
+  "tags": {
+    "area": "yes",
+    "highway": "pedestrian",
+    "name": "Place Neuve",
+    "surface": "asphalt",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 8746426,
+  "center": {
+    "lat": 46.2010723,
+    "lon": 6.1440028
+  },
+  "tags": {
+    "name": "Place de Neuve",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_area",
+    "type": "public_transport",
+    "uic_name": "Genève, Place de Neuve",
+    "uic_ref": "8592885"
+  }
+},
+{
+  "type": "relation",
+  "id": 9238745,
+  "center": {
+    "lat": 46.2005901,
+    "lon": 6.1492424
+  },
+  "tags": {
+    "bicycle": "yes",
+    "highway": "pedestrian",
+    "layer": "-1",
+    "name": "Place du Bourg-de-Four",
+    "surface": "paved",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 9423087,
+  "center": {
+    "lat": 46.2096842,
+    "lon": 6.1416160
+  },
+  "tags": {
+    "name": "Gare Cornavin",
+    "network": "Unireso",
+    "operator": "TPG",
+    "public_transport": "stop_area",
+    "type": "public_transport",
+    "uic_name": "Genève, gare Cornavin",
+    "uic_ref": "8587057"
+  }
+},
+{
+  "type": "relation",
+  "id": 9712590,
+  "center": {
+    "lat": 46.2014854,
+    "lon": 6.1478409
+  },
+  "tags": {
+    "name": "Cathédrale",
+    "network": "TPG",
+    "operator": "TPG",
+    "public_transport": "stop_area",
+    "type": "public_transport",
+    "uic_name": "Genève, Cathédrale",
+    "uic_ref": "8592799"
+  }
+},
+{
+  "type": "relation",
+  "id": 9712593,
+  "center": {
+    "lat": 46.2001432,
+    "lon": 6.1486275
+  },
+  "tags": {
+    "name": "Bourg-de-Four",
+    "network": "TPG",
+    "operator": "TPG",
+    "public_transport": "stop_area",
+    "type": "public_transport",
+    "uic_name": "Genève, Bourg-de-Four",
+    "uic_ref": "8592792"
+  }
+},
+{
+  "type": "relation",
+  "id": 11501943,
+  "center": {
+    "lat": 46.2389015,
+    "lon": 6.1940614
+  },
+  "tags": {
+    "colour": "#000000",
+    "from": "Genève, Gare Cornavin",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:route_id": "92-G+-j22-1",
+    "gtfs:trip_id:like": "%92-G+-j22-1.1.H",
+    "gtfs:trip_id:sample": "1.TA.92-G+-j22-1.1.H",
+    "name": "Bus G+: Gare Cornavin → Veigy-Douane",
+    "nat_ref": "11.107",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "network:wikipedia": "fr:Unireso",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "G+",
+    "ref_trips": "1.TA.92-G+-j22-1.1.H",
+    "route": "bus",
+    "to": "Veigy-Douane",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 11503256,
+  "center": {
+    "lat": 46.2388476,
+    "lon": 6.1943692
+  },
+  "tags": {
+    "colour": "#000000",
+    "from": "Veigy-Douane",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:route_id": "92-G+-j22-1",
+    "gtfs:trip_id:like": "%92-G+-j22-1.2.R",
+    "gtfs:trip_id:sample": "100.TA.92-G+-j22-1.2.R",
+    "name": "Bus G+: Veigy-Douane → Gare Cornavin",
+    "nat_ref": "11.107",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "network:wikipedia": "fr:Unireso",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "G+",
+    "ref_trips": "100.TA.92-G+-j22-1.2.R",
+    "route": "bus",
+    "to": "Genève, Gare Cornavin",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 11544254,
+  "center": {
+    "lat": 46.2511774,
+    "lon": 6.1927392
+  },
+  "tags": {
+    "colour": "#000000",
+    "from": "Gare Cornavin",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:route_id": "92-E+-j22-1",
+    "gtfs:trip_id:like": "%92-E+-j22-1.1.H",
+    "gtfs:trip_id:sample": "1.TA.92-E+-j22-1.1.H",
+    "name": "Bus E+: Gare Cornavin → Hermance-Village",
+    "nat_ref": "11.105",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "network:wikipedia": "fr:Unireso",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "E+",
+    "ref_trips": "1.TA.92-E+-j22-1.1.H",
+    "route": "bus",
+    "to": "Hermance-Village",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 11544450,
+  "center": {
+    "lat": 46.2512146,
+    "lon": 6.1931536
+  },
+  "tags": {
+    "colour": "#000000",
+    "from": "Hermance-Village",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:route_id": "92-E+-j22-1",
+    "gtfs:trip_id:like": "%92-E+-j22-1.2.R",
+    "gtfs:trip_id:sample": "27.TA.92-E+-j22-1.2.R",
+    "name": "Bus E+: Hermance-Village → Gare Cornavin",
+    "nat_ref": "11.105",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "network:wikipedia": "fr:Unireso",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "E+",
+    "ref_trips": "27.TA.92-E+-j22-1.2.R",
+    "route": "bus",
+    "to": "Gare Cornavin",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 12116584,
+  "center": {
+    "lat": 46.2352483,
+    "lon": 6.1238336
+  },
+  "tags": {
+    "colour": "#ec619f",
+    "contractor": "RDTA",
+    "from": "Genève, Gare Cornavin",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2025-12-18",
+    "gtfs:route_id": "92-60-E-j26-1",
+    "gtfs:trip_id:like": "%92-60-E-j26-1.2.H",
+    "gtfs:trip_id:sample": "2.TA.92-60-E-j26-1.2.H",
+    "name": "Bus 60: Gare Cornavin → Ferney-Mairie",
+    "nat_ref": "11.060",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "60",
+    "ref_trips": "92-60-E-j26-1.2.H",
+    "route": "bus",
+    "to": "Ferney-Mairie",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 12131776,
+  "center": {
+    "lat": 46.2352327,
+    "lon": 6.1248646
+  },
+  "tags": {
+    "colour": "#ec619f",
+    "contractor": "RDTA",
+    "from": "Ferney-Mairie",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2025-12-18",
+    "gtfs:route_id": "92-60-E-j26-1",
+    "gtfs:trip_id:like": "%92-60-E-j26-1.11.R",
+    "gtfs:trip_id:sample": "300.TA.92-60-E-j26-1.11.R",
+    "name": "Bus 60: Ferney-Mairie → Gare Cornavin",
+    "nat_ref": "11.060",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "60",
+    "ref_trips": "92-60-E-j26-1.11.R",
+    "route": "bus",
+    "to": "Genève, Gare Cornavin",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 12189833,
+  "center": {
+    "lat": 46.2740453,
+    "lon": 6.0982074
+  },
+  "tags": {
+    "colour": "#f5b5d2",
+    "contractor": "RDTA",
+    "from": "Genève, Gare Cornavin",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2025-12-18",
+    "gtfs:route_id": "92-61-F-j26-1",
+    "gtfs:trip_id:like": "%92-61-F-j26-1.1.H",
+    "gtfs:trip_id:sample": "16.TA.92-61-F-j26-1.1.H",
+    "name": "Bus 61: Gare Cornavin → Ferney-Avenue du Jura → Gex-L'Aiglette",
+    "nat_ref": "11.061",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "61",
+    "ref_trips": "92-61-F-j26-1.1.H",
+    "route": "bus",
+    "to": "Gex-L'Aiglette",
+    "type": "route",
+    "via": "Ferney-Avenue du Jura"
+  }
+},
+{
+  "type": "relation",
+  "id": 12941539,
+  "center": {
+    "lat": 46.2888218,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "bicycle": "yes",
+    "foot": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-13-Y-j21-1",
+    "gtfs:trip_id:like": "%94-13-Y-j21-1.3.R",
+    "gtfs:trip_id:sample": "4.TA.94-13-Y-j21-1.3.R",
+    "hgv": "no",
+    "motor_vehicle": "no",
+    "name": "CGN 3150: Genève-Jardin-Anglais (lac) => Genève-Pâquis (lac) => Yvoire (F) (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "CGN",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "4.TA.94-13-Y-j21-1.3.R",
+    "route": "ferry",
+    "to": "Yvoire (F) (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac)"
+  }
+},
+{
+  "type": "relation",
+  "id": 12941540,
+  "center": {
+    "lat": 46.2888218,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "from": "Yvoire (F) (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-13-Y-j21-1",
+    "gtfs:trip_id:like": "%94-13-Y-j21-1.1.H",
+    "gtfs:trip_id:sample": "1.TA.94-13-Y-j21-1.1.H",
+    "name": "CGN 3150: Yvoire (F) (lac) => Genève-Pâquis (lac) => Genève-Jardin-Anglais (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "CGN",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "1.TA.94-13-Y-j21-1.1.H",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac)"
+  }
+},
+{
+  "type": "relation",
+  "id": 12947004,
+  "center": {
+    "lat": 46.2887411,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-13-Y-j21-1",
+    "gtfs:trip_id:like": "%94-13-Y-j21-1.5.R",
+    "gtfs:trip_id:sample": "6.TA.94-13-Y-j21-1.5.R",
+    "name": "CGN 3150: Genève-Jardin-Anglais (lac) => Corsier (lac) => Anières (lac) => Hermance (lac) => Yvoire (F) (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "6.TA.94-13-Y-j21-1.5.R",
+    "route": "ferry",
+    "to": "Yvoire (F) (lac)",
+    "type": "route",
+    "via": "Corsier (lac);Anières (lac);Hermance (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12947079,
+  "center": {
+    "lat": 46.2887411,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "bicycle": "yes",
+    "fee": "yes",
+    "foot": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-13-Y-j21-1",
+    "gtfs:trip_id:like": "%94-13-Y-j21-1.4.R",
+    "gtfs:trip_id:sample": "5.TA.94-13-Y-j21-1.4.R",
+    "hgv": "no",
+    "motor_vehicle": "no",
+    "name": "CGN 3150: Genève-Jardin-Anglais (lac) => Genève-Pâquis (lac) => Hermance (lac) => Yvoire (F) (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "5.TA.94-13-Y-j21-1.4.R",
+    "route": "ferry",
+    "to": "Yvoire (F) (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac);Hermance (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12947142,
+  "center": {
+    "lat": 46.2936731,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Yvoire (F) (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-13-Y-j21-1",
+    "gtfs:trip_id:like": "%94-13-Y-j21-1.2.H",
+    "gtfs:trip_id:sample": "3.TA.94-13-Y-j21-1.2.H",
+    "name": "CGN 3150: Yvoire (F) (lac) => Nyon (lac) => Hermance (lac) => Anières (lac) => Corsier (lac) => Genève-Jardin-Anglais (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "3.TA.94-13-Y-j21-1.2.H",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Nyon (lac);Hermance (lac);Anières (lac);Corsier (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12948555,
+  "center": {
+    "lat": 46.2890872,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "bicycle": "yes",
+    "fee": "yes",
+    "foot": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-10-Y-j21-1",
+    "gtfs:trip_id:like": "%94-10-Y-j21-1.6.R",
+    "gtfs:trip_id:sample": "7.TA.94-10-Y-j21-1.6.R",
+    "hgv": "no",
+    "motor_vehicle": "no",
+    "name": "CGN 3150: Genève-Jardin-Anglais (lac) => Genève-Pâquis (lac) => Versoix (lac) => Coppet (lac) => Yvoire (F) (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "7.TA.94-10-Y-j21-1.6.R",
+    "route": "ferry",
+    "to": "Yvoire (F) (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac);Versoix (lac);Coppet (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12948556,
+  "center": {
+    "lat": 46.2890872,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "bicycle": "yes",
+    "fee": "yes",
+    "foot": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-10-Y-j21-1",
+    "gtfs:trip_id:like": "%94-10-Y-j21-1.5.R",
+    "gtfs:trip_id:sample": "5.TA.94-10-Y-j21-1.5.R",
+    "hgv": "no",
+    "motor_vehicle": "no",
+    "name": "CGN 3150: Genève-Jardin-Anglais (lac) => Versoix (lac) => Coppet (lac) => Yvoire (F) (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "5.TA.94-10-Y-j21-1.5.R",
+    "route": "ferry",
+    "to": "Yvoire (F) (lac)",
+    "type": "route",
+    "via": "Versoix (lac);Coppet (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12948557,
+  "center": {
+    "lat": 46.2890872,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Yvoire (F) (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-10-Y-j21-1",
+    "gtfs:trip_id:like": "%94-10-Y-j21-1.2.H",
+    "gtfs:trip_id:sample": "2.TA.94-10-Y-j21-1.2.H",
+    "name": "CGN 3150: Yvoire (F) (lac) => Coppet (lac) => Versoix (lac) => Genève-Pâquis (lac) => Genève-Jardin-Anglais (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "2.TA.94-10-Y-j21-1.2.H",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Coppet (lac);Versoix (lac);Genève-Pâquis (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12948558,
+  "center": {
+    "lat": 46.2936731,
+    "lon": 6.2369402
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Yvoire (F) (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-10-Y-j21-1",
+    "gtfs:trip_id:like": "%94-10-Y-j21-1.3.H",
+    "gtfs:trip_id:sample": "3.TA.94-10-Y-j21-1.3.H",
+    "name": "CGN 3150: Yvoire (F) (lac) => Nyon (lac) => Coppet (lac) => Versoix (lac) => Genève-Pâquis (lac) => Genève-Jardin-Anglais (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "3.TA.94-10-Y-j21-1.3.H",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Nyon (lac);Coppet (lac);Versoix (lac);Genève-Pâquis (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12948625,
+  "center": {
+    "lat": 46.2413701,
+    "lon": 6.1641626
+  },
+  "tags": {
+    "bicycle": "yes",
+    "fee": "yes",
+    "foot": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-10-Y-j21-1",
+    "gtfs:trip_id:like": "%94-10-Y-j21-1.4.R",
+    "gtfs:trip_id:sample": "4.TA.94-10-Y-j21-1.4.R",
+    "hgv": "no",
+    "motor_vehicle": "no",
+    "name": "CGN 3150: Genève-Jardin-Anglais (lac) => Genève-Pâquis (lac) => Versoix (lac)",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3150",
+    "ref_trips": "4.TA.94-10-Y-j21-1.4.R",
+    "route": "ferry",
+    "to": "Versoix (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12948626,
+  "center": {
+    "lat": 46.2413701,
+    "lon": 6.1641626
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Versoix (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-10-Y-j21-1",
+    "gtfs:trip_id:like": "%94-10-Y-j21-1.1.H",
+    "gtfs:trip_id:sample": "1.TA.94-10-Y-j21-1.1.H",
+    "name": "Bateau 3154: Versoix → Genève-Jardin-Anglais",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3154",
+    "ref_trips": "1.TA.94-10-Y-j21-1.1.H",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12967765,
+  "center": {
+    "lat": 46.2050877,
+    "lon": 6.1506490
+  },
+  "tags": {
+    "name": "Genève-Jardin-Anglais (lac)",
+    "network": "CGN",
+    "operator": "CGN",
+    "public_transport": "stop_area",
+    "type": "public_transport",
+    "uic_name": "Genève-Jardin-Anglais (lac)",
+    "uic_ref": "8501236"
+  }
+},
+{
+  "type": "relation",
+  "id": 12967766,
+  "center": {
+    "lat": 46.2532838,
+    "lon": 6.1957613
+  },
+  "tags": {
+    "fee": "yes",
+    "foot": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-1V-Y-j21-1",
+    "gtfs:trip_id:like": "%94-1V-Y-j21-1.1.H",
+    "gtfs:trip_id:sample": "1.TA.94-1V-Y-j21-1.1.H",
+    "motor_vehicle": "no",
+    "name": "Bateau 3154 : Genève-Jardin-Anglais → Genève-Pâquis → Versoix → Hermance → Genève-Pâquis → Genève-Jardin-Anglais",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3154",
+    "ref_trips": "1.TA.94-1V-Y-j21-1.1.H",
+    "roundtrip": "yes",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Genève-Pâquis (lac);Versoix (lac);Hermance (lac);Genève-Pâquis (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12991567,
+  "center": {
+    "lat": 46.2532838,
+    "lon": 6.1957613
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Genève-Jardin-Anglais (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-06-30",
+    "gtfs:route_id": "94-1X-Y-j21-1",
+    "gtfs:trip_id:like": "%94-1X-Y-j21-1.1.H",
+    "gtfs:trip_id:sample": "1.TA.94-1X-Y-j21-1.1.H",
+    "name": "Bateau 3154 : Genève-Jardin-Anglais → Corsier → Hermance → Genève-Jardin-Anglais",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3154",
+    "ref_trips": "1.TA.94-1X-Y-j21-1.1.H",
+    "roundtrip": "yes",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Corsier GE (lac);Hermance (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 13042678,
+  "center": {
+    "lat": 46.2300952,
+    "lon": 6.1700947
+  },
+  "tags": {
+    "fee": "yes",
+    "from": "Genève-Mt-Blanc (lac)",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2021-07-28",
+    "gtfs:route_id": "94-O-Y-j21-1",
+    "gtfs:trip_id:like": "%94-O-Y-j21-1.8.H",
+    "gtfs:trip_id:sample": "12.TA.94-O-Y-j21-1.8.H",
+    "name": "Bateau 3154 : Genève-Mt-Blanc → Genève-Jardin-Anglais → La Belotte → Bellevue → Genève-Mt-Blanc → Genève-Jardin-Anglais",
+    "network": "CGN",
+    "network:wikidata": "Q676230",
+    "operator": "Compagnie générale de navigation sur le lac Léman (CGN)",
+    "operator:wikidata": "Q676230",
+    "operator:wikipedia": "fr:Compagnie générale de navigation sur le lac Léman",
+    "public_transport:version": "2",
+    "ref": "3154",
+    "ref_trips": "12.TA.94-O-Y-j21-1.8.H",
+    "route": "ferry",
+    "to": "Genève-Jardin-Anglais (lac)",
+    "type": "route",
+    "via": "Genève-Jardin-Anglais (lac);La Belotte (lac);Bellevue (lac);Genève-Mt-Blanc (lac)",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 16817281,
+  "center": {
+    "lat": 46.2740929,
+    "lon": 6.0992384
+  },
+  "tags": {
+    "colour": "#ec619f",
+    "contractor": "RDTA",
+    "from": "Gex-L'Aiglette",
+    "gtfs:feed": "CH-Alle",
+    "gtfs:release_date": "2025-12-18",
+    "gtfs:route_id": "92-60-E-j26-1",
+    "gtfs:trip_id:like": "%92-60-E-j26-1.17.R",
+    "gtfs:trip_id:sample": "471.TA.92-60-E-j26-1.17.R",
+    "name": "Bus 60: Gex-L'Aiglette → Ferney-Mairie → Gare Cornavin",
+    "nat_ref": "11.060",
+    "network": "Unireso",
+    "network:short": "CTGE",
+    "network:wikidata": "Q1312883",
+    "note": "trips skipping Ferney-Mairie (%92-60-E-j26-1.12.R)",
+    "operator": "TPG",
+    "public_transport:version": "2",
+    "ref": "60",
+    "ref_trips": "92-60-E-j26-1.17.R",
+    "route": "bus",
+    "to": "Genève, Gare Cornavin",
+    "type": "route",
+    "via": "Ferney-Mairie"
+  }
+},
+{
+  "type": "relation",
+  "id": 18556770,
+  "center": {
+    "lat": 46.2099015,
+    "lon": 6.1430004
+  },
+  "tags": {
+    "level": "-1",
+    "name": "Metro Shopping Cornavin",
+    "type": "level"
+  }
+}
+
+  ]
+}

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Léman Royale · Battle royale over Geneva</title>
+    <script type="module" crossorigin src="./assets/index-DKP__vd8.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Dxg1AV1Y.css">
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+    <div id="loading">Building Geneva…</div>
+
+    <div id="hud" class="hidden">
+      <div id="status">
+        <div class="stat"><span id="alive">0</span><small>alive</small></div>
+        <div class="stat zone-box">
+          <span id="zone-stage">Bus flight</span>
+          <span id="zone-timer">--:--</span>
+        </div>
+      </div>
+
+      <div id="compass"><div id="compass-strip"></div><div id="heading">000°</div></div>
+      <div id="killfeed"></div>
+      <canvas id="minimap" width="300" height="300"></canvas>
+
+      <div id="vitals">
+        <div class="bar health"><div id="hp-fill"></div><span id="hp-text">100</span></div>
+        <div class="bar armor"><div id="armor-fill"></div><span id="armor-text">No armour</span></div>
+      </div>
+
+      <div id="loadout">
+        <div class="slot selected" id="slot-0">
+          <span class="key">1</span>
+          <div class="slot-body"><span id="slot-name-0" class="name">—</span><span id="slot-mag-0" class="mag"></span><span id="slot-res-0" class="res"></span></div>
+        </div>
+        <div class="slot empty" id="slot-1">
+          <span class="key">2</span>
+          <div class="slot-body"><span id="slot-name-1" class="name">—</span><span id="slot-mag-1" class="mag"></span><span id="slot-res-1" class="res"></span></div>
+        </div>
+        <div class="slot heal">
+          <span class="key">Q</span>
+          <div class="slot-body"><span id="heal-count" class="name">0</span><span id="heal-channel" class="mag"></span></div>
+        </div>
+      </div>
+
+      <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+      <div id="hit-marker"><span></span><span></span><span></span><span></span></div>
+      <div id="damage-flash"></div>
+      <div id="prompt"></div>
+      <div id="banner"></div>
+      <div id="spectate">Spectating <b id="spectate-name"></b> · click to switch</div>
+      <div id="help">
+        <b>WASD</b> move · <b>Shift</b> sprint · <b>Mouse</b> aim · <b>Right</b> ADS · <b>Left</b> fire · <b>R</b> reload ·
+        <b>E</b> pick up · <b>Q</b> heal · <b>1/2</b> weapons · <b>M</b> map · <b>Esc</b> pause
+      </div>
+    </div>
+
+    <div id="menu" class="overlay">
+      <div class="panel wide">
+        <h1>Léman Royale</h1>
+        <p class="tagline">Battle royale over Geneva. Drop into the old town, the lakefront, Place de Neuve or the Parc des Bastions, and be the last one standing.</p>
+        <div class="places">
+          <span>Vieille Ville</span><span>Quai du Mont-Blanc</span><span>Place de Neuve</span><span>Parc des Bastions</span>
+        </div>
+        <div class="row">
+          <button id="btn-drop" class="primary">Drop in</button>
+          <label class="field">Players
+            <select id="bots">
+              <option value="19">20</option>
+              <option value="39">40</option>
+              <option value="59">60</option>
+            </select>
+          </label>
+        </div>
+        <div class="controls">
+          <div><b>WASD</b> move</div><div><b>Shift</b> sprint</div><div><b>Space</b> jump / open chute</div>
+          <div><b>Mouse</b> look</div><div><b>Left click</b> fire</div><div><b>Right click</b> aim down sights</div>
+          <div><b>R</b> reload</div><div><b>E</b> pick up</div><div><b>Q</b> heal</div>
+          <div><b>1 / 2</b> weapon slots</div><div><b>M</b> full map</div><div><b>Esc</b> pause</div>
+        </div>
+        <p class="note">Stay inside the blue zone. It closes in stages, and the lake is swimmable but slow.</p>
+      </div>
+    </div>
+
+    <div id="pause" class="overlay hidden">
+      <div class="panel">
+        <h2>Paused</h2>
+        <button id="btn-resume" class="primary">Resume</button>
+        <button id="btn-quit">Back to lobby</button>
+      </div>
+    </div>
+
+    <div id="result" class="overlay hidden">
+      <div class="panel">
+        <h2 id="result-title">Eliminated</h2>
+        <p id="result-sub"></p>
+        <div id="result-stats"></div>
+        <div class="row">
+          <button id="btn-again" class="primary">Play again</button>
+          <button id="btn-spectate">Spectate</button>
+          <button id="btn-lobby">Lobby</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="fullmap" class="overlay hidden">
+      <div class="fullmap-wrap">
+        <canvas id="fullmap-canvas" width="900" height="900"></canvas>
+        <div class="legend">
+          <span class="swatch zone"></span>Safe zone
+          <span class="swatch bus"></span>Bus route
+          <span class="swatch river"></span>Rhône and lake
+          <span class="hint">Press M to close</span>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

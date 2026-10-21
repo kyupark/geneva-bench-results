@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GENÈVE ROYALE — Battle Royale</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="zoneMsg">WAITING FOR DROP</div>
+  <div id="aliveBox">
+    <div class="ab"><span id="aliveN">40</span><label>ALIVE</label></div>
+    <div class="ab"><span id="killsN">0</span><label>KILLS</label></div>
+  </div>
+  <div id="killfeed"></div>
+
+  <div id="banner"><div id="bannerMain"></div><div id="bannerSub"></div></div>
+  <div id="toast"></div>
+  <div id="prompt"></div>
+
+  <div id="bottomCenter">
+    <div id="armorChips"></div>
+    <div id="boostBar"><div id="boostFill"></div></div>
+    <div id="healthBar"><div id="healthFill"></div><span id="healthNum">100</span></div>
+    <div id="action"></div>
+  </div>
+
+  <div id="weapons">
+    <div class="wslot" id="slot0"><span class="key">1</span><span class="wname">—</span><span class="wammo"></span></div>
+    <div class="wslot" id="slot1"><span class="key">2</span><span class="wname">—</span><span class="wammo"></span></div>
+    <div id="heals">
+      <div class="hslot"><span class="key">4</span>🩹<b id="hBand">0</b></div>
+      <div class="hslot"><span class="key">5</span>🧰<b id="hAid">0</b></div>
+      <div class="hslot"><span class="key">F</span>🥤<b id="hDrink">0</b></div>
+    </div>
+  </div>
+
+  <div id="minimapWrap"><canvas id="minimap" width="200" height="200"></canvas><span id="northTag">N</span></div>
+
+  <div id="vignette"></div>
+  <div id="zonevign"></div>
+  <div id="lowhp"></div>
+</div>
+
+<!-- big map / drop select -->
+<div id="bigmapWrap" class="hidden">
+  <canvas id="bigmap"></canvas>
+  <div id="bigmapHint"></div>
+</div>
+
+<!-- menu -->
+<div id="menu">
+  <canvas id="menuMap"></canvas>
+  <div class="menuInner">
+    <div class="kicker">BATTLE ROYALE · 40 COMBATANTS · 1 WINNER</div>
+    <h1>GENÈVE<span> ROYALE</span></h1>
+    <p class="tag">Drop into Geneva — fight through the <b>Vieille Ville</b>, storm the lakefront past the
+      <b>Jet d'Eau</b>, hold <b>Place de Neuve</b> and the <b>Parc des Bastions</b>.
+      Loot, survive the blue zone, be the last one standing.</p>
+    <button id="btnDeploy">DEPLOY&nbsp;&nbsp;·&nbsp;&nbsp;SAUTEZ</button>
+    <div class="controls">
+      <div><b>WASD</b> move</div><div><b>Mouse</b> aim &amp; shoot</div>
+      <div><b>E</b> pick up</div><div><b>R</b> reload</div>
+      <div><b>1 / 2 / 3</b> weapons / fists</div><div><b>4 / 5 / F</b> heal / med kit / drink</div>
+      <div><b>Shift</b> sprint</div><div><b>M / Tab</b> map</div>
+      <div><b>V</b> sound</div><div><b>Esc</b> pause</div>
+    </div>
+    <div class="foot">Vieille Ville · Lac Léman · Parc des Bastions · Plainpalais · Carouge</div>
+  </div>
+</div>
+
+<!-- end screen -->
+<div id="endScreen" class="hidden">
+  <div class="endPanel">
+    <div id="endTitle">ELIMINATED</div>
+    <div id="endPlace">#12 / 40</div>
+    <div id="endStats"></div>
+    <div id="endKiller"></div>
+    <div id="endSub"></div>
+    <button id="btnRestart">REJOUER · PLAY AGAIN</button>
+  </div>
+</div>
+
+<!-- pause -->
+<div id="pauseScreen" class="hidden">
+  <div class="endPanel">
+    <div id="pauseTitle">PAUSED</div>
+    <div class="controls" style="margin:18px auto">
+      <div><b>WASD</b> move</div><div><b>Mouse</b> shoot</div><div><b>E</b> pick up</div>
+      <div><b>R</b> reload</div><div><b>1/2/3</b> slots</div><div><b>4/5/F</b> heals</div>
+    </div>
+    <button id="btnResume">RESUME</button>
+    <button id="btnQuit" class="secondary">QUIT TO MENU</button>
+  </div>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/world.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

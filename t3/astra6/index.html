@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#172a28">
+  <meta name="description" content="One city. One survivor. Drop into a stylized Geneva and outlast 23 opponents in a playable 3D battle royale.">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <title>GENEVA ROYALE — One city. One survivor.</title>
+</head>
+<body>
+  <div id="world" aria-label="3D Geneva battle royale game"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div id="loading"><div class="cross-logo">+</div><p>PREPARING GENEVA</p><div class="load-line"></div></div>
+
+  <header id="header">
+    <button class="brand" id="home" aria-label="Geneva Royale home"><span class="cross-logo">+</span><span>GENEVA<span class="brand-second">ROYALE</span></span></button>
+    <nav aria-label="Main navigation">
+      <button id="nav-play" class="nav-link active">PLAY<span class="nav-dot"></span></button>
+      <button id="nav-guide" class="nav-link">FIELD GUIDE</button>
+      <button id="nav-settings" class="nav-link">SETTINGS</button>
+    </nav>
+    <div class="header-status"><span class="status-dot"></span><span>SOLO <i>/</i> 24 SURVIVORS</span><button id="sound-toggle" class="icon-button" aria-label="Mute sound" title="Toggle sound"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></button></div>
+  </header>
+
+  <main id="lobby">
+    <div class="lobby-shade"></div>
+    <section class="hero">
+      <div class="eyebrow"><span></span> SWITZERLAND. NO SAFE HAVEN.</div>
+      <h1>GENEVA<br><span>ROYALE</span><span class="title-period">.</span></h1>
+      <p class="tagline">One city. One survivor.</p>
+      <p class="intro">From the cobblestones to the shoreline.<br>Drop in. Gear up. Own the last circle.</p>
+      <div class="match-tags"><span><svg viewBox="0 0 18 18"><circle cx="9" cy="5" r="3"/><path d="M3 16v-2a6 6 0 0 1 12 0v2"/></svg> SOLO VS BOTS</span><span>~5 MIN MATCH</span></div>
+      <button id="deploy" class="deploy-button"><span class="button-cross">⌖</span><span>DEPLOY TO GENEVA</span><span class="button-arrow">↗</span></button>
+      <div class="deploy-note"><span class="small-dot"></span> INSTANT DROP <span>•</span> NO DOWNLOAD</div>
+    </section>
+    <div class="world-caption"><span class="caption-line"></span><span id="scene-label">VIEILLE VILLE</span><small>46°12′ N &nbsp; 6°09′ E</small></div>
+    <div class="map-tag"><span class="outline-cross">+</span><span>THE GENEVA<br><strong>EXCLUSION ZONE</strong></span><span class="map-tag-num">01</span></div>
+    <section class="drop-picker" aria-label="Choose your drop zone">
+      <div class="section-label"><span>CHOOSE YOUR DROP ZONE</span><span class="map-scale">4 DISTRICTS. EVERY ADVANTAGE COUNTS.</span></div>
+      <div class="districts">
+        <button class="district active" data-district="oldtown"><span class="district-num">01</span><span class="district-icon cathedral-icon">♜</span><span class="district-copy"><strong>Old Town</strong><small>TIGHT STREETS · HIGH LOOT</small></span><span class="district-indicator">↗</span></button>
+        <button class="district" data-district="lakefront"><span class="district-num">02</span><span class="district-icon waves-icon">≋</span><span class="district-copy"><strong>The Lakefront</strong><small>OPEN SIGHTLINES · STAY MOVING</small></span><span class="district-indicator">↗</span></button>
+        <button class="district" data-district="neuve"><span class="district-num">03</span><span class="district-icon">▥</span><span class="district-copy"><strong>Place de Neuve</strong><small>CENTRAL CROSSROADS · HIGH RISK</small></span><span class="district-indicator">↗</span></button>
+        <button class="district" data-district="bastions"><span class="district-num">04</span><span class="district-icon tree-icon">♠</span><span class="district-copy"><strong>Parc des Bastions</strong><small>TREE COVER · TACTICAL GROUND</small></span><span class="district-indicator">↗</span></button>
+      </div>
+    </section>
+    <footer class="lobby-footer"><span>AN ORIGINAL BATTLE ROYALE EXPERIENCE</span><span><kbd>W A S D</kbd> MOVE <i>·</i> MOUSE AIM <i>·</i> CLICK FIRE</span><span class="version">GENEVA / 01.00 <span class="status-dot"></span></span></footer>
+  </main>
+
+  <div id="hud" hidden>
+    <div class="match-top">
+      <div class="mini-brand"><span class="cross-logo">+</span><span>GENEVA<br>ROYALE</span></div>
+      <div class="compass" aria-label="Camera facing northwest"><span>W</span><i>·</i><span>WNW</span><i>·</i><strong>NW <small>▾</small></strong><i>·</i><span>NNW</span><i>·</i><span>N</span></div>
+      <div class="match-counters"><div><strong id="alive-count">24</strong><span>ALIVE</span></div><div><strong id="kill-count">0</strong><span>ELIMINATIONS</span></div><button id="pause-btn" aria-label="Pause game">Ⅱ</button></div>
+    </div>
+    <div class="zone-status"><span class="zone-icon">◎</span><div><strong id="zone-label">SAFE ZONE</strong><span id="zone-timer">00:45</span></div><small id="zone-detail">FIRST CIRCLE INCOMING</small></div>
+    <div id="kill-feed" aria-live="polite"></div>
+    <div id="location-label"><small>ENTERING</small><strong>OLD TOWN</strong></div>
+    <div id="drop-announcement"><small>YOUR DROP ZONE</small><strong>OLD TOWN</strong><span>23 opponents. Make this city yours.</span></div>
+    <div id="toast" role="status"></div>
+    <div id="pickup-prompt"><kbd>E</kbd><span>SUPPLY CRATE</span><small>AMMO + MEDKIT</small></div>
+    <div id="action-progress"><span></span><strong>RELOADING</strong></div>
+    <div id="hit-marker">×</div><div id="damage-vignette"></div>
+    <div class="weapon-hud"><small id="weapon-type">ASSAULT RIFLE</small><strong id="weapon-name">M416</strong><div class="ammo"><span id="ammo-count">30</span><i>/</i><span id="reserve-count">120</span><kbd>R</kbd></div><div class="weapon-slots"><button id="slot-primary" class="selected"><kbd>1</kbd> <span>M416</span></button><button id="slot-secondary"><kbd>2</kbd> P18</button></div></div>
+    <div class="vitals"><div class="player-title"><span>YOU <i>/</i> LONE WOLF</span><span id="hp-number">100</span></div><div class="armor-track"><span id="armor-bar"></span></div><div class="health-track"><span id="health-bar"></span></div><div class="stamina-track"><span id="stamina-bar"></span></div><div class="vital-items"><span><kbd>Q</kbd> MEDKIT <b id="medkit-count">2</b></span><span><kbd>SHIFT</kbd> SPRINT</span></div></div>
+    <button class="minimap-panel" id="minimap-button" aria-label="Open tactical map"><canvas id="minimap" width="250" height="250"></canvas><span><b id="minimap-location">OLD TOWN</b><kbd>M</kbd></span></button>
+    <div class="game-hints"><kbd>WASD</kbd> MOVE <span>·</span> MOUSE AIM <span>·</span> CLICK FIRE <span>·</span> HOLD RIGHT CLICK TO FOCUS</div>
+  </div>
+
+  <div id="mobile-controls" hidden><div id="move-stick"><div></div></div><div class="mobile-actions"><button id="touch-heal" aria-label="Heal">+</button><button id="touch-reload" aria-label="Reload">R</button><button id="touch-loot" aria-label="Collect loot">E</button><button id="fire-stick" aria-label="Drag to aim and fire">⌖</button></div></div>
+
+  <div class="modal-backdrop" id="guide-modal" hidden>
+    <section class="modal guide-modal" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <button class="close-modal" data-close aria-label="Close field guide">×</button><div class="eyebrow">KNOW THE GROUND. STAY ALIVE.</div><h2 id="guide-title">FIELD GUIDE<span>.</span></h2>
+      <p class="modal-intro">24 drop in. One walks out. Eliminate your opponents and stay inside the shrinking blue circle.</p>
+      <div class="guide-grid"><div><h3>THE BASICS</h3><dl><dt><kbd>W A S D</kbd> / <kbd>↑ ↓ ← →</kbd></dt><dd>Move through the city</dd><dt><kbd>MOUSE</kbd> + <kbd>LEFT CLICK</kbd></dt><dd>Aim and fire</dd><dt><kbd>RIGHT CLICK</kbd></dt><dd>Hold for a closer, steadier aim</dd><dt><kbd>SHIFT</kbd></dt><dd>Sprint while you have stamina</dd><dt><kbd>R</kbd> / <kbd>1</kbd> <kbd>2</kbd></dt><dd>Reload / change weapons</dd><dt><kbd>E</kbd> / <kbd>Q</kbd></dt><dd>Collect supplies / use a medkit</dd><dt><kbd>M</kbd> / <kbd>ESC</kbd></dt><dd>Tactical map / pause</dd></dl></div><div><h3>WIN YOUR NEXT FIGHT</h3><article><span>01</span><p><strong>Use the city.</strong> Stone walls block shots. Trees and monuments offer cover. Circle around an opponent to break a standoff.</p></article><article><span>02</span><p><strong>Follow the circle.</strong> The blue zone hurts everyone. The white circle marks where safety is headed. Move early.</p></article><article><span>03</span><p><strong>Keep your kit stocked.</strong> Glowing crates contain weapons, ammo, armor, and medkits. Eliminated opponents leave supplies.</p></article><article><span>04</span><p><strong>Take a breath.</strong> Healing takes time and stops if you fire. Reload behind cover. Your last magazine matters.</p></article></div></div>
+      <div class="guide-footer">ON TOUCHSCREENS <span>Left stick to move. Drag the right crosshair to aim and fire.</span></div><button class="secondary-button" data-close>READY WHEN YOU ARE <span>↗</span></button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="settings-modal" hidden>
+    <section class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title"><button class="close-modal" data-close aria-label="Close settings">×</button><div class="eyebrow">MAKE IT YOURS</div><h2 id="settings-title">SETTINGS<span>.</span></h2>
+      <label class="setting-row"><span><strong>Sound effects</strong><small>Gunfire, supplies, and zone alerts</small></span><input id="setting-sound" type="checkbox" checked><span class="toggle"></span></label>
+      <label class="setting-row"><span><strong>Graphics</strong><small>Low uses fewer shadows and pixels</small></span><select id="setting-quality"><option value="high">High</option><option value="low">Low</option></select></label>
+      <label class="setting-row"><span><strong>Opponents</strong><small>Applies to your next match</small></span><select id="setting-difficulty"><option value="normal">Normal</option><option value="easy">Casual</option><option value="hard">Veteran</option></select></label>
+      <div class="settings-foot">Your preferences are saved on this device.</div><button class="secondary-button" data-close>BACK TO GENEVA <span>↗</span></button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="pause-modal" hidden><section class="modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="eyebrow">TAKE A BREATHER</div><h2 id="pause-title">PAUSED<span>.</span></h2><p>The city can wait.</p><button class="deploy-button" id="resume">BACK IN THE FIGHT <span>↗</span></button><button class="secondary-button" id="pause-guide">FIELD GUIDE</button><button class="text-button" id="quit">LEAVE MATCH</button></section></div>
+  <div class="modal-backdrop" id="result-modal" hidden><section class="modal result-modal" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="eyebrow" id="result-eyebrow">THE CITY HAS A NEW CHAMPION</div><div id="result-rank">#1<span>/24</span></div><h2 id="result-title">LAST ONE<br>STANDING<span>.</span></h2><p id="result-description">Geneva is yours.</p><div class="result-stats"><div><strong id="result-kills">0</strong><span>ELIMINATIONS</span></div><div><strong id="result-time">00:00</strong><span>SURVIVED</span></div><div><strong id="result-damage">0</strong><span>DAMAGE DEALT</span></div></div><button class="deploy-button" id="play-again">DROP IN AGAIN <span>↗</span></button><button class="text-button" id="back-lobby">BACK TO LOBBY</button></section></div>
+  <div class="modal-backdrop" id="map-modal" hidden><section class="modal tactical-modal" role="dialog" aria-modal="true" aria-labelledby="map-title"><button class="close-modal" data-close aria-label="Close map">×</button><div class="eyebrow">KNOW YOUR POSITION</div><h2 id="map-title">TACTICAL MAP<span>.</span></h2><canvas id="tactical-map" width="700" height="650"></canvas><div class="map-legend"><span><i class="you-dot"></i> YOU</span><span><i class="safe-dot"></i> NEXT ZONE</span><span><i class="crate-dot"></i> SUPPLIES</span><span><kbd>M</kbd> CLOSE</span></div><p class="map-warning">The match continues while your map is open.</p></section></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

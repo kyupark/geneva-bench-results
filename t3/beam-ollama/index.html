@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Geneva Royale</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>
+html,body{margin:0;padding:0;overflow:hidden;background:#000;font-family:ui-sans-serif,system-ui}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10;color:#fff;font-size:14px}
+#hud .bar{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.5);padding:8px 12px;border-radius:6px}
+#hud .right{right:10px;left:auto}
+#crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;pointer-events:none}
+#crosshair::before,#crosshair::after{content:'';position:absolute;background:#fff;opacity:.8}
+#crosshair::before{top:9px;left:0;width:20px;height:2px}
+#crosshair::after{left:9px;top:0;width:2px;height:20px}
+#menu{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0b1020,#1a2340);z-index:20;color:#fff;text-align:center}
+#menu h1{font-size:48px;margin:0 0 10px;letter-spacing:2px}
+#menu button{margin-top:20px;padding:12px 28px;font-size:18px;border:none;border-radius:8px;background:#e74c3c;color:#fff;cursor:pointer}
+#menu button:hover{background:#c0392b}
+#dead{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);align-items:center;justify-content:center;flex-direction:column;z-index:30;color:#fff}
+#dead.show{display:flex}
+#dead h2{font-size:44px;margin:0}
+#dead button{margin-top:20px;padding:12px 28px;font-size:18px;border:none;border-radius:8px;background:#2ecc71;color:#fff;cursor:pointer}
+</style>
+  <script type="module" crossorigin src="./assets/index-CbfwjfTT.js"></script>
+</head>
+<body>
+<div id="menu">
+  <div>
+    <h1>Geneva Royale</h1>
+    <p>Battle Royale on Lake Geneva. Land, loot, survive the storm.</p>
+    <p>Controls: WASD move · Mouse aim/shoot · R reload · F loot · Shift run · Space jump · Tab map</p>
+    <p>Goal: Be the last one standing. Zone shrinks over time.</p>
+    <button id="startBtn">Drop In</button>
+  </div>
+</div>
+<div id="hud" style="display:none">
+  <div class="bar">HP <span id="hp">100</span> · Armor <span id="armor">0</span> · Weapon <span id="weapon">Fists</span> · Ammo <span id="ammo">-</span></div>
+  <div class="bar right">Alive <span id="alive">1</span>/10 · Zone <span id="zoneTimer">-</span> · Kills <span id="kills">0</span></div>
+  <div id="notify" style="position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:6px 12px;border-radius:6px;display:none"></div>
+</div>
+<div id="crosshair" style="display:none"></div>
+<div id="dead"><h2 id="deadText">You Died</h2><button id="restartBtn">Play Again</button></div>
+</body>
+</html>

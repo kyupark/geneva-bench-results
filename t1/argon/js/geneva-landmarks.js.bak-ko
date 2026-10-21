@@ -1,0 +1,1054 @@
+/**
+ * 6 Iconic Geneva Landmarks + Connected LEGO City Table Builder
+ * 1. 올드타운 (Old Town / Vieille Ville & Cathédrale St-Pierre)
+ * 2. 호숫가 (Lakeside / Lac Léman, Jet d'Eau & Mont-Blanc Bridge)
+ * 3. 중앙역 (Central Station / Gare Cornavin & SBB Trains)
+ * 4. UN (유엔 유럽본부 / Palais des Nations & Broken Chair)
+ * 5. 플라스 드 뇌브 (Place de Neuve / Grand Théâtre, Musée Rath, Conservatoire, Dufour)
+ * 6. 바스티옹 (Parc des Bastions / Reformation Wall, Giant Chess, Uni Bastions)
+ */
+(function (global) {
+  'use strict';
+
+  const { U, P, LandmarkGroup, getMaterial, getBrickGeometry, getRoundBrickGeometry } = global.LegoEngine;
+
+  // Chapter metadata for the 6 landmarks + Panorama overview
+  const CHAPTERS = [
+    {
+      id: 'panorama',
+      index: 0,
+      code: 'GENEVA · CH',
+      nameKo: '제네바 레고 시티 전체 조망',
+      nameFr: 'GENÈVE EN BRIQUES LEGO®',
+      subtitle: '레만 호수를 중심으로 펼쳐진 제네바 6대 랜드마크 디오라마',
+      description: '올드타운의 성 피에르 대성당부터 140m 제트 분수, 코르나뱅 중앙역, 유엔 유럽본부, 플라스 드 뇌브, 바스티옹 공원까지 하나의 거대한 레고 브릭 시티로 연결된 모션그래픽입니다.',
+      accentColor: '#E5B83B',
+      worldCenter: new THREE.Vector3(-2, 0.5, 6),
+      camPos: new THREE.Vector3(6, 48, 72),
+      camOrbitRadius: 72,
+      camHeight: 45,
+      duration: 9.0
+    },
+    {
+      id: 'oldtown',
+      index: 1,
+      code: '01 · VIEILLE VILLE',
+      nameKo: '올드타운',
+      nameFr: 'Vieille Ville & Cathédrale St-Pierre',
+      subtitle: '민트빛 첨탑의 생 피에르 대성당과 중세 테라코타 지붕 골목',
+      description: '언덕 위에 층층이 쌓아 올린 제네바 구시가지와 157계단 위 민트그린 첨탑의 생 피에르 대성당, 부르 드 푸르 광장의 중세 분수와 골목을 레고 슬로프 브릭으로 재현했습니다.',
+      accentColor: '#78B09A',
+      worldCenter: new THREE.Vector3(24, 6.8, 19),
+      camPos: new THREE.Vector3(42, 20, 38),
+      camOrbitRadius: 26.5,
+      camHeight: 15.5,
+      duration: 9.5
+    },
+    {
+      id: 'lakeside',
+      index: 2,
+      code: '02 · RADE DE GENÈVE',
+      nameKo: '호숫가',
+      nameFr: "Lac Léman, Jet d'Eau & Pont du Mont-Blanc",
+      subtitle: '140m 상공으로 솟구치는 반투명 레고 브릭 제트 분수와 레만 호수',
+      description: '시속 200km로 솟구치는 제네바의 상징 제트 분수(Jet d\'Eau)와 몽블랑 다리, 벨 에포크 외륜 증기선, 제네바 꽃시계와 백조들을 반투명 블루 브릭 물결 위에 구현했습니다.',
+      accentColor: '#36AEBF',
+      worldCenter: new THREE.Vector3(0, 4.5, -1),
+      camPos: new THREE.Vector3(-19, 15, 18),
+      camOrbitRadius: 24,
+      camHeight: 13,
+      duration: 9.5
+    },
+    {
+      id: 'cornavin',
+      index: 3,
+      code: '03 · GARE CORNAVIN',
+      nameKo: '중앙역',
+      nameFr: 'Gare de Genève-Cornavin & SBB CFF FFS',
+      subtitle: '스위스 연방철도 적색 열차와 TPG 트램이 교차하는 교통의 심장',
+      description: '웅장한 아치형 유리 파사드와 스위스 철도 시계가 빛나는 코르나뱅 중앙역, 승강장을 오가는 SBB 인터시티 열차와 레만 익스프레스, 역전 광장의 TPG 트램을 역동적인 모션으로 담았습니다.',
+      accentColor: '#D11919',
+      worldCenter: new THREE.Vector3(-23, 3.8, -18),
+      camPos: new THREE.Vector3(-23, 17, 1),
+      camOrbitRadius: 22,
+      camHeight: 15,
+      duration: 9.5
+    },
+    {
+      id: 'un',
+      index: 4,
+      code: '04 · NATIONS UNIES',
+      nameKo: 'UN 유럽본부',
+      nameFr: 'Palais des Nations & Broken Chair',
+      subtitle: '만국기가 물결치는 팔레 데 나시옹과 12m 부러진 의자 기념조각',
+      description: '세계 평화와 외교의 중심 팔레 데 나시옹(UN 유럽본부), 회원국 국기가 일제히 펄럭이는 만국기 거리, 그리고 대인지뢰 반대 메시지를 담은 나시옹 광장의 부러진 의자(Broken Chair)를 표현했습니다.',
+      accentColor: '#56B4E9',
+      worldCenter: new THREE.Vector3(20, 4.2, -21),
+      camPos: new THREE.Vector3(20, 15, -2),
+      camOrbitRadius: 21,
+      camHeight: 12,
+      duration: 9.5
+    },
+    {
+      id: 'placedeneuve',
+      index: 5,
+      code: '05 · PLACE DE NEUVE',
+      nameKo: '플라스 드 뇌브',
+      nameFr: 'Grand Théâtre, Musée Rath & Conservatoire',
+      subtitle: '대극장과 음악원, 라트 미술관, 뒤푸르 장군 기마상이 모인 예술 광장',
+      description: '제네바 문화예술의 심장 플라스 드 뇌브를 둘러싼 보자르 양식의 대극장(Grand Théâtre), 그리스 신전 형태의 라트 미술관, 붉은 벽돌빛 음악원과 광장 중앙의 뒤푸르 장군 기마상을 정교하게 조립했습니다.',
+      accentColor: '#F5A623',
+      worldCenter: new THREE.Vector3(-20, 3.8, 22),
+      camPos: new THREE.Vector3(-20, 15, 40),
+      camOrbitRadius: 20,
+      camHeight: 12,
+      duration: 9.5
+    },
+    {
+      id: 'bastions',
+      index: 6,
+      code: '06 · PARC DES BASTIONS',
+      nameKo: '바스티옹',
+      nameFr: 'Mur des Réformateurs & Échecs Géants',
+      subtitle: '4대 종교개혁가 거대 부조 벽과 스톱모션으로 움직이는 대형 체스판',
+      description: '파렐·칼뱅·베즈·녹스 4인의 거대 레고 조각상이 서 있는 종교개혁 기념비(POST TENEBRAS LUX), 미니피겨들이 대국을 벌이는 대형 야외 체스판, 단풍이 흩날리는 제네바 대학교 산책로를 구현했습니다.',
+      accentColor: '#A6CA1E',
+      worldCenter: new THREE.Vector3(2, 3.8, 25),
+      camPos: new THREE.Vector3(2, 14, 43),
+      camOrbitRadius: 20,
+      camHeight: 12,
+      duration: 9.5
+    }
+  ];
+
+  /**
+   * 1. Build OLD TOWN (올드타운 — Vieille Ville & Cathédrale St-Pierre)
+   */
+  function buildOldTown() {
+    const lm = new LandmarkGroup('oldtown', CHAPTERS[1]);
+    lm.group.position.set(24, 0.32, 19);
+
+    // Multi-tiered hilltop stone fortification & cobblestone terraces
+    lm.addBrick(0, 0, 0, 22, 20, 3, 'darkBluishGray', { studStride: 2 });
+    lm.addBrick(0, 3, -0.5, 19, 17, 3, 'mediumStoneGray', { studStride: 2 });
+    lm.addBrick(0.5, 6, -1, 15, 13, 3, 'tan', { studStride: 2 });
+
+    // Escaliers du Marché (stepped cobblestone stairs climbing the hill on the left)
+    for (let step = 0; step < 6; step++) {
+      lm.addBrick(-7 + step * 0.8, 1 + step * 1.4, 5 - step * 0.6, 2, 3, 1.5, 'lightBluishGray');
+    }
+
+    // === CATHÉDRALE SAINT-PIERRE (Sitting at the summit y = 9 plates) ===
+    const cy = 9;
+    // Cathedral nave & transept body
+    lm.addBrick(1, cy, -2, 8, 10, 9, 'tan');
+    lm.addBrick(1, cy + 9, -2, 8, 10, 3, 'cream');
+    // Stained glass windows along nave sides
+    for (let iz = -5; iz <= 1; iz += 2) {
+      lm.addBrick(-3.1, cy + 3, iz, 1, 1, 5, 'transCyanGlow');
+      lm.addBrick(5.1, cy + 3, iz, 1, 1, 5, 'transOrangeGlow');
+    }
+    // Pitched Cathedral roof
+    lm.addSlope(1, cy + 12, -2, 8, 5, 4, 'darkBluishGray', 0);
+    lm.addSlope(1, cy + 12, -2, 8, 5, 4, 'darkBluishGray', 2);
+
+    // Neoclassical Front Portico (facing front +Z / South-West)
+    lm.addBrick(1, cy, 3.8, 8, 3, 2, 'lightBluishGray'); // steps
+    const colPositions = [-2.2, -0.9, 0.4, 1.6, 2.9, 4.2];
+    for (let i = 0; i < colPositions.length; i++) {
+      lm.addRound(colPositions[i], cy + 2, 4.2, 0.9, 8, 'cream', { tile: true });
+    }
+    // Pediment entablature & triangular gable
+    lm.addBrick(1, cy + 10, 4.0, 8, 2, 2, 'cream');
+    lm.addSlope(1, cy + 12, 4.0, 6, 2, 3, 'tan', 0);
+    lm.addBrick(1, cy + 12.5, 4.7, 2, 1, 1, 'pearlGold', { tile: true });
+
+    // Central Rose Window behind portico
+    lm.addRound(1, cy + 6, 3.1, 2.2, 1, 'transRedGlow', { rotX: Math.PI * 0.5 });
+
+    // Twin Bell Towers (North & South Towers)
+    // Left (West/North) Tower
+    lm.addBrick(-2.2, cy + 12, -4.5, 3, 3, 9, 'tan');
+    lm.addArch(-2.2, cy + 21, -4.5, 3, 3, 4, 'cream');
+    lm.addBrick(-2.2, cy + 25, -4.5, 3.4, 3.4, 1.5, 'darkBluishGray');
+    // Right (East/South) Tower
+    lm.addBrick(4.2, cy + 12, -4.5, 3, 3, 10, 'tan');
+    lm.addArch(4.2, cy + 22, -4.5, 3, 3, 4, 'cream');
+    lm.addSlope(4.2, cy + 26, -4.5, 3, 3, 3, 'darkBluishGray', 0);
+    // Golden Cathedral Clock Face on Right Tower
+    lm.addRound(4.2, cy + 19, -2.9, 1.6, 0.6, 'pearlGold', { rotX: Math.PI * 0.5, tile: true });
+
+    // THE ICONIC MINT-GREEN SPIRE (Flèche de la Cathédrale) between the towers!
+    lm.addRound(1, cy + 15, -2.2, 2.2, 5, 'sandGreen');
+    lm.addCone(1, cy + 20, -2.2, 2.2, 1.1, 9, 'sandGreen');
+    lm.addCone(1, cy + 29, -2.2, 1.1, 0.25, 8, 'sandGreen', { topStud: false });
+    const spireCross = lm.addRound(1, cy + 37, -2.2, 0.6, 2, 'pearlGold');
+
+    // === PLACE DU BOURG-DE-FOUR & MEDIEVAL OLD TOWN HOUSES ===
+    // Terraced medieval townhouses wrapping the hill with terracotta/red roofs
+    const houses = [
+      { x: -6.5, y: 6, z: -3, w: 4, d: 4, stories: 3, wall: 'cream', roof: 'terracotta' },
+      { x: -6.8, y: 6, z: 1.8, w: 4, d: 4, stories: 2, wall: 'tan', roof: 'darkRed' },
+      { x: 7.2, y: 6, z: -1, w: 4, d: 5, stories: 3, wall: 'tan', roof: 'terracotta' },
+      { x: 6.8, y: 3, z: 5.2, w: 5, d: 4, stories: 3, wall: 'lightBluishGray', roof: 'nougat' }, // Maison Tavel style
+      { x: -2.0, y: 3, z: 6.8, w: 5, d: 3, stories: 2, wall: 'cream', roof: 'terracotta' }
+    ];
+
+    houses.forEach((h, idx) => {
+      const hPlates = h.stories * 3;
+      lm.addBrick(h.x, h.y, h.z, h.w, h.d, hPlates, h.wall);
+      // Warm glowing windows
+      lm.addBrick(h.x, h.y + 2, h.z + h.d * 0.45, Math.max(1, h.w - 2), 1, Math.max(2, hPlates - 3), 'transYellowGlow');
+      // Pitched terracotta LEGO roof
+      lm.addSlope(h.x, h.y + hPlates, h.z, h.w, h.d, 4, h.roof, idx % 2 === 0 ? 0 : 1);
+      // Chimney round brick
+      lm.addRound(h.x + 1, h.y + hPlates + 3, h.z - 0.5, 0.8, 2, 'reddishBrown');
+    });
+
+    // Old Arsenal (Ancien Arsenal) arches with medieval cannons at base of cathedral
+    lm.addArch(2.8, 6, 4.5, 4, 2, 3, 'mediumStoneGray');
+    lm.addRound(2.2, 6, 5.2, 0.6, 2, 'black', { rotX: Math.PI * 0.45, tile: true });
+    lm.addRound(3.4, 6, 5.2, 0.6, 2, 'black', { rotX: Math.PI * 0.45, tile: true });
+
+    // Place du Bourg-de-Four Octagonal Fountain
+    lm.addRound(-2.5, 6, 2.8, 2.4, 1.5, 'lightBluishGray');
+    lm.addRound(-2.5, 7.5, 2.8, 0.9, 3, 'tan');
+    const ftnJet = lm.addRound(-2.5, 10.5, 2.8, 0.8, 1.5, 'transLightBlue');
+
+    // Old Town Cypress & Chestnut Trees + Minifigures
+    lm.addTree(-8.5, 3, -6, 'cypress', 1.1);
+    lm.addTree(8.5, 3, -5.5, 'lush', 1.0);
+    lm.addTree(-7.8, 3, 6.5, 'autumn', 0.9);
+    lm.addStreetLamp(-4.5, 6, 4.2);
+    lm.addStreetLamp(5.2, 6, 3.8);
+
+    lm.addMinifig(-2.5, 6, 4.5, 'brightRed', 'darkBlue', 'black', { walkRadius: 1.2, speed: 0.9 });
+    lm.addMinifig(0.5, 9, 5.0, 'brightBlue', 'darkBluishGray', 'brightYellow', { walkRadius: 0.8, speed: 0.7 });
+
+    // Kinetic animation for Old Town
+    lm.kineticUpdaters.push((t) => {
+      ftnJet.scale.y = 0.85 + Math.sin(t * 8) * 0.25;
+      spireCross.rotation.y = t * 0.8;
+    });
+
+    // 3D Motion Graphic Callouts
+    lm.addCallout(1, 35, -2.2, '생 피에르 대성당 첨탑', 'Cathédrale St-Pierre · 157계단 전망대', 'MINT SPIRE');
+    lm.addCallout(-2.5, 12, 2.8, '부르 드 푸르 광장', 'Place du Bourg-de-Four · 중세 광장 분수', 'OLD SQUARE');
+    lm.addCallout(6.8, 15, 5.2, '메종 타벨 & 구 무기고', 'Maison Tavel · 제네바 최고령 주택', '14TH CENTURY');
+
+    return lm;
+  }
+
+  /**
+   * 2. Build LAKESIDE (호숫가 — Lac Léman, Jet d'Eau & Pont du Mont-Blanc)
+   */
+  function buildLakeside() {
+    const lm = new LandmarkGroup('lakeside', CHAPTERS[2]);
+    lm.group.position.set(0, 0, 0);
+
+    // Expansive LEGO Lake Geneva basin (translucent blue plates with stud grid)
+    lm.addBrick(0, 0, -2, 34, 28, 1.5, 'transDarkBlue', { studStride: 2 });
+    lm.addBrick(0, 1.5, -2, 30, 24, 1, 'transMediumBlue', { studStride: 2 });
+
+    // Animated water wave strips across the lake
+    const waveStrips = [];
+    for (let i = 0; i < 10; i++) {
+      const wx = -11 + (i % 5) * 5.5;
+      const wz = -9 + Math.floor(i / 5) * 7;
+      const strip = lm.addBrick(wx, 2.5, wz, 3, 1, 0.8, 'transLightBlue', { skipAssembly: false });
+      waveStrips.push({ mesh: strip, baseY: 2.5 * P, phase: i * 0.7 });
+    }
+
+    // === JETÉE DES EAUX-VIVES & THE 140m JET D'EAU ===
+    // Stone breakwater jetty extending from right shore toward center
+    lm.addBrick(8, 1.5, -3, 12, 3, 2.5, 'lightBluishGray');
+    lm.addBrick(3, 4.0, -3, 3, 3, 1.5, 'mediumStoneGray'); // Nozzle housing
+    // Small white & red jetty lighthouse at the tip
+    lm.addRound(-2.2, 4.0, -3, 1.2, 4, 'white');
+    lm.addRound(-2.2, 8.0, -3, 1.2, 1.5, 'brightRed');
+    lm.addRound(-2.2, 9.5, -3, 1.0, 1.2, 'transYellowGlow');
+
+    // JET D'EAU CORE COLUMN + DYNAMIC BRICK WATER PARTICLES
+    const jetBaseU = 3;
+    const jetBaseZ = -3;
+    const jetColumnSegments = [];
+    for (let s = 0; s < 9; s++) {
+      const diam = s < 3 ? 1.6 : (s < 6 ? 2.0 : 2.5);
+      const col = s % 2 === 0 ? 'transFoam' : 'transLightBlue';
+      const seg = lm.addRound(jetBaseU, 5.5 + s * 3.2, jetBaseZ, diam, 3.2, col);
+      jetColumnSegments.push({ mesh: seg, idx: s, baseY: (5.5 + s * 3.2) * P });
+    }
+
+    // Cascading water spray LEGO bricks & foam ring around Jet d'Eau
+    const sprayBricks = [];
+    const sprayGeo = getRoundBrickGeometry(0.9, 1.2, false, 10);
+    const matFoam = getMaterial('transFoam');
+    const matLightBlue = getMaterial('transLightBlue');
+    for (let i = 0; i < 42; i++) {
+      const m = new THREE.Mesh(sprayGeo, i % 2 === 0 ? matFoam : matLightBlue);
+      lm.group.add(m);
+      sprayBricks.push({
+        mesh: m,
+        seed: i / 42,
+        angle: (i / 42) * Math.PI * 2 + (i % 5) * 0.3,
+        drift: 1.2 + (i % 7) * 0.45
+      });
+    }
+
+    // Translucent LEGO Rainbow Arc beside the Jet d'Eau mist!
+    const rainbowColors = ['brightRed', 'brightOrange', 'brightYellow', 'brightGreen', 'skyBlue'];
+    const rainbowGroup = new THREE.Group();
+    rainbowGroup.position.set(jetBaseU * U, 3.0 * P, (jetBaseZ + 2.2) * U);
+    lm.group.add(rainbowGroup);
+    for (let r = 0; r < rainbowColors.length; r++) {
+      const radius = (4.2 - r * 0.32) * U;
+      for (let a = 0; a <= 8; a++) {
+        const theta = (a / 8) * Math.PI;
+        const rx = Math.cos(theta) * radius;
+        const ry = Math.sin(theta) * radius;
+        lm.addBrick(rx / U, ry / P, 0, 0.9, 0.6, 0.8, rainbowColors[r], {
+          parent: rainbowGroup,
+          rotZ: theta - Math.PI * 0.5,
+          tile: true
+        });
+      }
+    }
+
+    // === PONT DU MONT-BLANC (Mont-Blanc Bridge spanning the lake on the left) ===
+    const bx = -12;
+    for (let archIdx = -2; archIdx <= 2; archIdx++) {
+      lm.addArch(bx, 1.5, archIdx * 4.2, 4, 4, 3.5, 'lightBluishGray', { rotY: Math.PI * 0.5 });
+    }
+    // Bridge deck road (dark grey tile with white lane studs)
+    lm.addBrick(bx, 5.0, 0, 4, 22, 1.2, 'darkBluishGray', { tile: true });
+    // Waving Swiss & Genevan Flags along both sides of Mont-Blanc Bridge
+    const bridgeFlags = [];
+    for (let fz = -9; fz <= 9; fz += 3) {
+      const isSwiss = Math.abs(fz) % 6 === 0;
+      const flagColor = isSwiss ? 'brightRed' : 'brightYellow';
+      lm.addRound(bx - 2.1, 6.2, fz, 0.4, 3.5, 'white', { tile: true });
+      const f1 = lm.addBrick(bx - 2.6, 8.5, fz, 1.2, 0.4, 1.2, flagColor, { tile: true });
+      lm.addRound(bx + 2.1, 6.2, fz, 0.4, 3.5, 'white', { tile: true });
+      const f2 = lm.addBrick(bx + 2.6, 8.5, fz, 1.2, 0.4, 1.2, isSwiss ? 'brightYellow' : 'brightRed', { tile: true });
+      bridgeFlags.push(f1, f2);
+    }
+
+    // === JARDIN ANGLAIS & L'HORLOGE FLEURIE (Geneva Flower Clock on South Promenade) ===
+    lm.addBrick(4, 1.5, 10, 18, 5, 2.5, 'lightBluishGray', { studStride: 2 });
+    lm.addBrick(6, 4.0, 10, 10, 4, 1, 'brightGreen');
+    // Colorful Flower Clock dial
+    lm.addRound(6, 5.0, 9.8, 3.6, 1, 'brightGreen');
+    const flowerClockColors = ['brightRed', 'brightYellow', 'brightOrange', 'skyBlue', 'white', 'autumnGold'];
+    for (let hr = 0; hr < 12; hr++) {
+      const ang = (hr / 12) * Math.PI * 2;
+      lm.addRound(
+        6 + Math.cos(ang) * 1.3,
+        6.0,
+        9.8 + Math.sin(ang) * 1.3,
+        0.6,
+        0.8,
+        flowerClockColors[hr % flowerClockColors.length]
+      );
+    }
+    const flowerHand = lm.addBrick(6, 6.4, 9.8, 1.6, 0.4, 0.6, 'pearlGold', { tile: true });
+    lm.addTree(10.5, 4.0, 10.2, 'lush', 1.0);
+    lm.addTree(1.5, 4.0, 10.2, 'lush', 0.95);
+
+    // === CGN BELLE ÉPOQUE PADDLE STEAMER ("LA SUISSE") ===
+    const steamer = new THREE.Group();
+    lm.group.add(steamer);
+    // White hull with red waterline
+    lm.addBrick(0, 0, 0, 6, 2.2, 1.5, 'brightRed', { parent: steamer });
+    lm.addBrick(0, 1.5, 0, 6.5, 2.4, 1.5, 'white', { parent: steamer });
+    lm.addBrick(0, 3.0, 0, 4.2, 1.8, 2.0, 'white', { parent: steamer });
+    lm.addBrick(0, 3.3, 0, 3.8, 1.9, 1.2, 'transYellowGlow', { parent: steamer });
+    // Classic yellow/black funnel & Swiss stern flag
+    lm.addRound(0.4, 5.0, 0, 0.9, 3.5, 'brightYellow', { parent: steamer });
+    lm.addRound(0.4, 8.5, 0, 0.95, 0.8, 'black', { parent: steamer, tile: true });
+    // Red Paddlewheel boxes on sides
+    const wheelLeft = lm.addRound(0, 2.2, 1.4, 1.8, 0.6, 'brightRed', { parent: steamer, rotX: Math.PI * 0.5 });
+    const wheelRight = lm.addRound(0, 2.2, -1.4, 1.8, 0.6, 'brightRed', { parent: steamer, rotX: Math.PI * 0.5 });
+
+    // === MOUETTES GENEVOISES (Yellow-and-Red Water Taxi) & LEGO SWANS ===
+    const mouette = new THREE.Group();
+    lm.group.add(mouette);
+    lm.addBrick(0, 0, 0, 3.0, 1.4, 1.2, 'brightRed', { parent: mouette });
+    lm.addBrick(0, 1.2, 0, 2.4, 1.2, 1.4, 'brightYellow', { parent: mouette });
+    lm.addBrick(0, 1.5, 0, 1.8, 1.3, 0.9, 'transClear', { parent: mouette });
+
+    // Brick-built white LEGO Swans
+    const swans = [];
+    for (let s = 0; s < 4; s++) {
+      const swan = new THREE.Group();
+      lm.group.add(swan);
+      lm.addBrick(0, 0, 0, 1.2, 0.9, 1.0, 'white', { parent: swan });
+      lm.addBrick(0.4, 1.0, 0, 0.5, 0.5, 1.6, 'white', { parent: swan });
+      lm.addBrick(0.7, 2.0, 0, 0.5, 0.4, 0.6, 'brightOrange', { parent: swan, tile: true });
+      swans.push({ group: swan, idx: s });
+    }
+
+    // Kinetic updater for Lakeside
+    lm.kineticUpdaters.push((t) => {
+      // Pulse Jet d'Eau core segments
+      for (let i = 0; i < jetColumnSegments.length; i++) {
+        const seg = jetColumnSegments[i];
+        const pulse = 1 + Math.sin(t * 14 - seg.idx * 0.7) * 0.14;
+        seg.mesh.scale.set(pulse, 1.05, pulse);
+        seg.mesh.position.y = seg.baseY + Math.sin(t * 18 - seg.idx) * 0.12;
+      }
+
+      // Animate 42 parabolic water spray LEGO bricks
+      for (let i = 0; i < sprayBricks.length; i++) {
+        const sb = sprayBricks[i];
+        const cycle = (t * 0.85 + sb.seed) % 1.0;
+        // Parabolic trajectory: shoots up to height 12.5 world units then arcs outward
+        const upPhase = cycle < 0.48 ? (cycle / 0.48) : 1.0;
+        const downPhase = cycle >= 0.48 ? ((cycle - 0.48) / 0.52) : 0.0;
+        const height = (1.6 + Math.sin(upPhase * Math.PI * 0.5) * 11.2 - downPhase * downPhase * 11.0);
+        const radius = (0.2 + Math.pow(cycle, 1.4) * sb.drift) * U;
+        // Slight downwind drift toward -X/+Z
+        const windX = cycle * 1.4 * U;
+        sb.mesh.position.set(
+          jetBaseU * U + Math.cos(sb.angle) * radius - windX,
+          Math.max(0.8, height),
+          jetBaseZ * U + Math.sin(sb.angle) * radius
+        );
+        sb.mesh.rotation.x = t * 5 + i;
+        sb.mesh.rotation.z = t * 4 + i;
+        const sScale = cycle > 0.88 ? (1 - (cycle - 0.88) / 0.12) : 1.0;
+        sb.mesh.scale.setScalar(Math.max(0.2, sScale));
+      }
+
+      // Lake wave strips
+      for (let i = 0; i < waveStrips.length; i++) {
+        const ws = waveStrips[i];
+        ws.mesh.position.y = ws.baseY + Math.sin(t * 3.5 + ws.phase) * 0.08;
+      }
+
+      // Bridge flags waving
+      for (let i = 0; i < bridgeFlags.length; i++) {
+        bridgeFlags[i].rotation.y = Math.sin(t * 6 + i * 0.8) * 0.25;
+      }
+
+      // Flower clock hand rotation
+      flowerHand.rotation.y = -t * 0.5;
+
+      // Belle Époque Steamer cruising around the lake basin
+      const boatAngle = t * 0.38;
+      const bxPos = -3.5 + Math.cos(boatAngle) * 5.2 * U;
+      const bzPos = 2.0 + Math.sin(boatAngle) * 4.0 * U;
+      steamer.position.set(bxPos, 2.2 * P + Math.sin(t * 4) * 0.06, bzPos);
+      steamer.rotation.y = -boatAngle + Math.PI * 0.5;
+      steamer.rotation.z = Math.sin(t * 3.5) * 0.04;
+      wheelLeft.rotation.z = t * 6;
+      wheelRight.rotation.z = t * 6;
+
+      // Mouette water taxi shuttle
+      const mAngle = -t * 0.55 + 1.5;
+      mouette.position.set(
+        -5.0 * U + Math.cos(mAngle) * 3.8 * U,
+        2.2 * P + Math.cos(t * 5) * 0.05,
+        -4.5 * U + Math.sin(mAngle) * 3.2 * U
+      );
+      mouette.rotation.y = -mAngle - Math.PI * 0.5;
+
+      // Gliding LEGO swans
+      for (let s = 0; s < swans.length; s++) {
+        const sw = swans[s];
+        const sa = t * 0.45 + s * 1.57;
+        sw.group.position.set(
+          (6 + Math.cos(sa) * 3.2) * U,
+          2.3 * P + Math.sin(t * 5 + s) * 0.04,
+          (4.5 + Math.sin(sa) * 2.2) * U
+        );
+        sw.group.rotation.y = -sa + Math.PI * 0.5;
+      }
+    });
+
+    // 3D Motion Graphic Callouts
+    lm.addCallout(3, 35, -3, '제트 분수 (Jet d\'Eau)', '140m 높이 · 초당 500리터 분사', 'ICON OF GENEVA');
+    lm.addCallout(-12, 11, -5.5, '몽블랑 다리 (Pont du Mont-Blanc)', '스위스 & 제네바 주 깃발 가로수길', 'LAKE CROSSING');
+    lm.addCallout(6, 9, 9.8, '영국 정원 & 제네바 꽃시계', 'Jardin Anglais · L\'Horloge Fleurie', 'SWISS WATCHMAKING');
+
+    return lm;
+  }
+
+  /**
+   * 3. Build CENTRAL STATION (중앙역 — Gare de Genève-Cornavin)
+   */
+  function buildCentralStation() {
+    const lm = new LandmarkGroup('cornavin', CHAPTERS[3]);
+    lm.group.position.set(-23, 0.32, -18);
+
+    // Station plaza & rail yard baseplate
+    lm.addBrick(0, 0, 0, 26, 20, 2, 'mediumStoneGray', { studStride: 2 });
+    lm.addBrick(0, 2, 5.5, 24, 7, 1, 'lightBluishGray', { tile: true }); // Place de Cornavin forecourt
+
+    // === GARE CORNAVIN MONUMENTAL LIMESTONE FACADE ===
+    // Central Grand Hall with tall arched glass windows
+    lm.addBrick(0, 3, 0, 10, 5, 10, 'tan');
+    lm.addArch(0, 3, 2.6, 8, 1, 9, 'cream');
+    // Glowing glass curtain wall inside central arch
+    lm.addBrick(0, 4, 2.3, 6, 1, 7, 'transCyanGlow');
+    // Flanking limestone symmetrical wings
+    lm.addWindowedFacade(-8, 3, 0.5, 6, 3, 'tan', 'transYellowGlow', 0);
+    lm.addWindowedFacade(8, 3, 0.5, 6, 3, 'tan', 'transYellowGlow', 0);
+    // Mansard roofs on wings and central pavilion
+    lm.addSlope(0, 13, 0, 10, 5, 4, 'darkBluishGray', 0);
+    lm.addSlope(-8, 15, 0.5, 6, 3, 3, 'darkBluishGray', 0);
+    lm.addSlope(8, 15, 0.5, 6, 3, 3, 'darkBluishGray', 0);
+
+    // SBB CFF FFS Iconic Red Signboard & Swiss Railway Clock Tower
+    lm.addBrick(0, 13.5, 2.6, 5, 1, 2, 'brightRed', { tile: true });
+    lm.addBrick(0, 14.0, 2.9, 3.2, 0.5, 1, 'white', { tile: true });
+    // Clock tower turret
+    lm.addBrick(0, 17, 0.5, 3, 3, 5, 'cream');
+    lm.addRound(0, 19.5, 2.1, 1.8, 0.6, 'white', { rotX: Math.PI * 0.5, tile: true });
+    const sbbSecondHand = lm.addBrick(0, 19.5, 2.4, 0.3, 0.3, 1.2, 'brightRed', { tile: true });
+
+    // === RAILWAY TRACKS, PLATFORMS & OVERHEAD CATENARY ===
+    // Two parallel LEGO train tracks behind the station (z = -4.5 and z = -7.8)
+    [-4.5, -7.8].forEach((tz) => {
+      // Gravel ballast & wooden sleepers
+      lm.addBrick(0, 2, tz, 25, 2.6, 0.8, 'darkBluishGray', { tile: true });
+      for (let tx = -11; tx <= 11; tx += 2) {
+        lm.addBrick(tx, 2.8, tz, 0.8, 2.4, 0.5, 'reddishBrown', { tile: true });
+      }
+      // Silver steel rails
+      lm.addBrick(0, 3.3, tz - 0.7, 25, 0.3, 0.5, 'silverMetallic', { tile: true });
+      lm.addBrick(0, 3.3, tz + 0.7, 25, 0.3, 0.5, 'silverMetallic', { tile: true });
+    });
+
+    // Passenger Island Platform with translucent glass canopy
+    lm.addBrick(0, 2, -6.15, 20, 1.6, 2.0, 'lightBluishGray');
+    for (let px = -7; px <= 7; px += 7) {
+      lm.addRound(px, 4.0, -6.15, 0.7, 6, 'darkBluishGray', { tile: true });
+    }
+    lm.addBrick(0, 10.0, -6.15, 18, 2.8, 1.0, 'transClear');
+
+    // === TRAIN 1: SBB INTERCITY / GIRUNO EXPRESS (Red & White) ===
+    const sbbTrain = new THREE.Group();
+    lm.group.add(sbbTrain);
+    // Locomotive + coach
+    lm.addBrick(0, 0, 0, 7.5, 2.0, 3.2, 'brightRed', { parent: sbbTrain });
+    lm.addBrick(0, 1.2, 0, 6.8, 2.1, 1.4, 'transYellowGlow', { parent: sbbTrain });
+    lm.addBrick(0, 3.2, 0, 7.2, 1.8, 0.8, 'white', { parent: sbbTrain, tile: true });
+    // Aerodynamic nose slopes on both ends
+    lm.addSlope(4.2, 0, 0, 2.0, 2.0, 3.2, 'brightRed', 1, { parent: sbbTrain });
+    lm.addSlope(-4.2, 0, 0, 2.0, 2.0, 3.2, 'brightRed', 3, { parent: sbbTrain });
+    // Pantograph on roof
+    lm.addBrick(1.5, 4.0, 0, 1.2, 1.0, 1.2, 'silverMetallic', { parent: sbbTrain, tile: true });
+
+    // === TRAIN 2: LÉMAN EXPRESS / TGV LYRIA (White, Blue & Red) ===
+    const lemanTrain = new THREE.Group();
+    lm.group.add(lemanTrain);
+    lm.addBrick(0, 0, 0, 7.5, 2.0, 3.0, 'white', { parent: lemanTrain });
+    lm.addBrick(0, 0.8, 0, 7.6, 2.05, 0.8, 'brightBlue', { parent: lemanTrain, tile: true });
+    lm.addBrick(0, 1.6, 0, 6.6, 2.1, 1.2, 'transCyanGlow', { parent: lemanTrain });
+    lm.addSlope(4.2, 0, 0, 2.0, 2.0, 3.0, 'white', 1, { parent: lemanTrain });
+    lm.addSlope(-4.2, 0, 0, 2.0, 2.0, 3.0, 'white', 3, { parent: lemanTrain });
+
+    // === PLACE DE CORNAVIN TPG TRAM (Blue & White Geneva Tramway) ===
+    const tpgTram = new THREE.Group();
+    lm.group.add(tpgTram);
+    lm.addBrick(0, 0, 0, 5.2, 1.8, 2.8, 'white', { parent: tpgTram });
+    lm.addBrick(0, 0, 0, 5.3, 1.85, 1.0, 'brightBlue', { parent: tpgTram });
+    lm.addBrick(0, 1.2, 0, 4.6, 1.9, 1.2, 'transYellowGlow', { parent: tpgTram });
+    lm.addBrick(0, 2.8, 0, 4.8, 1.6, 0.6, 'brightBlue', { parent: tpgTram, tile: true });
+
+    // Forecourt trees, lamps & commuter minifigures
+    lm.addStreetLamp(-6, 3, 4.5);
+    lm.addStreetLamp(6, 3, 4.5);
+    lm.addTree(-10.5, 3, 5.5, 'lush', 0.95);
+    lm.addTree(10.5, 3, 5.5, 'lush', 0.95);
+    lm.addMinifig(-2, 3, 4.8, 'brightBlue', 'black', 'brightRed', { walkRadius: 1.4, speed: 1.1 });
+    lm.addMinifig(3, 3, 5.0, 'brightRed', 'darkBluishGray', 'brightYellow', { walkRadius: 1.2, speed: 0.9 });
+
+    // Kinetic updater for Central Station
+    lm.kineticUpdaters.push((t) => {
+      // SBB Train gliding along Track 1 (z = -4.5)
+      const sbbX = Math.sin(t * 0.9) * 6.5 * U;
+      sbbTrain.position.set(sbbX, 3.8 * P, -4.5 * U);
+
+      // Léman Express gliding in counter-phase along Track 2 (z = -7.8)
+      const lemX = -Math.sin(t * 0.9 + 0.8) * 6.5 * U;
+      lemanTrain.position.set(lemX, 3.8 * P, -7.8 * U);
+
+      // TPG Tram shuttling across Place de Cornavin forecourt (z = 6.2)
+      const tramX = Math.cos(t * 0.75) * 6.8 * U;
+      tpgTram.position.set(tramX, 3.0 * P, 6.2 * U);
+
+      // Iconic Swiss Railway Clock red paddle second hand (pauses briefly at 12 o'clock!)
+      const rawSec = (t * 0.25) % 1.0;
+      const swissSec = Math.min(1.0, rawSec / 0.92);
+      sbbSecondHand.rotation.z = -swissSec * Math.PI * 2;
+    });
+
+    // 3D Motion Graphic Callouts
+    lm.addCallout(0, 23, 1.5, '코르나뱅 중앙역 (Gare Cornavin)', 'SBB CFF FFS · 스위스 철도 시계탑', 'MAIN STATION');
+    lm.addCallout(2, 9, -4.5, '스위스 연방철도 & 레만 익스프레스', 'SBB InterCity · TGV Lyria 고속열차', 'SWISS RAIL');
+    lm.addCallout(-2, 7, 6.2, 'TPG 트램 환승 허브', 'Place de Cornavin · 제네바 친환경 트램', 'TRAM NETWORK');
+
+    return lm;
+  }
+
+  /**
+   * 4. Build UNITED NATIONS (UN 유럽본부 — Palais des Nations & Broken Chair)
+   */
+  function buildUN() {
+    const lm = new LandmarkGroup('un', CHAPTERS[4]);
+    lm.group.position.set(20, 0.32, -21);
+
+    // Ariana Park & Place des Nations terraced baseplate
+    lm.addBrick(0, 0, 0, 26, 22, 2, 'lightBluishGray', { studStride: 2 });
+    lm.addBrick(0, 2, -3.5, 24, 11, 2, 'brightGreen', { studStride: 2 }); // Ariana Park lawns
+    lm.addBrick(0, 2, 5.5, 22, 8, 1, 'mediumStoneGray', { tile: true }); // Place des Nations plaza
+
+    // === PALAIS DES NATIONS (Monumental Neoclassical/Art Deco White Complex) ===
+    const py = 4;
+    // Central Assembly Hall Building
+    lm.addBrick(0, py, -5.5, 10, 6, 9, 'white');
+    lm.addBrick(0, py + 9, -5.5, 8, 5, 3, 'cream');
+    // Blue-tinted UN glass facade columns
+    for (let ix = -3; ix <= 3; ix += 1.5) {
+      lm.addBrick(ix, py + 2, -2.4, 0.8, 0.8, 6, 'transLightBlue');
+    }
+    // Sweeping Left & Right Diplomatic Wings
+    lm.addWindowedFacade(-7.5, py, -4.5, 6, 2, 'white', 'transLightBlue', 0.22);
+    lm.addWindowedFacade(7.5, py, -4.5, 6, 2, 'white', 'transLightBlue', -0.22);
+
+    // Kinetic UN Azure & Gold Emblem Globe atop the Palais des Nations
+    const unEmblemGroup = new THREE.Group();
+    unEmblemGroup.position.set(0, (py + 13.5) * P, -5.5 * U);
+    lm.group.add(unEmblemGroup);
+    lm.addRound(0, 0, 0, 2.4, 2.2, 'mediumAzure', { parent: unEmblemGroup });
+    lm.addRound(0, 0.5, 0, 2.7, 0.6, 'pearlGold', { parent: unEmblemGroup, tile: true });
+    lm.addRound(0, 2.2, 0, 1.2, 0.8, 'white', { parent: unEmblemGroup });
+
+    // === ALLEY OF FLAGS (만국기 거리 — 16 Waving Member State Flags) ===
+    const flagColors = [
+      'mediumAzure', 'brightRed', 'white', 'brightBlue',
+      'brightYellow', 'brightGreen', 'brightOrange', 'skyBlue',
+      'brightRed', 'mediumAzure', 'brightYellow', 'brightGreen',
+      'white', 'brightBlue', 'brightOrange', 'brightRed'
+    ];
+    const unFlags = [];
+    for (let i = 0; i < 8; i++) {
+      const fz = -0.8 + i * 1.15;
+      // Left colonnade pole + flag
+      lm.addRound(-4.5, 3, fz, 0.35, 5, 'silverMetallic', { tile: true });
+      const fl = lm.addBrick(-5.1, 6.8, fz, 1.3, 0.35, 1.2, flagColors[i * 2], { tile: true });
+      // Right colonnade pole + flag
+      lm.addRound(4.5, 3, fz, 0.35, 5, 'silverMetallic', { tile: true });
+      const fr = lm.addBrick(5.1, 6.8, fz, 1.3, 0.35, 1.2, flagColors[i * 2 + 1], { tile: true });
+      unFlags.push({ mesh: fl, phase: i * 0.5 }, { mesh: fr, phase: i * 0.5 + 0.25 });
+    }
+
+    // === THE BROKEN CHAIR (부러진 의자 — Iconic 12m Wooden-Brick Sculpture at Place des Nations) ===
+    const chairX = 0;
+    const chairZ = 6.2;
+    const chairY = 3;
+    // 3 intact tall legs (Back-Left, Back-Right, Front-Left)
+    lm.addBrick(chairX - 1.4, chairY, chairZ - 1.2, 1.0, 1.0, 9, 'reddishBrown');
+    lm.addBrick(chairX + 1.4, chairY, chairZ - 1.2, 1.0, 1.0, 9, 'reddishBrown');
+    lm.addBrick(chairX - 1.4, chairY, chairZ + 1.2, 1.0, 1.0, 9, 'reddishBrown');
+    // 4th Front-Right Leg: DRAMATICALLY SNAPPED MID-AIR with jagged slope bricks!
+    lm.addBrick(chairX + 1.4, chairY + 5.2, chairZ + 1.2, 1.0, 1.0, 3.8, 'reddishBrown');
+    lm.addSlope(chairX + 1.4, chairY + 4.0, chairZ + 1.2, 1.0, 1.0, 1.5, 'darkBrown', 1, { rotZ: 0.35 });
+    // Chair Seat
+    lm.addBrick(chairX, chairY + 9, chairZ, 4.0, 3.6, 1.5, 'reddishBrown');
+    // Tall Slatted Backrest rising to 21 plates high
+    lm.addBrick(chairX - 1.4, chairY + 10.5, chairZ - 1.2, 0.9, 0.9, 10, 'reddishBrown');
+    lm.addBrick(chairX + 1.4, chairY + 10.5, chairZ - 1.2, 0.9, 0.9, 10, 'reddishBrown');
+    lm.addBrick(chairX, chairY + 13.0, chairZ - 1.2, 3.6, 0.8, 2.0, 'darkBrown');
+    lm.addBrick(chairX, chairY + 17.5, chairZ - 1.2, 3.8, 0.9, 2.5, 'reddishBrown');
+    lm.addSlope(chairX, chairY + 20.0, chairZ - 1.2, 3.8, 0.9, 1.8, 'reddishBrown', 0);
+
+    // Place des Nations Dancing Water Jets flanking the Broken Chair
+    const plazaJets = [];
+    for (let jx = -3.2; jx <= 3.2; jx += 1.6) {
+      if (Math.abs(jx) < 1.8) continue;
+      for (let jz = 4.5; jz <= 7.5; jz += 1.5) {
+        const jet = lm.addRound(jx, 3, jz, 0.55, 2.2, 'transLightBlue');
+        plazaJets.push({ mesh: jet, phase: jx + jz });
+      }
+    }
+
+    // Ariana Park trees & diplomat minifigures
+    lm.addTree(-10.5, 4, -6.5, 'cypress', 1.2);
+    lm.addTree(10.5, 4, -6.5, 'cypress', 1.2);
+    lm.addTree(-9.5, 4, -1.5, 'lush', 1.0);
+    lm.addTree(9.5, 4, -1.5, 'lush', 1.0);
+    lm.addMinifig(-2.2, 3, 6.2, 'darkBlue', 'black', null, { walkRadius: 1.0, speed: 0.75 });
+    lm.addMinifig(2.5, 3, 5.5, 'brightRed', 'darkBluishGray', 'white', { walkRadius: 1.1, speed: 0.85 });
+
+    // Kinetic updater for UN
+    lm.kineticUpdaters.push((t) => {
+      unEmblemGroup.rotation.y = t * 0.9;
+      unEmblemGroup.position.y = (py + 13.5) * P + Math.sin(t * 3) * 0.12;
+
+      for (let i = 0; i < unFlags.length; i++) {
+        const uf = unFlags[i];
+        uf.mesh.rotation.y = Math.sin(t * 5.5 + uf.phase) * 0.32;
+      }
+
+      for (let i = 0; i < plazaJets.length; i++) {
+        const pj = plazaJets[i];
+        pj.mesh.scale.y = 0.5 + Math.abs(Math.sin(t * 6 + pj.phase)) * 1.4;
+      }
+    });
+
+    // 3D Motion Graphic Callouts
+    lm.addCallout(0, 21, -5.5, '팔레 데 나시옹 (Palais des Nations)', 'UN 유럽본부 · 국제 평화 외교의 중심', 'UNITED NATIONS');
+    lm.addCallout(0, 24, 6.2, '부러진 의자 (Broken Chair)', '다니엘 베르세 작 · 12m 레고 우드 브릭 조형물', 'PLACE DES NATIONS');
+    lm.addCallout(-4.8, 10, 3.0, '만국기 거리 (Allée des Drapeaux)', '193개 유엔 회원국 국기 물결 모션', 'FLAG ALLEY');
+
+    return lm;
+  }
+
+  /**
+   * 5. Build PLACE DE NEUVE (플라스 드 뇌브 — Grand Théâtre, Musée Rath, Conservatoire & Dufour)
+   */
+  function buildPlaceDeNeuve() {
+    const lm = new LandmarkGroup('placedeneuve', CHAPTERS[5]);
+    lm.group.position.set(-20, 0.32, 22);
+
+    // Grand cultural square baseplate
+    lm.addBrick(0, 0, 0, 24, 22, 2, 'mediumStoneGray', { studStride: 2 });
+    lm.addBrick(0, 2, 0.5, 18, 14, 1, 'lightBluishGray', { tile: true });
+
+    // === 1. GRAND THÉÂTRE DE GENÈVE (Center-North of Square, Beaux-Arts Opera House) ===
+    const gy = 3;
+    const gz = -5.5;
+    lm.addBrick(0, gy, gz, 11, 6, 8, 'cream');
+    lm.addBrick(0, gy + 2, gz + 2.8, 9, 1, 5, 'transYellowGlow'); // Warm glowing opera foyer
+    // Corinthian colonnade along the front loggia
+    for (let cx = -4; cx <= 4; cx += 1.6) {
+      lm.addRound(cx, gy + 1, gz + 3.2, 0.75, 6, 'white', { tile: true });
+    }
+    // Balustrade & golden rooftop statues/lyres
+    lm.addBrick(0, gy + 8, gz, 11.2, 6.2, 1.5, 'tan');
+    lm.addRound(-3.5, gy + 9.5, gz + 2.8, 0.8, 2, 'pearlGold');
+    lm.addRound(0, gy + 9.5, gz + 2.8, 1.0, 2.5, 'pearlGold');
+    lm.addRound(3.5, gy + 9.5, gz + 2.8, 0.8, 2, 'pearlGold');
+    // Opera stage house copper/slate dome roof
+    lm.addSlope(0, gy + 9.5, gz - 0.3, 9, 5, 4, 'darkBluishGray', 0);
+    lm.addBrick(0, gy + 13.5, gz - 0.3, 5, 3, 2, 'sandGreen');
+
+    // === 2. MUSÉE RATH (Right/East Side — Classical Greek Temple Portico) ===
+    const rx = 7.5;
+    const rz = 1.5;
+    lm.addBrick(rx, gy, rz, 5, 7, 7, 'tan');
+    for (let cz = -2.2; cz <= 2.2; cz += 1.4) {
+      lm.addRound(rx - 2.6, gy + 1, rz + cz, 0.75, 5.5, 'cream', { tile: true });
+    }
+    lm.addSlope(rx, gy + 7, rz, 5, 7, 3, 'lightBluishGray', 3);
+
+    // === 3. CONSERVATOIRE DE MUSIQUE (Left/West Side — Terracotta & Ochre Palace) ===
+    const mx = -7.5;
+    const mz = 1.5;
+    lm.addBrick(mx, gy, mz, 5, 7, 7, 'terracotta');
+    lm.addBrick(mx + 2.2, gy + 1.5, mz, 1, 5, 4, 'transOrangeGlow');
+    lm.addBrick(mx, gy + 7, mz, 5.2, 7.2, 1.5, 'cream');
+    lm.addSlope(mx, gy + 8.5, mz, 5, 7, 3, 'darkBluishGray', 1);
+
+    // === 4. EQUESTRIAN STATUE OF GENERAL DUFOUR (Center of Place de Neuve) ===
+    // Stepped marble pedestal
+    lm.addBrick(0, gy, 1.5, 3.6, 4.4, 1.5, 'lightBluishGray');
+    lm.addBrick(0, gy + 1.5, 1.5, 2.4, 3.2, 4.5, 'cream');
+    lm.addBrick(0, gy + 3.0, 1.5, 2.6, 3.4, 1.0, 'pearlGold', { tile: true });
+    // Bronze Patina LEGO Horse & General Guillaume-Henri Dufour on top
+    const dufourStatue = new THREE.Group();
+    dufourStatue.position.set(0, (gy + 6.0) * P, 1.5 * U);
+    lm.group.add(dufourStatue);
+    lm.addBrick(0, 0, 0, 1.2, 2.2, 2.0, 'bronzePatina', { parent: dufourStatue }); // Horse body
+    lm.addBrick(0, 1.5, 0.8, 0.9, 0.9, 1.8, 'bronzePatina', { parent: dufourStatue }); // Horse neck/head
+    lm.addBrick(0, 2.0, -0.1, 0.9, 0.9, 2.2, 'pearlGold', { parent: dufourStatue }); // General Dufour
+    lm.addRound(0, 4.2, -0.1, 0.75, 1.2, 'pearlGold', { parent: dufourStatue });
+
+    // Kinetic Floating 3D LEGO Musical Notes rising between Conservatoire & Grand Théâtre!
+    const musicNotes = [];
+    const noteColors = ['pearlGold', 'brightOrange', 'transCyanGlow', 'brightRed'];
+    for (let n = 0; n < 6; n++) {
+      const note = new THREE.Group();
+      lm.group.add(note);
+      lm.addRound(0, 0, 0, 0.85, 0.8, noteColors[n % noteColors.length], { parent: note });
+      lm.addBrick(0.35, 0.8, 0, 0.3, 0.3, 2.2, noteColors[n % noteColors.length], { parent: note, tile: true });
+      lm.addBrick(0.1, 2.6, 0, 0.8, 0.3, 0.6, noteColors[n % noteColors.length], { parent: note, tile: true });
+      musicNotes.push({
+        group: note,
+        baseX: (n % 2 === 0 ? -6.5 : 0) + (n - 2.5) * 1.1,
+        baseZ: n % 2 === 0 ? 1.5 : -4.5,
+        phase: n * 1.05
+      });
+    }
+
+    // Ornate streetlamps, trees & opera-goer minifigures
+    lm.addStreetLamp(-3.5, gy, 3.8);
+    lm.addStreetLamp(3.5, gy, 3.8);
+    lm.addTree(-9.5, gy, 7.5, 'lush', 1.0);
+    lm.addTree(9.5, gy, 7.5, 'autumn', 1.0);
+    lm.addMinifig(-2.2, gy, 1.8, 'black', 'black', 'pearlGold', { walkRadius: 1.3, speed: 0.8 });
+    lm.addMinifig(2.2, gy, 2.2, 'brightRed', 'cream', 'black', { walkRadius: 1.3, speed: 0.7 });
+
+    // Kinetic updater for Place de Neuve
+    lm.kineticUpdaters.push((t) => {
+      for (let i = 0; i < musicNotes.length; i++) {
+        const mn = musicNotes[i];
+        const cycle = (t * 0.45 + mn.phase) % 1.0;
+        mn.group.position.set(
+          (mn.baseX + Math.sin(t * 2.5 + i) * 0.6) * U,
+          (11 + cycle * 9) * P,
+          mn.baseZ * U
+        );
+        mn.group.rotation.y = t * 1.8 + i;
+        const scale = Math.sin(cycle * Math.PI);
+        mn.group.scale.setScalar(Math.max(0.15, scale));
+      }
+    });
+
+    // 3D Motion Graphic Callouts
+    lm.addCallout(0, 18, -5.5, '제네바 대극장 (Grand Théâtre)', '보자르 양식 오페라 하우스 & 황금 리라 조각', 'OPERA HOUSE');
+    lm.addCallout(0, 13, 1.5, '뒤푸르 장군 기마상', 'Général Guillaume-Henri Dufour · 광장 중앙', 'EQUESTRIAN MONUMENT');
+    lm.addCallout(-7.5, 13, 1.5, '제네바 음악원 & 라트 미술관', 'Conservatoire de Musique & Musée Rath', 'ARTS QUARTER');
+
+    return lm;
+  }
+
+  /**
+   * 6. Build PARC DES BASTIONS (바스티옹 — Reformation Wall, Giant Chessboards & Uni Bastions)
+   */
+  function buildBastions() {
+    const lm = new LandmarkGroup('bastions', CHAPTERS[6]);
+    lm.group.position.set(2, 0.32, 25);
+
+    // Lush green Parc des Bastions baseplate with central gravel promenade
+    lm.addBrick(0, 0, 0, 26, 20, 2, 'brightGreen', { studStride: 2 });
+    lm.addBrick(0, 2, 1.0, 8, 16, 0.8, 'tan', { tile: true }); // Central promenade
+
+    // === 1. MUR DES RÉFORMATEURS (종교개혁 기념비 / Reformation Wall at North/Back) ===
+    const wy = 2.5;
+    const wz = -6.2;
+    // Reflecting water moat in front of the wall
+    lm.addBrick(0, 2, wz + 2.2, 18, 2.2, 0.8, 'transMediumBlue');
+    // Monumental 100m stone rampart wall
+    lm.addBrick(0, wy, wz, 20, 2.4, 10, 'lightBluishGray');
+    lm.addBrick(0, wy + 10, wz, 20.4, 2.8, 1.5, 'cream');
+    // Golden engraved motto frieze: "POST TENEBRAS LUX"
+    const mottoBricks = [];
+    for (let mx = -7.5; mx <= 7.5; mx += 1.5) {
+      const mb = lm.addBrick(mx, wy + 8.8, wz + 1.25, 1.1, 0.4, 1.0, 'pearlGold', { tile: true });
+      mottoBricks.push(mb);
+    }
+
+    // THE 4 GIANT REFORMER STATUES (Farel, Calvin, Bèze, Knox) standing in high relief!
+    const reformerX = [-3.3, -1.1, 1.1, 3.3];
+    for (let r = 0; r < 4; r++) {
+      const rx = reformerX[r];
+      // Pedestal
+      lm.addBrick(rx, wy, wz + 1.3, 1.6, 1.2, 2.0, 'mediumStoneGray');
+      // Robed torso & Bible
+      lm.addBrick(rx, wy + 2.0, wz + 1.3, 1.5, 1.1, 5.2, 'white');
+      lm.addBrick(rx + 0.2, wy + 4.5, wz + 1.85, 0.7, 0.5, 1.2, 'tan', { tile: true }); // Held Bible
+      // Sculpted beard & head + scholar cap
+      lm.addRound(rx, wy + 7.2, wz + 1.3, 1.1, 1.6, 'cream');
+      lm.addBrick(rx, wy + 8.8, wz + 1.3, 1.2, 1.1, 0.7, 'lightBluishGray', { tile: true });
+    }
+
+    // === 2. GIANT OUTDOOR CHESSBOARDS (대형 야외 체스판 — Live Stop-Motion Match!) ===
+    const cbX = -6.8;
+    const cbZ = 3.5;
+    const cbY = 2.8;
+    // 6x6 LEGO Black & White Tiled Chessboard
+    lm.addBrick(cbX, 2, cbZ, 7, 7, 0.8, 'darkBluishGray');
+    for (let cx = 0; cx < 6; cx++) {
+      for (let cz = 0; cz < 6; cz++) {
+        const isWhite = (cx + cz) % 2 === 0;
+        lm.addBrick(
+          cbX - 2.5 + cx,
+          cbY,
+          cbZ - 2.5 + cz,
+          1,
+          1,
+          0.6,
+          isWhite ? 'white' : 'black',
+          { tile: true }
+        );
+      }
+    }
+    // Giant Chess Pieces (4 animated pieces hopping across squares!)
+    const chessPieces = [];
+    const pieceConfigs = [
+      { col: 'white', x: -1.5, z: -1.5, h: 3.2, crown: 'pearlGold' },
+      { col: 'white', x: 0.5, z: -0.5, h: 2.6, crown: 'white' },
+      { col: 'black', x: 1.5, z: 1.5, h: 3.2, crown: 'pearlGold' },
+      { col: 'black', x: -0.5, z: 0.5, h: 2.6, crown: 'black' }
+    ];
+    pieceConfigs.forEach((pc, idx) => {
+      const piece = new THREE.Group();
+      lm.group.add(piece);
+      lm.addRound(0, 0, 0, 0.9, pc.h, pc.col, { parent: piece });
+      lm.addCone(0, pc.h, 0, 1.0, 0.5, 1.2, pc.crown, { parent: piece });
+      chessPieces.push({
+        group: piece,
+        baseX: cbX + pc.x,
+        baseZ: cbZ + pc.z,
+        idx
+      });
+    });
+
+    // === 3. UNI BASTIONS (University of Geneva Building on East Side) ===
+    const ux = 7.8;
+    const uz = 2.0;
+    lm.addWindowedFacade(ux, 2, uz, 7, 2, 'tan', 'transYellowGlow', -Math.PI * 0.5);
+    lm.addSlope(ux, 10, uz, 4, 7, 3, 'darkBluishGray', 1);
+    lm.addRound(ux, 13, uz, 1.6, 2.5, 'sandGreen');
+
+    // === 4. PROMENADE DES MARRONNIERS (Chestnut Trees & Drifting Autumn Leaf Studs) ===
+    const treeCoords = [
+      [-9.5, -2.5, 'lush'], [-3.8, -1.0, 'autumn'], [3.8, -1.0, 'lush'],
+      [-9.5, 6.5, 'autumn'], [-3.5, 6.8, 'lush'], [3.5, 6.8, 'autumn'], [9.5, 6.8, 'lush']
+    ];
+    treeCoords.forEach(([tx, tz, style]) => {
+      lm.addTree(tx, 2, tz, style, 1.05);
+    });
+
+    // Falling LEGO autumn leaf studs
+    const fallingLeaves = [];
+    const leafGeo = getRoundBrickGeometry(0.65, 0.6, false, 8);
+    const leafColors = ['brightOrange', 'autumnGold', 'brightYellow'];
+    for (let l = 0; l < 14; l++) {
+      const leafMesh = new THREE.Mesh(leafGeo, getMaterial(leafColors[l % leafColors.length]));
+      lm.group.add(leafMesh);
+      fallingLeaves.push({
+        mesh: leafMesh,
+        x: (-8 + (l % 7) * 2.6) * U,
+        z: (-1 + (l % 4) * 2.5) * U,
+        seed: l / 14
+      });
+    }
+
+    lm.addStreetLamp(-2.8, 2.8, 2.5);
+    lm.addStreetLamp(2.8, 2.8, 2.5);
+    lm.addMinifig(cbX - 3.2, 2.8, cbZ, 'brightRed', 'darkBlue', 'brightYellow');
+    lm.addMinifig(cbX + 3.2, 2.8, cbZ, 'brightBlue', 'black', 'white');
+    lm.addMinifig(0, 2.8, 3.5, 'brightGreen', 'darkBluishGray', null, { walkRadius: 1.5, speed: 0.85 });
+
+    // Kinetic updater for Parc des Bastions
+    lm.kineticUpdaters.push((t) => {
+      // Hopping Giant Chess Pieces in stop-motion arcs
+      for (let i = 0; i < chessPieces.length; i++) {
+        const cp = chessPieces[i];
+        const phase = t * 1.4 + cp.idx * 1.57;
+        const stepProgress = Math.max(0, Math.sin(phase));
+        const shiftX = Math.cos(t * 0.7 + cp.idx * 2.1) * 0.85;
+        const shiftZ = Math.sin(t * 0.7 + cp.idx * 2.1) * 0.85;
+        cp.group.position.set(
+          (cp.baseX + shiftX) * U,
+          (cbY + 0.6) * P + stepProgress * 0.9,
+          (cp.baseZ + shiftZ) * U
+        );
+        cp.group.rotation.z = Math.sin(phase * 2) * 0.14;
+      }
+
+      // Drifting autumn LEGO leaf studs
+      for (let i = 0; i < fallingLeaves.length; i++) {
+        const lf = fallingLeaves[i];
+        const cyc = (t * 0.28 + lf.seed) % 1.0;
+        lf.mesh.position.set(
+          lf.x + Math.sin(t * 2 + i) * 0.45,
+          (12 - cyc * 9.5) * P,
+          lf.z + Math.cos(t * 1.7 + i) * 0.35
+        );
+        lf.mesh.rotation.x = t * 2 + i;
+        lf.mesh.rotation.z = t * 1.5 + i;
+      }
+    });
+
+    // 3D Motion Graphic Callouts
+    lm.addCallout(0, 14, -5.5, '종교개혁 기념비 (Mur des Réformateurs)', '파렐 · 칼뱅 · 베즈 · 녹스 · POST TENEBRAS LUX', 'REFORMATION WALL');
+    lm.addCallout(cbX, 8, cbZ, '바스티옹 대형 야외 체스판', 'Échecs Géants · 실시간 스톱모션 대국', 'GIANT CHESS');
+    lm.addCallout(ux, 15, uz, '제네바 대학교 (Uni Bastions)', '1559년 설립 · 밤나무 공원 산책로', 'UNIVERSITY');
+
+    return lm;
+  }
+
+  /**
+   * Build the Master LEGO Architecture Display Plinth & Inter-Landmark Connectors
+   * Connects all 6 Geneva districts into one cohesive tabletop world
+   */
+  function buildMasterCityTable(scene) {
+    const baseGroup = new LandmarkGroup('base', CHAPTERS[0]);
+
+    // Sleek dark LEGO Architecture collector display frame & baseplate
+    baseGroup.addBrick(0, -3.5, 2, 86, 78, 2.5, 'black', { tile: true, castShadow: false });
+    baseGroup.addBrick(0, -1.0, 2, 82, 74, 1.0, 'darkBluishGray', { studStride: 4, castShadow: false });
+
+    // Golden Collector Nameplate on Front Plinth Edge
+    baseGroup.addBrick(0, -2.2, 41.2, 18, 1.2, 1.8, 'pearlGold', { tile: true });
+
+    // Connecting Rhône River & Lake Geneva extension channel
+    baseGroup.addBrick(-22, -0.2, -1, 20, 12, 1.2, 'transDarkBlue', { studStride: 3 });
+    baseGroup.addBrick(22, -0.2, -6, 16, 14, 1.2, 'transDarkBlue', { studStride: 3 });
+
+    // Connecting LEGO avenues between the 6 districts (Rue du Mont-Blanc, Rue de la Corraterie, Avenue de la Paix)
+    // 1. Cornavin (-23, -18) to Mont-Blanc Bridge (-12, 0)
+    baseGroup.addBrick(-17, 0.2, -9, 10, 6, 0.8, 'mediumStoneGray', { tile: true });
+    // 2. Cornavin / Lake to UN (20, -21)
+    baseGroup.addBrick(0, 0.2, -18, 22, 4, 0.8, 'mediumStoneGray', { tile: true });
+    // 3. Mont-Blanc Bridge (-12, 0) to Place de Neuve (-20, 22)
+    baseGroup.addBrick(-16, 0.2, 11, 6, 12, 0.8, 'mediumStoneGray', { tile: true });
+    // 4. Place de Neuve (-20, 22) to Parc des Bastions (2, 25) to Old Town (24, 19)
+    baseGroup.addBrick(-9, 0.2, 23, 8, 6, 0.8, 'tan', { tile: true });
+    baseGroup.addBrick(14, 0.2, 22, 8, 6, 0.8, 'mediumStoneGray', { tile: true });
+
+    // City-wide inter-district TPG Tram circulating along the Grand Geneva Loop!
+    const cityTram = new THREE.Group();
+    baseGroup.group.add(cityTram);
+    baseGroup.addBrick(0, 0, 0, 4.5, 1.6, 2.4, 'white', { parent: cityTram });
+    baseGroup.addBrick(0, 0, 0, 4.6, 1.65, 0.9, 'brightOrange', { parent: cityTram }); // Historic Geneva orange/white tram
+    baseGroup.addBrick(0, 1.1, 0, 4.0, 1.7, 1.0, 'transYellowGlow', { parent: cityTram });
+
+    baseGroup.kineticUpdaters.push((t) => {
+      // Loop tram between Place de Neuve, Bastions, Lakeside, and Cornavin
+      const loopA = t * 0.32;
+      const rx = -8 + Math.cos(loopA) * 14;
+      const rz = 8 + Math.sin(loopA) * 14;
+      cityTram.position.set(rx, 0.45, rz);
+      cityTram.rotation.y = -loopA;
+    });
+
+    scene.add(baseGroup.group);
+    return baseGroup;
+  }
+
+  /**
+   * Build all 6 Geneva Landmarks + Base Table and register them in the scene
+   */
+  function createGenevaWorld(scene) {
+    const baseTable = buildMasterCityTable(scene);
+    const landmarks = {
+      oldtown: buildOldTown(),
+      lakeside: buildLakeside(),
+      cornavin: buildCentralStation(),
+      un: buildUN(),
+      placedeneuve: buildPlaceDeNeuve(),
+      bastions: buildBastions()
+    };
+
+    Object.keys(landmarks).forEach((key) => {
+      scene.add(landmarks[key].group);
+    });
+
+    return {
+      CHAPTERS,
+      baseTable,
+      landmarks
+    };
+  }
+
+  global.GenevaLandmarks = {
+    CHAPTERS,
+    createGenevaWorld
+  };
+})(window);

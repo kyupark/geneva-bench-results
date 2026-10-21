@@ -1,0 +1,16 @@
+import {chromium} from 'playwright';
+const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1100}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto('http://127.0.0.1:8765/output/Play.html');
+await page.locator('video').evaluate(v=>new Promise(resolve=>{if(v.readyState>=1)resolve();else v.addEventListener('loadedmetadata',resolve,{once:true});}));
+const video=await page.locator('video').evaluate(v=>({duration:v.duration,width:v.videoWidth,height:v.videoHeight,error:v.error?.message||null}));
+await page.locator('video').evaluate(v=>v.muted=true);
+await page.locator('button[data-time="44"]').click();
+await page.waitForFunction(()=>{const v=document.querySelector('video');return !v.seeking&&v.readyState>=2&&v.currentTime>=44;},{},{timeout:30000});
+await page.locator('video').evaluate(v=>v.pause());
+const sought=await page.locator('video').evaluate(v=>({time:v.currentTime,readyState:v.readyState,decodedFrames:v.getVideoPlaybackQuality().totalVideoFrames,error:v.error?.message||null}));
+await page.screenshot({path:'previews/player.png',fullPage:true});
+console.log(JSON.stringify({video,sought,buttons:await page.locator('button').count(),errors},null,2));
+if(video.duration!==100||video.width!==1920||video.height!==1080||video.error||sought.time<44||sought.time>47||errors.length)throw new Error('Playback verification failed');
+await page.setViewportSize({width:390,height:844});console.log('Mobile layout',await page.evaluate(()=>({width:innerWidth,contentWidth:document.documentElement.scrollWidth})));
+await browser.close();

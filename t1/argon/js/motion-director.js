@@ -1,0 +1,717 @@
+/**
+ * Motion Graphic Director, Brick Assembly Physics, 3D-to-2D Callout Renderer & Web Audio Synth
+ * Built for "LEGO® GENEVA: BRICK BY BRICK"
+ */
+(function (global) {
+  'use strict';
+
+  const { setLightingMoodIntensity } = global.LegoEngine;
+
+  // Overshoot bounce easing for authentic LEGO brick snap
+  function easeOutBack(x) {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  }
+
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  /**
+   * Procedural Web Audio LEGO Brick Click & Swiss Motion Graphic Synth
+   */
+  class LegoAudioSynth {
+    constructor() {
+      this.ctx = null;
+      this.enabled = false;
+      this.musicTimer = null;
+      this.stepIndex = 0;
+    }
+
+    _ensureCtx() {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+    }
+
+    playBrickClick(pitchScale) {
+      if (!this.enabled) return;
+      this._ensureCtx();
+      if (!this.ctx) return;
+
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const scale = pitchScale || (0.9 + Math.random() * 0.35);
+
+      // Sharp ABS plastic click transient
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1100 * scale, now);
+      osc.frequency.exponentialRampToValueAtTime(280 * scale, now + 0.045);
+
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.055);
+    }
+
+    playCascadeClicks(count) {
+      if (!this.enabled) return;
+      const n = Math.min(12, count || 8);
+      for (let i = 0; i < n; i++) {
+        setTimeout(() => {
+          this.playBrickClick(0.85 + (i / n) * 0.6);
+        }, i * 65);
+      }
+    }
+
+    toggleMusic(forceState) {
+      this.enabled = forceState !== undefined ? forceState : !this.enabled;
+      if (this.enabled) {
+        this._ensureCtx();
+        this.playBrickClick(1.2);
+        if (!this.musicTimer) {
+          // Bright Swiss marimba-like motion graphic arpeggio
+          const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 659.25, 587.33, 783.99];
+          this.musicTimer = setInterval(() => {
+            if (!this.enabled || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const freq = notes[this.stepIndex % notes.length];
+            this.stepIndex++;
+
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.045, now);
+            gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.22);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.24);
+          }, 240);
+        }
+      } else if (this.musicTimer) {
+        clearInterval(this.musicTimer);
+        this.musicTimer = null;
+      }
+      return this.enabled;
+    }
+  }
+
+  /**
+   * Lighting Presets for Daylight Studio, Geneva Golden Sunset, and Escalades Night Glow
+   */
+  const LIGHTING_MODES = {
+    day: {
+      id: 'day',
+      labelKo: 'Day studio',
+      skyBg: 0x162436,
+      fogColor: 0x162436,
+      ambientColor: 0xDCE8F8,
+      ambientIntensity: 0.85,
+      sunColor: 0xFFF7E8,
+      sunIntensity: 1.95,
+      sunPos: new THREE.Vector3(45, 68, 42),
+      rimColor: 0x56B4E9,
+      rimIntensity: 0.75,
+      emissiveBoost: 0.55
+    },
+    sunset: {
+      id: 'sunset',
+      labelKo: 'Lake Geneva sunset',
+      skyBg: 0x1E162B,
+      fogColor: 0x1E162B,
+      ambientColor: 0xF2B8A2,
+      ambientIntensity: 0.70,
+      sunColor: 0xFF8C42,
+      sunIntensity: 2.15,
+      sunPos: new THREE.Vector3(-55, 34, 38),
+      rimColor: 0xE5B83B,
+      rimIntensity: 1.0,
+      emissiveBoost: 1.35
+    },
+    night: {
+      id: 'night',
+      labelKo: 'Geneva at night',
+      skyBg: 0x09101D,
+      fogColor: 0x09101D,
+      ambientColor: 0x4A6B9C,
+      ambientIntensity: 0.48,
+      sunColor: 0x70A4FF,
+      sunIntensity: 0.95,
+      sunPos: new THREE.Vector3(25, 55, -35),
+      rimColor: 0x00D4FF,
+      rimIntensity: 1.15,
+      emissiveBoost: 2.35
+    }
+  };
+
+  /**
+   * Main Motion Graphic Director
+   */
+  class MotionDirector {
+    constructor(opts) {
+      this.scene = opts.scene;
+      this.camera = opts.camera;
+      this.overlayCanvas = opts.overlayCanvas;
+      this.overlayCtx = this.overlayCanvas.getContext('2d');
+      this.world = opts.world;
+      this.lights = opts.lights;
+      this.onChapterChange = opts.onChapterChange || function () {};
+      this.onTimelineUpdate = opts.onTimelineUpdate || function () {};
+
+      this.chapters = this.world.CHAPTERS;
+      this.totalDuration = this.chapters.reduce((acc, ch) => acc + ch.duration, 0);
+
+      this.currentChapterIndex = 0;
+      this.isPlaying = true;
+      this.stopMotionMode = false; // false = 60fps smooth, true = 12fps stop-motion
+      this.isolatedView = false;   // false = full connected city, true = spotlight active landmark
+      this.lightingMode = 'day';
+
+      this.elapsedTimeline = 0;
+      this.chapterElapsed = 0;
+      this.clockTime = 0;
+
+      // Camera interpolation targets
+      this.camLookCurrent = this.chapters[0].worldCenter.clone();
+      this.camLookTarget = this.chapters[0].worldCenter.clone();
+      this.camPosCurrent = this.chapters[0].camPos.clone();
+      this.userOrbitAngleOffset = 0;
+      this.userPitchOffset = 0;
+      this.userZoomScale = 1.0;
+
+      // Active brick assembly animation state per landmark
+      this.assemblyStates = {};
+      Object.keys(this.world.landmarks).forEach((id) => {
+        const lm = this.world.landmarks[id];
+        // Pre-compute max layer height for normalized bottom-to-top build wave
+        let maxY = 1;
+        for (let i = 0; i < lm.bricks.length; i++) {
+          if (lm.bricks[i].userData.layerY > maxY) {
+            maxY = lm.bricks[i].userData.layerY;
+          }
+        }
+        lm.maxLayerY = maxY;
+        this.assemblyStates[id] = {
+          active: false,
+          progress: 1.0,
+          duration: 1.85,
+          fullRebuild: false
+        };
+      });
+
+      this.audio = new LegoAudioSynth();
+    }
+
+    /**
+     * Trigger a LEGO brick-by-brick assembly wave on a landmark (or all landmarks)
+     */
+    triggerAssembly(landmarkId, fullRebuild) {
+      const targets = landmarkId === 'all' || landmarkId === 'panorama'
+        ? Object.keys(this.world.landmarks)
+        : [landmarkId];
+
+      targets.forEach((id) => {
+        const st = this.assemblyStates[id];
+        if (!st) return;
+        st.active = true;
+        st.progress = 0.0;
+        st.duration = fullRebuild ? 2.1 : 1.55;
+        st.fullRebuild = !!fullRebuild;
+      });
+
+      this.audio.playCascadeClicks(10);
+    }
+
+    /**
+     * Jump to a specific chapter index (0 = Panorama, 1..6 = Geneva Landmarks)
+     */
+    selectChapter(index, triggerBuildWave) {
+      const safeIdx = ((index % this.chapters.length) + this.chapters.length) % this.chapters.length;
+      const prevIdx = this.currentChapterIndex;
+      this.currentChapterIndex = safeIdx;
+      this.chapterElapsed = 0;
+
+      // Synchronize master timeline position to start of selected chapter
+      let accum = 0;
+      for (let i = 0; i < safeIdx; i++) {
+        accum += this.chapters[i].duration;
+      }
+      this.elapsedTimeline = accum;
+
+      const ch = this.chapters[safeIdx];
+      this.camLookTarget.copy(ch.worldCenter);
+
+      // Update landmark visibility if isolated spotlight mode is enabled
+      this._applyIsolationVisibility();
+
+      // Trigger signature upper-story brick snap animation when entering a landmark
+      if (triggerBuildWave !== false && safeIdx > 0 && prevIdx !== safeIdx) {
+        this.triggerAssembly(ch.id, false);
+      }
+
+      this.onChapterChange(ch, safeIdx);
+    }
+
+    /**
+     * Scrub directly to normalized timeline progress [0..1]
+     */
+    seekNormalized(norm) {
+      const clamped = clamp(norm, 0, 0.9999);
+      this.elapsedTimeline = clamped * this.totalDuration;
+
+      let accum = 0;
+      for (let i = 0; i < this.chapters.length; i++) {
+        const dur = this.chapters[i].duration;
+        if (this.elapsedTimeline < accum + dur || i === this.chapters.length - 1) {
+          const changed = this.currentChapterIndex !== i;
+          this.currentChapterIndex = i;
+          this.chapterElapsed = this.elapsedTimeline - accum;
+          this.camLookTarget.copy(this.chapters[i].worldCenter);
+          if (changed) {
+            this._applyIsolationVisibility();
+            this.onChapterChange(this.chapters[i], i);
+          }
+          break;
+        }
+        accum += dur;
+      }
+    }
+
+    setIsolatedView(isolated) {
+      this.isolatedView = !!isolated;
+      this._applyIsolationVisibility();
+    }
+
+    _applyIsolationVisibility() {
+      const ch = this.chapters[this.currentChapterIndex];
+      const showAll = !this.isolatedView || ch.id === 'panorama';
+      this.world.baseTable.group.visible = showAll;
+      Object.keys(this.world.landmarks).forEach((id) => {
+        this.world.landmarks[id].group.visible = showAll || id === ch.id;
+      });
+    }
+
+    setLightingMode(modeId) {
+      const preset = LIGHTING_MODES[modeId] || LIGHTING_MODES.day;
+      this.lightingMode = preset.id;
+
+      this.scene.background.setHex(preset.skyBg);
+      if (this.scene.fog) {
+        this.scene.fog.color.setHex(preset.fogColor);
+      }
+      this.lights.ambient.color.setHex(preset.ambientColor);
+      this.lights.ambient.intensity = preset.ambientIntensity;
+
+      this.lights.sun.color.setHex(preset.sunColor);
+      this.lights.sun.intensity = preset.sunIntensity;
+      this.lights.sun.position.copy(preset.sunPos);
+
+      this.lights.rim.color.setHex(preset.rimColor);
+      this.lights.rim.intensity = preset.rimIntensity;
+
+      setLightingMoodIntensity(preset.emissiveBoost);
+    }
+
+    /**
+     * Main per-frame update loop
+     */
+    update(dt) {
+      const safeDt = clamp(dt || 0, 0, 0.1);
+      this.clockTime += safeDt;
+
+      // Advance automated motion graphic timeline if playing
+      if (this.isPlaying) {
+        this.elapsedTimeline += safeDt;
+        this.chapterElapsed += safeDt;
+
+        const currentChapter = this.chapters[this.currentChapterIndex];
+        if (this.chapterElapsed >= currentChapter.duration) {
+          const nextIdx = (this.currentChapterIndex + 1) % this.chapters.length;
+          this.selectChapter(nextIdx, true);
+        }
+      }
+
+      // Stop-motion time quantization (12 FPS stepped motion for kinetic elements)
+      const kineticTime = this.stopMotionMode
+        ? Math.floor(this.clockTime * 12) / 12
+        : this.clockTime;
+
+      // Update kinetic animations on base table & all 6 landmarks
+      this.world.baseTable.kineticUpdaters.forEach((fn) => fn(kineticTime));
+      Object.keys(this.world.landmarks).forEach((id) => {
+        const lm = this.world.landmarks[id];
+        for (let i = 0; i < lm.kineticUpdaters.length; i++) {
+          lm.kineticUpdaters[i](kineticTime);
+        }
+        this._updateLandmarkAssembly(id, lm, safeDt);
+      });
+
+      // Smoothly choreograph camera along orbital arc around active chapter
+      this._updateCamera(safeDt);
+
+      // Draw 2D Broadcast Motion Graphic Overlay (3D-to-2D callouts & HUD viewfinder)
+      this._renderBroadcastOverlay();
+
+      // Notify UI timeline bar
+      const normProgress = (this.elapsedTimeline % this.totalDuration) / this.totalDuration;
+      const chProgress = clamp(this.chapterElapsed / this.chapters[this.currentChapterIndex].duration, 0, 1);
+      this.onTimelineUpdate(normProgress, chProgress, this.elapsedTimeline);
+    }
+
+    /**
+     * Update brick-by-brick assembly wave physics for a landmark
+     */
+    _updateLandmarkAssembly(id, lm, dt) {
+      const st = this.assemblyStates[id];
+      if (!st || !st.active) return;
+
+      st.progress += dt / st.duration;
+      if (st.progress >= 1.0) {
+        st.progress = 1.0;
+        st.active = false;
+      }
+
+      const p = st.progress;
+      const maxY = lm.maxLayerY || 10;
+      const bricks = lm.bricks;
+
+      for (let i = 0; i < bricks.length; i++) {
+        const b = bricks[i];
+        const ud = b.userData;
+        const normLayer = clamp(ud.layerY / maxY, 0, 1);
+
+        // If not a full rebuild, keep foundational base plates grounded so landmark silhouette stays anchored
+        if (!st.fullRebuild && normLayer < 0.25) {
+          b.position.set(ud.baseX, ud.baseY, ud.baseZ);
+          b.rotation.set(ud.baseRotX, ud.baseRotY, ud.baseRotZ);
+          b.scale.setScalar(1);
+          continue;
+        }
+
+        const delay = normLayer * 0.52 + ud.phaseJitter;
+        const localP = clamp((p - delay) / 0.45, 0, 1);
+
+        if (localP <= 0) {
+          b.position.y = ud.baseY + ud.dropOffset;
+          b.scale.setScalar(0.001);
+        } else if (localP >= 1) {
+          b.position.set(ud.baseX, ud.baseY, ud.baseZ);
+          b.rotation.set(ud.baseRotX, ud.baseRotY, ud.baseRotZ);
+          b.scale.setScalar(1);
+        } else {
+          const eased = easeOutBack(localP);
+          b.position.y = ud.baseY + (1 - eased) * ud.dropOffset;
+          b.rotation.y = ud.baseRotY + (1 - localP) * ud.spinOffset;
+          b.scale.setScalar(clamp(localP * 1.35, 0.01, 1.0));
+        }
+      }
+    }
+
+    /**
+     * Choreographed 3D Camera Motion Path + User Drag/Zoom Offset
+     */
+    _updateCamera(dt) {
+      const ch = this.chapters[this.currentChapterIndex];
+      const chNorm = clamp(this.chapterElapsed / ch.duration, 0, 1);
+
+      // Gentle cinematic orbital sweep during each chapter
+      const sweepAngle = (ch.id === 'panorama')
+        ? (this.clockTime * 0.18 + this.userOrbitAngleOffset)
+        : ((chNorm - 0.5) * 0.72 + this.userOrbitAngleOffset);
+
+      const baseOffset = ch.camPos.clone().sub(ch.worldCenter);
+      const baseAngle = Math.atan2(baseOffset.x, baseOffset.z);
+      const totalAngle = baseAngle + sweepAngle;
+
+      const radius = ch.camOrbitRadius * this.userZoomScale;
+      const height = clamp((ch.camHeight + this.userPitchOffset) * this.userZoomScale, 4, 85);
+
+      const desiredPos = new THREE.Vector3(
+        ch.worldCenter.x + Math.sin(totalAngle) * radius,
+        ch.worldCenter.y + height,
+        ch.worldCenter.z + Math.cos(totalAngle) * radius
+      );
+
+      const lerpFactor = clamp(1 - Math.exp(-Math.max(0.001, dt) * 3.8), 0.01, 1.0);
+      this.camPosCurrent.lerp(desiredPos, lerpFactor);
+      this.camLookCurrent.lerp(this.camLookTarget, lerpFactor);
+
+      this.camera.position.copy(this.camPosCurrent);
+      this.camera.lookAt(this.camLookCurrent);
+    }
+
+    /**
+     * Render 2D Motion Graphic Broadcast Overlay:
+     * - 3D-to-2D Projected Callout Pointers for the active landmark (or all 6 landmarks in Panorama)
+     * - Animated LEGO stud target rings & leader lines
+     */
+    _renderBroadcastOverlay() {
+      const canvas = this.overlayCanvas;
+      const ctx = this.overlayCtx;
+      const w = canvas.width;
+      const h = canvas.height;
+      const dpr = window.devicePixelRatio || 1;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const cssW = w / dpr;
+      const cssH = h / dpr;
+      const ch = this.chapters[this.currentChapterIndex];
+
+      if (ch.id === 'panorama') {
+        // In Panorama Overview, project floating landmark badges over all 6 Geneva districts!
+        for (let i = 1; i < this.chapters.length; i++) {
+          const lmChapter = this.chapters[i];
+          const worldPt = lmChapter.worldCenter.clone().add(new THREE.Vector3(0, 5.5, 0));
+          const screenPt = this._projectToScreen(worldPt, cssW, cssH);
+          if (screenPt.visible) {
+            this._drawPanoramaBadge(ctx, screenPt.x, screenPt.y, lmChapter, i);
+          }
+        }
+      } else {
+        // In Landmark Focus, project its 3 detailed architectural callouts
+        const lm = this.world.landmarks[ch.id];
+        if (lm && lm.callouts) {
+          lm.callouts.forEach((co, idx) => {
+            const worldPt = co.localPos.clone().add(lm.group.position);
+            const screenPt = this._projectToScreen(worldPt, cssW, cssH);
+            if (screenPt.visible) {
+              this._drawLandmarkCallout(ctx, screenPt.x, screenPt.y, co, ch.accentColor, idx, cssW, cssH);
+            }
+          });
+        }
+      }
+
+      // Draw Geneva 6-Landmark Broadcast Radar Mini-Map in bottom-right
+      this._drawGenevaRadarMiniMap(ctx, cssW, cssH, ch);
+
+      ctx.restore();
+    }
+
+    _drawGenevaRadarMiniMap(ctx, cssW, cssH, activeChapter) {
+      if (cssW < 720) return;
+      const boxW = 210;
+      const boxH = 148;
+      const rx = cssW - boxW - 20;
+      const ry = cssH - boxH - 94;
+
+      // Glass panel
+      ctx.fillStyle = 'rgba(11, 17, 28, 0.82)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(rx, ry, boxW, boxH, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      // Header label
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '700 9.5px "Pretendard", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('GENEVA LEGO® TOPOLOGY MAP', rx + 12, ry + 10);
+
+      // Lake Geneva stylized water polygon in center of radar
+      const mapCx = rx + boxW * 0.5;
+      const mapCy = ry + boxH * 0.56;
+      ctx.fillStyle = 'rgba(54, 174, 191, 0.18)';
+      ctx.strokeStyle = 'rgba(54, 174, 191, 0.45)';
+      ctx.beginPath();
+      ctx.ellipse(mapCx, mapCy - 4, 48, 20, -0.12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Convert landmark world (x, z) -> mini-map (mx, my)
+      const toMap = (wx, wz) => ({
+        x: mapCx + wx * 2.4,
+        y: mapCy + wz * 1.65
+      });
+
+      // Draw connecting topological lines between landmarks
+      ctx.beginPath();
+      for (let i = 1; i < this.chapters.length; i++) {
+        const wc = this.chapters[i].worldCenter;
+        const pt = toMap(wc.x, wc.z);
+        if (i === 1) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Plot each of the 6 Geneva landmarks
+      for (let i = 1; i < this.chapters.length; i++) {
+        const lmCh = this.chapters[i];
+        const pt = toMap(lmCh.worldCenter.x, lmCh.worldCenter.z);
+        const isActive = activeChapter.id === lmCh.id || activeChapter.id === 'panorama';
+
+        if (activeChapter.id === lmCh.id) {
+          const rPulse = 8 + Math.sin(this.clockTime * 6) * 2.5;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, rPulse, 0, Math.PI * 2);
+          ctx.strokeStyle = lmCh.accentColor;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, isActive ? 4.2 : 3.0, 0, Math.PI * 2);
+        ctx.fillStyle = lmCh.accentColor;
+        ctx.fill();
+
+        ctx.fillStyle = isActive ? '#FFFFFF' : 'rgba(203, 213, 225, 0.72)';
+        ctx.font = (activeChapter.id === lmCh.id ? '800 ' : '600 ') + '9.5px "Pretendard", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(lmCh.nameKo, pt.x, pt.y - 6);
+      }
+    }
+
+    _projectToScreen(worldVec, cssW, cssH) {
+      const v = worldVec.clone().project(this.camera);
+      const visible = v.z >= -1 && v.z <= 1;
+      return {
+        x: (v.x * 0.5 + 0.5) * cssW,
+        y: (-v.y * 0.5 + 0.5) * cssH,
+        visible
+      };
+    }
+
+    _drawPanoramaBadge(ctx, x, y, ch, index) {
+      // Keep within safe viewport bounds
+      if (x < 60 || x > ctx.canvas.width / (window.devicePixelRatio || 1) - 60 || y < 60 || y > ctx.canvas.height / (window.devicePixelRatio || 1) - 110) {
+        return;
+      }
+      const pulse = 1 + Math.sin(this.clockTime * 4 + index) * 0.2;
+
+      // Anchor stud dot
+      ctx.beginPath();
+      ctx.arc(x, y, 5 * pulse, 0, Math.PI * 2);
+      ctx.fillStyle = ch.accentColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(x, y, 10 * pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = ch.accentColor;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Vertical leader pin up to pill badge
+      const pillY = y - 34;
+      ctx.beginPath();
+      ctx.moveTo(x, y - 6);
+      ctx.lineTo(x, pillY + 12);
+      ctx.strokeStyle = ch.accentColor;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      const label = `0${index} · ${ch.nameKo}`;
+      ctx.font = '700 12px "Pretendard", "Apple SD Gothic Neo", sans-serif';
+      const textW = ctx.measureText(label).width;
+      const boxW = textW + 22;
+      const boxH = 24;
+
+      ctx.fillStyle = 'rgba(12, 18, 28, 0.86)';
+      ctx.strokeStyle = ch.accentColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(x - boxW * 0.5, pillY - boxH * 0.5, boxW, boxH, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, pillY);
+    }
+
+    _drawLandmarkCallout(ctx, x, y, callout, accentColor, idx, cssW, cssH) {
+      if (x < 40 || x > cssW - 40 || y < 50 || y > cssH - 120) return;
+
+      const dir = (idx % 2 === 0) ? 1 : -1;
+      const elbowX = x + dir * 26;
+      const elbowY = y - 24 - (idx % 2) * 10;
+      const endX = elbowX + dir * 18;
+
+      const pulse = 1 + Math.sin(this.clockTime * 5 + idx * 1.5) * 0.22;
+
+      // Target ring at 3D brick position
+      ctx.beginPath();
+      ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = accentColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(x, y, 9.5 * pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Diagonal + horizontal broadcast callout leader line
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(elbowX, elbowY);
+      ctx.lineTo(endX, elbowY);
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 1.75;
+      ctx.stroke();
+
+      // Callout card
+      ctx.font = '700 12.5px "Pretendard", "Apple SD Gothic Neo", sans-serif';
+      const titleW = ctx.measureText(callout.titleKo).width;
+      ctx.font = '500 10.5px "Pretendard", "Apple SD Gothic Neo", sans-serif';
+      const subW = ctx.measureText(callout.titleSub).width;
+      const cardW = Math.max(titleW, subW) + 24;
+      const cardH = 42;
+
+      const cardX = dir > 0 ? endX : endX - cardW;
+      const cardY = elbowY - cardH * 0.5;
+
+      ctx.fillStyle = 'rgba(11, 17, 27, 0.86)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(cardX, cardY, cardW, cardH, 7);
+      ctx.fill();
+      ctx.stroke();
+
+      // Accent side bar
+      ctx.fillStyle = accentColor;
+      ctx.fillRect(dir > 0 ? cardX : cardX + cardW - 3.5, cardY + 5, 3.5, cardH - 10);
+
+      // Text
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '700 12.5px "Pretendard", "Apple SD Gothic Neo", sans-serif';
+      ctx.fillText(callout.titleKo, cardX + 11, cardY + 7);
+
+      ctx.fillStyle = 'rgba(215, 228, 245, 0.82)';
+      ctx.font = '500 10.5px "Pretendard", "Apple SD Gothic Neo", sans-serif';
+      ctx.fillText(callout.titleSub, cardX + 11, cardY + 24);
+    }
+  }
+
+  global.MotionDirector = {
+    MotionDirector,
+    LIGHTING_MODES
+  };
+})(window);

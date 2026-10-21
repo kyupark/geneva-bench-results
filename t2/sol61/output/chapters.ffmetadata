@@ -1,0 +1,34 @@
+;FFMETADATA1
+title=GENÈVE — 제네바, 하늘을 걷다
+artist=Original 3D aerial visualization
+comment=Geodata and aerial imagery © swisstopo. Original synthesized score. 3D simulation.
+[CHAPTER]
+TIMEBASE=1/1000
+START=0
+END=16000
+title=올드타운 · La Vieille-Ville
+[CHAPTER]
+TIMEBASE=1/1000
+START=16000
+END=30000
+title=호숫가 · Au bord du Léman
+[CHAPTER]
+TIMEBASE=1/1000
+START=30000
+END=42000
+title=중앙역 · Gare de Cornavin
+[CHAPTER]
+TIMEBASE=1/1000
+START=42000
+END=57000
+title=UN · Palais des Nations
+[CHAPTER]
+TIMEBASE=1/1000
+START=57000
+END=69000
+title=플라스 드 뇌브 · Place de Neuve
+[CHAPTER]
+TIMEBASE=1/1000
+START=69000
+END=84000
+title=바스티옹 · Parc des Bastions

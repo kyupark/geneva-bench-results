@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4eedf">
+  <title>Brick Cab: Geneva Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="cab-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Brick Cab Geneva home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><b></b></span>
+        <span class="brand-copy"><strong>BRICK CAB</strong><small>GENEVA CITY RUN</small></span>
+      </a>
+      <div class="top-center"><span class="live-dot"></span><span>ARCADE SHIFT</span><span class="top-divider"></span><span class="date-chip">46°12′N&nbsp; 6°09′E</span></div>
+      <div class="top-right"><span class="weather"><span class="sun-icon">☼</span> LAKE BREEZE <b>18°</b></span><span class="top-divider"></span><button class="icon-button sound-toggle" id="sound-toggle" aria-label="Toggle sound" title="Toggle sound">♪</button></div>
+    </header>
+
+    <section class="game-layout" aria-label="Geneva taxi game">
+      <section class="drive-stage">
+        <canvas id="drive-map" aria-label="Top-down Geneva city map. Drive with WASD or arrow keys."></canvas>
+        <div class="map-vignette" aria-hidden="true"></div>
+        <div class="stage-topline">
+          <div class="area-pill"><span class="area-pin">✦</span><span id="area-name">CITÉ · GENÈVE</span><span class="area-dot"></span><span class="map-scale">CITY MAP</span></div>
+          <div class="weather-tag"><span class="weather-cloud">☀</span><span>BLUE HOUR</span></div>
+        </div>
+        <div class="compass-card" aria-label="Direction to destination">
+          <div class="compass-ring"><div class="compass-n">N</div><div class="compass-arrow" id="compass-arrow"><i></i></div></div>
+          <div class="compass-copy"><small>DESTINATION</small><strong id="compass-label">CORNAVIN</strong><span id="compass-distance">—</span></div>
+        </div>
+        <div class="drive-toast" id="drive-toast" aria-live="polite">
+          <span class="toast-icon" id="toast-icon">✦</span><span id="toast-copy">Your first passenger is waiting nearby.</span><kbd id="toast-key">E</kbd>
+        </div>
+        <div class="speed-card">
+          <div class="speed-value"><strong id="speed-value">0</strong><span>KM/H</span></div>
+          <div class="speed-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="street-state"><span class="street-led" id="street-led"></span><span id="street-state">AT THE CURB</span></div>
+        </div>
+        <div class="touch-pad" id="touch-pad" aria-label="Touch driving controls">
+          <button class="touch-key touch-up" data-key="up" aria-label="Accelerate">▲</button>
+          <button class="touch-key touch-left" data-key="left" aria-label="Turn left">◀</button>
+          <button class="touch-key touch-down" data-key="down" aria-label="Reverse / brake">▼</button>
+          <button class="touch-key touch-right" data-key="right" aria-label="Turn right">▶</button>
+          <button class="touch-key touch-boost" data-key="boost" aria-label="Boost">⚡</button>
+          <button class="touch-key touch-drift" data-key="drift" aria-label="Handbrake drift">✳</button>
+        </div>
+        <button class="map-reset" id="map-reset" title="Center on your taxi" aria-label="Center map on taxi">⌖</button>
+      </section>
+
+      <aside class="dispatch-panel">
+        <div class="panel-heading"><div><p class="eyebrow">DISPATCH  ·  SHIFT 01</p><h1>City's calling<span class="heading-dot">.</span></h1></div><div class="shift-badge"><span>●</span> ON DUTY</div></div>
+        <section class="fare-card" id="fare-card">
+          <div class="fare-top"><div class="passenger-tag"><span class="passenger-icon" id="passenger-icon"><i></i><b></b></span><span id="passenger-state">NEXT FARE</span></div><div class="trip-count"><span id="trip-number">01</span><small> / 10</small></div></div>
+          <div class="fare-route"><div class="route-endpoint"><span class="route-marker pickup-marker" id="pickup-marker">P</span><div><small>PICKUP</small><strong id="pickup-name">PLACE BEL-AIR</strong></div></div><div class="route-connector"><i></i><i></i><i></i><i></i><i></i></div><div class="route-endpoint"><span class="route-marker destination-marker" id="destination-marker">1</span><div><small>DROP-OFF</small><strong id="destination-name">GARE CORNAVIN</strong></div></div></div>
+          <div class="fare-divider"></div>
+          <div class="fare-stats"><div><small>DIRECT DISTANCE</small><strong id="distance-value">—</strong></div><div class="eta-stat"><small>TIME LEFT</small><strong id="timer-value">—</strong></div><div class="fare-total"><small>FARE</small><strong>CHF <span id="fare-value">0.00</span></strong></div></div>
+          <button class="pickup-button" id="pickup-button"><span id="pickup-button-label">PICK UP PASSENGER</span><kbd>E</kbd><span class="button-arrow">↗</span></button>
+        </section>
+
+        <section class="mini-map-card">
+          <div class="section-label"><div><span class="section-icon map-icon">⌁</span><strong>GENEVA OVERVIEW</strong></div><span class="north-indicator">N ↑</span></div>
+          <canvas id="overview-map" aria-label="Overview map with all ten landmarks in their real relative positions"></canvas>
+          <div class="overview-legend"><span><i class="legend-you"></i>YOU</span><span><i class="legend-stop"></i>FARE STOPS</span><span><i class="legend-water"></i>LAC LÉMAN</span></div>
+        </section>
+
+        <section class="manifest-card">
+          <div class="section-label"><div><span class="section-icon flag-icon">⚑</span><strong>THE RUN</strong></div><span class="manifest-progress" id="manifest-progress">0 / 10 CLEARED</span></div>
+          <div class="stop-list" id="stop-list"></div>
+        </section>
+
+        <div class="panel-bottom">
+          <div class="boost-block"><div class="boost-head"><span>BRICK BOOST</span><strong id="boost-value">100%</strong></div><div class="boost-track"><i id="boost-fill"></i></div><div class="boost-hint"><kbd>SHIFT</kbd><span>HOLD TO BLAST</span></div></div>
+          <div class="score-block"><small>SHIFT SCORE</small><strong id="score-value">00000</strong><span>BEST RUN <b id="best-score">00000</b></span></div>
+        </div>
+        <div class="control-footer"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> DRIVE</span><span><kbd>SPACE</kbd> DRIFT</span><span><kbd>E</kbd> PICK UP</span><span><kbd>R</kbd> RESTART</span><span class="map-credit">Map positions <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors · ODbL</a></span></div>
+      </aside>
+    </section>
+    <div class="toast-pop" id="toast-pop" role="status" aria-live="polite"></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GENÈVE in BRICKS — Geneva made of LEGO</title>
+<style>
+  :root { --red:#d01012; --yellow:#ffcf00; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0d1b2a;
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Helvetica Neue", Arial, sans-serif; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+
+  /* ---------- Title ---------- */
+  #title { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; pointer-events: none; opacity: 0; transition: opacity .6s; }
+  #title.show { opacity: 1; }
+  #title .logo { background: var(--red); color: #fff; font-weight: 900; font-size: clamp(36px, 7vw, 96px);
+    padding: .15em .45em; border: .08em solid var(--yellow); border-radius: .18em; letter-spacing: .02em;
+    box-shadow: 0 .12em 0 #8a0a0b, 0 .25em .5em rgba(0,0,0,.35); transform: rotate(-3deg) scale(.6);
+    transition: transform .8s cubic-bezier(.2,1.6,.4,1); }
+  #title.show .logo { transform: rotate(-3deg) scale(1); }
+  #title .sub { margin-top: 28px; color: #fff; font-size: clamp(16px, 2.2vw, 30px); font-weight: 700;
+    letter-spacing: .3em; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+
+  /* ---------- Landmark card ---------- */
+  #card { position: fixed; left: 4vw; bottom: 9vh; pointer-events: none; display: flex; align-items: stretch;
+    transform: translateX(-120%); transition: transform .7s cubic-bezier(.2,1.2,.3,1); filter: drop-shadow(0 8px 18px rgba(0,0,0,.35)); }
+  #card.show { transform: translateX(0); }
+  #card .num { background: var(--yellow); color: #222; font-weight: 900; font-size: clamp(28px, 4vw, 54px);
+    display: flex; align-items: center; padding: 0 .45em; border-radius: 12px 0 0 12px; position: relative; }
+  #card .num::before, #card .num::after { content: ""; position: absolute; top: -9px; width: 22px; height: 9px;
+    background: var(--yellow); border-radius: 4px 4px 0 0; }
+  #card .num::before { left: 14%; } #card .num::after { right: 14%; }
+  #card .body { background: #fff; padding: 14px 26px 16px 22px; border-radius: 0 12px 12px 0; min-width: 300px; }
+  #card .ko { font-size: clamp(22px, 2.8vw, 40px); font-weight: 900; color: #1b1b1b; }
+  #card .fr { font-size: clamp(13px, 1.3vw, 18px); font-weight: 700; color: var(--red); letter-spacing: .08em; margin-top: 2px; }
+  #card .desc { font-size: clamp(12px, 1.15vw, 16px); color: #555; margin-top: 6px; }
+
+  /* ---------- Finale ---------- */
+  #finale { position: fixed; top: 7vh; width: 100%; text-align: center; pointer-events: none; opacity: 0;
+    transform: translateY(-20px); transition: opacity 1s, transform 1s; color: #fff; text-shadow: 0 3px 14px rgba(0,0,0,.45); }
+  #finale.show { opacity: 1; transform: none; }
+  #finale h1 { font-size: clamp(30px, 5vw, 72px); font-weight: 900; letter-spacing: .06em; }
+  #finale p { font-size: clamp(14px, 1.6vw, 22px); font-weight: 600; margin-top: 8px; letter-spacing: .2em; opacity: .9; }
+
+  /* ---------- Controls ---------- */
+  #ui { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 18px 14px; display: flex; gap: 10px; align-items: center;
+    background: linear-gradient(transparent, rgba(0,0,0,.45)); opacity: .25; transition: opacity .3s; }
+  #ui:hover { opacity: 1; }
+  #ui button { background: #fff; border: 0; border-radius: 6px; padding: 7px 12px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 3px 0 #bbb; font-family: inherit; font-size: 13px; }
+  #ui button:active { transform: translateY(2px); box-shadow: 0 1px 0 #bbb; }
+  #ui button.rec { background: var(--red); color: #fff; box-shadow: 0 3px 0 #8a0a0b; }
+  #bar { flex: 1; height: 8px; background: rgba(255,255,255,.25); border-radius: 4px; cursor: pointer; position: relative; }
+  #bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--yellow); border-radius: 4px; width: 0; }
+  #time { color: #fff; font-size: 12px; font-weight: 700; min-width: 74px; text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+
+<div id="ui">
+  <button id="play">❚❚ Pause</button>
+  <button id="replay">↺ Restart</button>
+  <button id="rec" class="rec">● Save video</button>
+  <div id="bar"><i></i></div>
+  <div id="time">0.0s</div>
+</div>
+
+<script>
+/* =========================================================
+   GENÈVE in BRICKS — isometric LEGO motion graphic
+   ========================================================= */
+'use strict';
+
+// ---------- Iso projection constants ----------
+const TW = 24, TH = 12, BH = 14, PLATE = 5;   // tile w/h, brick height, baseplate thickness
+const GW = 56, GH = 44, GZ = 24;               // world grid size
+const proj = (x, y, z) => [(x - y) * TW / 2, (x + y) * TH / 2 - z * BH];
+
+// ---------- Easing ----------
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const easeOutBack = t => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+function easeOutBounce(t) {
+  const n = 7.5625, d = 2.75;
+  if (t < 1 / d) return n * t * t;
+  if (t < 2 / d) return n * (t -= 1.5 / d) * t + .75;
+  if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + .9375;
+  return n * (t -= 2.625 / d) * t + .984375;
+}
+
+// ---------- Color helpers ----------
+function hex2rgb(h) { let s = h.slice(1); if (s.length === 3) s = s.replace(/./g, ch => ch + ch); const n = parseInt(s, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function shade(rgb, k) { return `rgb(${rgb[0] * k | 0},${rgb[1] * k | 0},${rgb[2] * k | 0})`; }
+const shadeCache = new Map();
+function shades(hex) {
+  let s = shadeCache.get(hex);
+  if (!s) {
+    const c = hex2rgb(hex);
+    s = { top: shade(c, 1), left: shade(c, .8), right: shade(c, .64), stud: shade(c, .9), studHi: shade(c.map(v => Math.min(255, v * 1.15 + 20)), 1) };
+    shadeCache.set(hex, s);
+  }
+  return s;
+}
+
+// Deterministic random
+let seed = 7;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+// ---------- LEGO palette ----------
+const C = {
+  grass: '#4b9f4a', park: '#2f8a45', dkgreen: '#237841', water: '#3a86c8', road: '#a0a5a9', rail: '#6c6e68',
+  stone: '#d8c79f', plaza: '#cfc8b8', white: '#f4f4f4', cream: '#efe4c9', tan: '#e4cd9e', dktan: '#958a73',
+  red: '#c91a09', dkred: '#8b1c12', yellow: '#f2cd37', orange: '#fe8a18', brown: '#583927', rbrown: '#82422a',
+  black: '#2b2b2b', grey: '#a0a5a9', dkgrey: '#6c6e68', copper: '#5f9e7f', slate: '#56646d', bronze: '#4d5a4c',
+  window: '#41566b', gold: '#d9a93b', blue: '#0055bf', pink: '#e4a0c0', lime: '#bbe90b', glass: '#cfe8ff'
+};
+
+// ---------- Baseplate map ----------
+function baseType(x, y) {
+  if (x >= 33 && x <= 34 && y >= 18 && y <= 21) return 'road';                  // Pont du Mont-Blanc
+  if (x >= 14 && x <= 15 && y >= 18 && y <= 21) return 'road';                  // Pont de la Coulouvrenière
+  if ((x >= 36 && y <= 25) || (y >= 18 && y <= 21)) return 'water';             // Lac Léman + Rhône
+  if (y >= 42 && x >= 10 && x <= 25) return 'water';                            // Bastions moat
+  if (x >= 19 && x <= 22 && y >= 33 && y <= 36) return 'chess';
+  if (y >= 3 && y <= 6 && x >= 17 && x <= 35) return 'rail';
+  if (y === 14 || y === 22) return 'road';                                      // quais
+  if (x === 16 && y >= 7 && y <= 17) return 'road';
+  if (x === 10 && y >= 31) return 'road';
+  if (x <= 16 && y >= 4 && y <= 12) return 'plaza';                             // Place des Nations
+  if (x >= 3 && x <= 14 && y >= 23 && y <= 31) return 'plaza';                  // Place de Neuve
+  if (x >= 24 && x <= 34 && y >= 24 && y <= 34) return 'stone';                 // Vieille Ville
+  if (x >= 36 && x <= 42 && y >= 26 && y <= 31) return 'park';                  // Jardin Anglais
+  if (x >= 11 && x <= 23 && y >= 32 && y <= 41) return 'park';                  // Parc des Bastions
+  if (x >= 17 && x <= 35 && y >= 7 && y <= 12) return 'plaza';                  // Cornavin forecourt
+  return 'grass';
+}
+const BASE_COL = { grass: C.grass, park: C.park, water: C.water, road: C.road, rail: C.rail, stone: C.stone, plaza: C.plaza };
+const base = [];
+for (let y = 0; y < GH; y++) for (let x = 0; x < GW; x++) {
+  const type = baseType(x, y);
+  let col = type === 'chess' ? ((x + y) % 2 ? C.black : C.white) : BASE_COL[type];
+  base.push({ x, y, type, col, t: 0 });
+}
+{ // ripple-in timing from map centre
+  const cx = GW / 2, cy = GH / 2;
+  for (const b of base) b.t = 0.6 + Math.hypot(b.x - cx, b.y - cy) * 0.055 + rnd() * 0.15;
+}
+
+// ---------- Voxel world ----------
+const voxels = [];
+const occ = new Map();                         // key -> voxel
+const key = (x, y, z) => (z * GH + y) * GW + x;
+let curGroup = 0;
+function add(x, y, z, c, f = {}) {
+  if (x < 0 || y < 0 || z < 0 || x >= GW || y >= GH || z >= GZ) return;
+  const k = key(x, y, z);
+  const old = occ.get(k);
+  if (old) { old.c = c; Object.assign(old, f); return; }
+  const v = { x, y, z, c, g: curGroup, t: Infinity, ...f };
+  occ.set(k, v); voxels.push(v);
+}
+function box(x0, y0, z0, w, d, h, c, f) {
+  for (let z = z0; z < z0 + h; z++) for (let y = y0; y < y0 + d; y++) for (let x = x0; x < x0 + w; x++) add(x, y, z, c, f);
+}
+function gable(x0, y0, z0, w, d, c, alongX = true) {   // stepped LEGO gable roof
+  let i = 0;
+  if (alongX) { while (d - 2 * i > 0) { box(x0, y0 + i, z0 + i, w, d - 2 * i, 1, c); i++; } }
+  else { while (w - 2 * i > 0) { box(x0 + i, y0, z0 + i, w - 2 * i, d, 1, c); i++; } }
+}
+function tree(x, y, big = false) {
+  box(x, y, 0, 1, 1, big ? 2 : 1, C.rbrown);
+  const z = big ? 2 : 1;
+  for (let dz = 0; dz < 2; dz++) for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+    if (dz === 1 && Math.abs(dx) + Math.abs(dy) === 2) continue;
+    add(x + dx, y + dy, z + dz, rnd() < .5 ? C.dkgreen : C.grass);
+  }
+  add(x, y, z + 2, C.grass);
+}
+function house(x, y, z, w, d, h, wall, roof) {
+  box(x, y, z, w, d, h, wall);
+  for (let xx = x; xx < x + w; xx++) if ((xx - x) % 2 === 0 && h > 1) add(xx, y + d - 1, z + h - 1, C.window);
+  add(x + (w >> 1), y + d - 1, z, C.brown);
+  gable(x, y, z + h, w, d, roof, w >= d);
+}
+
+/* ---- 01 · Lac Léman & Jet d'Eau ---- */
+curGroup = 0;
+box(46, 13, 0, 1, 13, 1, C.grey, { ns: 1 });            // Jetée des Eaux-Vives
+add(46, 12, 0, C.dkgrey);
+for (let z = 1; z <= 16; z++) add(46, 12, z, C.white, { tr: 1, jet: 1, ns: 1 });
+box(37, 6, 0, 7, 1, 1, C.grey, { ns: 1 });              // Jetée des Pâquis
+box(43, 6, 0, 1, 1, 4, C.white); add(43, 6, 4, C.copper); add(43, 6, 5, C.copper, { ns: 1 });
+box(38, 6, 1, 2, 1, 1, C.rbrown);                       // Bains des Pâquis cabins
+for (let y = 26; y <= 30; y++) for (let x = 37; x <= 41; x++) {   // Horloge fleurie
+  const dx = x - 39, dy = y - 28, r = Math.hypot(dx, dy);
+  if (r > 2.3) continue;
+  let c = r > 1.5 ? (((x + y) % 2) ? C.red : C.yellow) : C.lime;
+  if ((dx === 0 && dy <= 0 && dy >= -1) || (dy === 0 && dx >= 0 && dx <= 1)) c = C.black;
+  add(x, y, 0, c, { pl: 1 });
+}
+tree(35, 16); tree(35, 13); tree(42, 31); tree(36, 31);
+
+/* ---- 02 · Vieille Ville & Cathédrale Saint-Pierre ---- */
+curGroup = 1;
+box(24, 24, 0, 11, 11, 1, C.dktan);                     // hill
+box(25, 25, 1, 9, 9, 1, C.stone);
+box(26, 28, 2, 5, 3, 3, C.tan);                         // nave
+gable(26, 28, 5, 5, 3, C.slate, true);
+box(31, 27, 2, 2, 2, 7, C.cream); box(31, 30, 2, 2, 2, 7, C.cream);  // twin towers
+box(31, 27, 9, 2, 2, 1, C.slate); box(31, 30, 9, 2, 2, 1, C.slate);
+box(31, 29, 2, 2, 1, 4, C.cream);
+for (const y of [27, 29, 31]) box(33, y, 2, 1, 1, 3, C.white);      // neoclassical portico
+box(33, 27, 5, 1, 5, 1, C.white); box(33, 28, 6, 1, 3, 1, C.white); add(33, 29, 7, C.white);
+for (let z = 5; z <= 10; z++) add(28, 29, z, C.copper);             // green spire
+add(28, 29, 11, C.gold, { ns: 1 });
+add(32, 27, 10, C.grey); add(32, 27, 11, C.grey);                   // Geneva flag on tower
+add(32, 27, 12, C.yellow, { flag: 1 }); add(32, 28, 12, C.red, { flag: 1 });
+house(25, 25, 2, 2, 2, 2, C.cream, C.red);
+house(28, 25, 2, 3, 2, 3, '#f0c87a', C.dkred);
+house(25, 32, 2, 3, 2, 2, '#e9b8a0', C.red);
+house(29, 32, 2, 2, 2, 3, C.white, C.dkred);
+house(25, 29, 2, 1, 2, 2, '#f0c87a', C.red);
+box(34, 24, 1, 1, 1, 2, C.dktan); box(24, 34, 1, 1, 1, 2, C.dktan); // rampart corners
+
+/* ---- 03 · Parc des Bastions & Mur des Réformateurs ---- */
+curGroup = 2;
+box(11, 41, 0, 14, 1, 4, '#9b9a8e');                    // Reformation Wall
+box(11, 41, 4, 14, 1, 1, '#b5b4a8', { ns: 1 });
+for (const x of [16, 17, 18, 19]) { add(x, 40, 0, '#7d7c72'); box(x, 40, 1, 1, 1, 3, C.bronze); }
+add(12, 40, 0, '#7d7c72'); add(23, 40, 0, '#7d7c72');   // side reliefs
+box(12, 40, 1, 1, 1, 2, C.bronze); box(23, 40, 1, 1, 1, 2, C.bronze);
+add(19, 34, 0, C.white); add(19, 34, 1, C.white, { ns: 1 });        // giant chess pieces
+add(21, 35, 0, C.black); add(21, 35, 1, C.black, { ns: 1 });
+add(22, 33, 0, C.black); add(22, 33, 1, C.black); add(22, 33, 2, C.yellow, { ns: 1 });
+add(20, 36, 0, C.white); add(20, 36, 1, C.white); add(20, 36, 2, C.white, { ns: 1 });
+tree(13, 33, true); tree(17, 33, true); tree(13, 37, true); tree(17, 37, true); tree(23, 38);
+box(11, 32, 0, 1, 1, 2, C.black); box(11, 32, 2, 1, 1, 1, C.gold, { ns: 1 });  // park gate
+
+/* ---- 04 · Place de Neuve ---- */
+curGroup = 3;
+box(4, 24, 0, 5, 5, 4, C.tan);                          // Grand Théâtre
+for (let y = 24; y <= 28; y++) { add(9, y, 0, y % 2 ? C.brown : C.cream); if (y % 2 === 0) box(9, y, 1, 1, 1, 2, C.white); }
+box(9, 24, 3, 1, 5, 1, C.cream, { ns: 1 });
+box(4, 24, 4, 6, 5, 1, C.copper);
+box(5, 25, 5, 4, 3, 1, C.copper); box(6, 26, 6, 2, 1, 1, C.copper);
+add(9, 24, 5, C.gold, { ns: 1 }); add(9, 28, 5, C.gold, { ns: 1 });
+for (let x = 4; x <= 8; x += 2) add(x, 28, 2, C.window);
+box(11, 26, 0, 3, 1, 2, '#9b9a8e');                     // Général Dufour statue
+box(11, 26, 2, 2, 1, 1, C.bronze); add(13, 26, 3, C.bronze); add(13, 26, 2, C.bronze);
+add(11, 26, 3, C.bronze); add(11, 26, 4, C.bronze, { ns: 1 });
+box(11, 28, 0, 4, 2, 3, '#e8dfc6');                     // Musée Rath
+for (const x of [11, 12, 13, 14]) box(x, 30, 0, 1, 1, 3, C.white);
+box(11, 28, 3, 4, 3, 1, C.cream, { ns: 1 }); box(12, 28, 4, 2, 3, 1, C.cream, { ns: 1 });
+tree(5, 30);
+
+/* ---- 05 · Gare Cornavin ---- */
+curGroup = 4;
+box(18, 8, 0, 17, 3, 3, C.cream);
+box(23, 8, 0, 7, 4, 4, '#f5ecd6');
+for (let x = 18; x <= 34; x++) {
+  const front = (x >= 23 && x <= 29) ? 11 : 10;
+  for (let z = 1; z <= (front === 11 ? 2 : 2); z++) if (x % 2 === 0) add(x, front, z, C.window);
+  if (x % 3 === 0) add(x, front, 0, C.brown);
+}
+add(26, 11, 3, C.white, { clock: 1 });
+box(18, 8, 3, 5, 3, 1, C.dkgrey); box(30, 8, 3, 5, 3, 1, C.dkgrey);
+box(23, 8, 4, 7, 4, 1, C.dkgrey);
+add(29, 11, 3, C.red, { sbb: 1 });
+box(23, 12, 1, 7, 1, 1, C.black, { ns: 1 });            // entrance canopy
+for (const x of [23, 29]) add(x, 12, 0, C.grey);
+for (const x of [18, 24, 30, 35]) box(x, 5, 0, 1, 1, 2, C.grey);   // platform canopy
+box(17, 5, 2, 19, 1, 1, C.dkgrey, { ns: 1 });
+tree(19, 13); tree(32, 13);
+
+/* ---- 06 · Palais des Nations (UN) ---- */
+curGroup = 5;
+box(1, 0, 0, 14, 3, 4, '#efe8d8');
+box(5, 0, 0, 6, 3, 5, '#f7f2e6');
+for (let x = 1; x <= 14; x++) for (let z = 1; z <= (x >= 5 && x <= 10 ? 4 : 3); z++) if (x % 2) add(x, 2, z, C.window);
+for (let x = 5; x <= 10; x++) add(x, 2, 0, C.brown);
+const FLAGS = [['#d52b1e', '#fff'], ['#0055bf', '#f2cd37'], ['#009246', '#ce2b37'], ['#000', '#dd0000'], ['#002395', '#ed2939'],
+               ['#bc002d', '#fff'], ['#fe8a18', '#169b62'], ['#4b92db', '#fff']];   // last: UN blue
+FLAGS.forEach((f, i) => {
+  const x = 1 + i * 2;
+  box(x, 5, 0, 1, 1, 4, C.grey, { ns: 1 });
+  add(x, 5, 4, f[0], { flag: 1, ns: 1 }); add(x + 1, 5, 4, f[1], { flag: 1, ns: 1 });
+});
+// The Broken Chair (Broken Chair, Daniel Berset)
+for (const [x, y] of [[6, 8], [8, 8], [6, 10]]) box(x, y, 0, 1, 1, 4, C.rbrown);
+add(8, 10, 0, C.rbrown, { pl: 1 }); add(8, 10, 3, C.rbrown);       // the broken leg
+box(6, 8, 4, 3, 3, 1, C.rbrown);
+box(6, 8, 5, 3, 1, 4, C.rbrown);
+tree(13, 9); tree(2, 10);
+
+/* ---- timeline ---- */
+const T_INTRO = 3.6, T_SEG = 5.6, N_SEG = 6;
+const T_FINALE = T_INTRO + T_SEG * N_SEG, T_END = T_FINALE + 10;
+const SEGMENTS = [
+  { ko: 'Lakeside', fr: "LAC LÉMAN · JET D'EAU", desc: "140m high, soaring Jet d’Eau, the Flower Clock and the Pâquis lighthouse", c: [44, 16, 3], z: 1.75 },
+  { ko: 'Old Town', fr: 'VIEILLE VILLE · CATHÉDRALE ST-PIERRE', desc: 'The Old Town on the hill and St. Pierre Cathedral’s green spire', c: [29, 29, 4], z: 2.2 },
+  { ko: 'Bastions', fr: 'PARC DES BASTIONS', desc: 'A park with the Reformation Wall and a giant chessboard', c: [17, 37, 2], z: 2.2 },
+  { ko: 'Place de Neuve', fr: 'PLACE DE NEUVE', desc: 'Grand Théâtre, Musée Rath, General Dufour statue', c: [9, 27, 2], z: 2.3 },
+  { ko: 'Central Station', fr: 'GARE CORNAVIN', desc: 'Geneva’s gateway, Cornavin Station and red SBB trains', c: [26, 8, 2], z: 2.0 },
+  { ko: 'UN', fr: 'PALAIS DES NATIONS', desc: 'The Allée des Drapeaux and the Broken Chair', c: [8, 5, 3], z: 2.1 },
+];
+// assign landing times: layer by layer, with a little randomness
+for (let g = 0; g < N_SEG; g++) {
+  const vs = voxels.filter(v => v.g === g);
+  const zmax = Math.max(...vs.map(v => v.z)) || 1;
+  const s = T_INTRO + g * T_SEG + 0.9, D = 3.4;
+  for (const v of vs) v.t = s + (v.z / zmax) * D * 0.75 + rnd() * D * 0.25;
+}
+// static draw order (back to front)
+voxels.sort((a, b) => (a.x + a.y + a.z) - (b.x + b.y + b.z) || a.z - b.z || (a.x - b.x));
+
+// =========================================================
+//  RENDERING
+// =========================================================
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+}
+addEventListener('resize', resize); resize();
+
+// ---------- Camera ----------
+const MAP_BOUNDS = (() => {
+  const xs = [proj(0, GH, 0)[0], proj(GW, 0, 0)[0]];
+  const ys = [proj(0, 0, 12)[1], proj(GW, GH, 0)[1] + PLATE];
+  return { cx: (xs[0] + xs[1]) / 2, cy: (ys[0] + ys[1]) / 2, w: xs[1] - xs[0], h: ys[1] - ys[0] };
+})();
+const fitZoom = () => Math.min(W / MAP_BOUNDS.w, H / MAP_BOUNDS.h) * 0.94;
+function camFor(i, drift = 0) {          // i = -1 → full view
+  if (i < 0) return { x: MAP_BOUNDS.cx, y: MAP_BOUNDS.cy, z: fitZoom() * (1 + drift * 0.06) };
+  const s = SEGMENTS[i], p = proj(...s.c);
+  return { x: p[0] + drift * 18, y: p[1], z: fitZoom() * s.z * (1 + drift * 0.07) };
+}
+function camAt(t) {
+  if (t < T_INTRO) return camFor(-1, -0.6 + t / T_INTRO * 0.6);
+  let g = Math.floor((t - T_INTRO) / T_SEG);
+  let a, b, local;
+  if (g >= N_SEG) { a = camFor(N_SEG - 1, 1); local = t - T_FINALE; b = camFor(-1, clamp((local - 2.2) / 8)); }
+  else { local = t - T_INTRO - g * T_SEG; a = g === 0 ? camFor(-1, 0) : camFor(g - 1, 1); b = camFor(g, local / T_SEG); }
+  const k = easeInOut(clamp(local / (g >= N_SEG ? 2.2 : 1.3)));
+  const dip = 1 - 0.22 * Math.sin(Math.PI * k) * (g === 0 ? 0 : 1);   // pull-back between landmarks
+  return { x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k), z: Math.exp(lerp(Math.log(a.z), Math.log(b.z), k)) * dip };
+}
+
+// ---------- Sky, mountains, clouds ----------
+const mixHex = (h1, h2, k) => { const a = hex2rgb(h1), b = hex2rgb(h2); return `rgb(${a.map((v, i) => lerp(v, b[i], k) | 0)})`; };
+const CLOUDS = Array.from({ length: 9 }, (_, i) => ({ x: rnd(), y: 0.05 + rnd() * 0.35, s: 0.6 + rnd() * 0.9, v: 0.004 + rnd() * 0.006 }));
+function drawSky(t, dusk, cam) {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, mixHex('#5fb4ee', '#3b3f7a', dusk));
+  g.addColorStop(0.55, mixHex('#a9dcff', '#f08a5d', dusk));
+  g.addColorStop(1, mixHex('#e6f6ff', '#ffd08a', dusk));
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // Alps & Mont Blanc (parallax)
+  const px = -(cam.x - MAP_BOUNDS.cx) * 0.08, py = -(cam.y - MAP_BOUNDS.cy) * 0.05;
+  const baseY = H * 0.42 + py;
+  for (let layer = 0; layer < 2; layer++) {
+    ctx.fillStyle = layer ? mixHex('#7d93b5', '#6a4d78', dusk) : mixHex('#a9b9d3', '#9c6f8e', dusk);
+    ctx.beginPath(); ctx.moveTo(0, H);
+    const step = 60;
+    for (let x = -step; x <= W + step; x += step) {
+      const wx = x - px * (layer ? 1 : .6);
+      const hgt = (layer ? 70 : 110) + Math.sin(wx * 0.004 + layer * 2) * 40 + Math.abs(Math.sin(wx * 0.011 + layer)) * 50
+        + Math.exp(-Math.pow((wx - W * 0.78) / 120, 2)) * (layer ? 40 : 120);
+      ctx.lineTo(x, baseY + layer * 40 - hgt);
+    }
+    ctx.lineTo(W + step, H); ctx.closePath(); ctx.fill();
+  }
+  // snow caps on the far range (studded LEGO-ish blocks)
+  ctx.fillStyle = mixHex('#ffffff', '#ffd9c7', dusk);
+  for (let x = -60; x <= W + 60; x += 60) {
+    const wx = x - px * .6;
+    const hgt = 110 + Math.sin(wx * 0.004) * 40 + Math.abs(Math.sin(wx * 0.011)) * 50 + Math.exp(-Math.pow((wx - W * 0.78) / 120, 2)) * 120;
+    if (hgt > 180) { const y = baseY - hgt; ctx.beginPath(); ctx.moveTo(x - 22, y + 22); ctx.lineTo(x, y); ctx.lineTo(x + 22, y + 22); ctx.closePath(); ctx.fill(); }
+  }
+  // clouds
+  for (const c of CLOUDS) {
+    const x = ((c.x + t * c.v) % 1.3 - 0.15) * W + px * 0.5, y = c.y * H + py * 0.3, s = c.s * Math.min(W, H) * 0.09;
+    ctx.fillStyle = `rgba(255,255,255,${0.75 - dusk * 0.3})`;
+    ctx.beginPath();
+    ctx.ellipse(x, y, s * 1.4, s * 0.45, 0, 0, Math.PI * 2);
+    ctx.ellipse(x - s * .5, y - s * .2, s * .6, s * .45, 0, 0, Math.PI * 2);
+    ctx.ellipse(x + s * .4, y - s * .3, s * .7, s * .55, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ---------- Primitive: one brick ----------
+let VIEW = { l: 0, r: 0, t: 0, b: 0 };
+function studAt(sx, sy, col) {
+  const rx = TW * 0.2, ry = TH * 0.2, h = 3;
+  ctx.fillStyle = col.right;
+  ctx.beginPath(); ctx.ellipse(sx, sy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(sx - rx, sy - h, rx * 2, h);
+  ctx.fillStyle = col.studHi;
+  ctx.beginPath(); ctx.ellipse(sx, sy - h, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+}
+function drawBrick(x, y, z, hgt, hex, faces, stud, alpha = 1) {
+  const [ox, oy] = proj(x, y, z);
+  if (ox < VIEW.l - 30 || ox > VIEW.r + 30 || oy < VIEW.t - 40 || oy > VIEW.b + 60) return;
+  const col = shades(hex), hz = hgt * BH;
+  const hw = TW / 2, hh = TH / 2;
+  // corners relative to (x,y,z) projected origin = back-top corner of footprint
+  const A = [ox, oy - hz], B = [ox + hw, oy + hh - hz], Cc = [ox, oy + TH - hz], D = [ox - hw, oy + hh - hz];
+  if (alpha < 1) ctx.globalAlpha = alpha;
+  ctx.lineWidth = 0.5; ctx.strokeStyle = 'rgba(0,0,0,.22)';
+  if (faces & 2) { // +x face (right)
+    ctx.fillStyle = col.right; ctx.beginPath();
+    ctx.moveTo(B[0], B[1]); ctx.lineTo(Cc[0], Cc[1]); ctx.lineTo(Cc[0], Cc[1] + hz); ctx.lineTo(B[0], B[1] + hz); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  if (faces & 4) { // +y face (left)
+    ctx.fillStyle = col.left; ctx.beginPath();
+    ctx.moveTo(D[0], D[1]); ctx.lineTo(Cc[0], Cc[1]); ctx.lineTo(Cc[0], Cc[1] + hz); ctx.lineTo(D[0], D[1] + hz); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  if (faces & 1) { // top
+    ctx.fillStyle = col.top; ctx.beginPath();
+    ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.lineTo(Cc[0], Cc[1]); ctx.lineTo(D[0], D[1]); ctx.closePath(); ctx.fill(); ctx.stroke();
+    if (stud) studAt(ox, oy + hh - hz, col);
+  }
+  if (alpha < 1) ctx.globalAlpha = 1;
+}
+// draw a decal on the +y face of a voxel (unit square mapped onto the face)
+function faceDecal(x, y, z, fn) {
+  const [ox, oy] = proj(x, y + 1, z + 1);
+  ctx.save(); ctx.transform(TW / 2, TH / 2, 0, BH, ox, oy); fn(); ctx.restore();
+}
+
+// ---------- Baseplate ----------
+const WATER_SH = Array.from({ length: 8 }, (_, i) => mixHex(C.water, '#8cc8f0', i / 7 * 0.55));
+function drawBase(t) {
+  for (const b of base) {
+    if (t < b.t - 0.6) continue;
+    const p = clamp((t - (b.t - 0.6)) / 0.6);
+    const lift = (1 - easeOutBounce(p)) * 6;
+    let hex = b.col;
+    if (b.type === 'water') {
+      const w = (Math.sin(t * 1.6 + b.x * 0.7 + b.y * 0.45) + Math.sin(t * 1.1 - b.x * 0.3 + b.y * 0.8)) * 0.25 + 0.5;
+      ctx.fillStyle = WATER_SH[clamp(w * 7.99, 0, 7) | 0];
+    }
+    const [ox, oy0] = proj(b.x, b.y, lift);
+    const oy = oy0 + (b.type === 'water' ? 3 : 0);
+    if (ox < VIEW.l - 20 || ox > VIEW.r + 20 || oy < VIEW.t - 20 || oy > VIEW.b + 20) continue;
+    const col = shades(hex);
+    if (b.type !== 'water') ctx.fillStyle = col.top;
+    ctx.globalAlpha = p;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy); ctx.lineTo(ox + TW / 2, oy + TH / 2); ctx.lineTo(ox, oy + TH); ctx.lineTo(ox - TW / 2, oy + TH / 2); ctx.closePath();
+    ctx.fill();
+    if (b.type === 'rail') { // sleepers & rails
+      ctx.strokeStyle = '#4a3a2a'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(ox - 3, oy + 2); ctx.lineTo(ox + 5, oy + 6); ctx.stroke();
+      ctx.strokeStyle = '#c8c8c8'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(ox - 8, oy + 4); ctx.lineTo(ox + 4, oy + 10); ctx.moveTo(ox - 4, oy + 2); ctx.lineTo(ox + 8, oy + 8); ctx.stroke();
+    }
+    // edge sides of the plate
+    if (b.x === GW - 1 || b.y === GH - 1) {
+      ctx.fillStyle = b.x === GW - 1 ? col.right : col.left; ctx.beginPath();
+      if (b.x === GW - 1) { ctx.moveTo(ox + TW / 2, oy + TH / 2); ctx.lineTo(ox, oy + TH); ctx.lineTo(ox, oy + TH + PLATE); ctx.lineTo(ox + TW / 2, oy + TH / 2 + PLATE); }
+      else { ctx.moveTo(ox - TW / 2, oy + TH / 2); ctx.lineTo(ox, oy + TH); ctx.lineTo(ox, oy + TH + PLATE); ctx.lineTo(ox - TW / 2, oy + TH / 2 + PLATE); }
+      ctx.closePath(); ctx.fill();
+    }
+    if (b.type !== 'water' && b.type !== 'road' && b.type !== 'rail') studAt(ox, oy + TH / 2, col);
+    if (b.type === 'road' && (b.x + b.y) % 3 === 0) { ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(ox - 2, oy + TH / 2 - 1, 4, 2); }
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ---------- Moving things: train, tram, cars, boats ----------
+const segStart = g => T_INTRO + g * T_SEG;
+function dynamicVoxels(t) {
+  const out = [];
+  const push = (x, y, z, c, f = {}) => out.push({ x, y, z, c, ns: 1, ...f });
+  // SBB train (after Cornavin is built)
+  if (t > segStart(4) + 4.2) {
+    const hx = 12 + ((t - segStart(4) - 4.2) * 5) % 46;
+    for (let i = 0; i < 12; i++) {
+      const x = hx - i; if (x < 17 || x > 35) continue;
+      push(x, 4, 0, C.red); push(x, 4, 1, (i % 3 === 1 || i === 0) ? C.window : C.red);
+      push(x, 4, 2, C.white, { pl: 1 });
+    }
+  }
+  // Geneva tram on the left-bank quai
+  if (t > segStart(3) + 4) {
+    const hx = -4 + ((t - segStart(3) - 4) * 3.2) % 46;
+    for (let i = 0; i < 6; i++) {
+      const x = hx - i; if (x < 0 || x > 35) continue;
+      push(x, 22, 0, C.white); push(x, 22, 1, i % 2 ? C.window : '#2e9a5b');
+    }
+  }
+  // cars on the right-bank quai
+  if (t > T_INTRO) {
+    [[C.yellow, 4.5, 0], [C.blue, 3.4, 17], [C.orange, 5.2, 30]].forEach(([c, v, off]) => {
+      const hx = (t * v + off) % 40 - 2;
+      for (let i = 0; i < 2; i++) { const x = hx - i; if (x >= 0 && x <= 35) { push(x, 14, 0, c, { pl: 1 }); push(x, 14, 1 / 3, i ? C.window : c, { pl: 1 }); } }
+    });
+  }
+  // CGN paddle steamer & sailboats (after the lake is built)
+  if (t > segStart(0) + 4) {
+    const by = 12 + Math.sin((t - segStart(0)) * 0.25) * 8;
+    for (let i = 0; i < 6; i++) {
+      push(53, by + i, 0, C.white); if (i > 0 && i < 5) push(53, by + i, 1, i % 2 ? C.window : C.cream);
+    }
+    push(53, by + 2, 2, C.yellow); push(53, by + 3, 2, C.yellow);
+    for (let s = 0; s < 2; s++) {
+      const a = (t - segStart(0)) * (0.35 + s * 0.15) + s * 3;
+      const sx = (s ? 49 : 41) + Math.cos(a) * 2.2, sy = (s ? 3.5 : 12) + Math.sin(a) * 2.2;
+      push(sx, sy, 0, C.white, { pl: 1 }); push(sx + 1, sy, 0, C.white, { pl: 1 });
+      push(sx, sy, 1 / 3, s ? C.red : C.white, { thin: 1 });
+    }
+  }
+  out.sort((a, b) => (a.x + a.y + a.z) - (b.x + b.y + b.z) || a.z - b.z);
+  return out;
+}
+
+// ---------- World pass ----------
+function solidAt(x, y, z, t, v) {
+  if (x >= GW || y >= GH || z >= GZ) return false;
+  const n = occ.get(key(x, y, z));
+  return n && t >= n.t && !n.pl && !!n.tr === !!v.tr;
+}
+function drawStatic(v, t) {
+  if (t < v.t - 0.55) return;
+  if (v.jet) { const jh = 13 + Math.sin(t * 2.3) * 1.5 + Math.sin(t * 5.1) * 0.6; if (v.z > jh) return; }
+  const p = clamp((t - (v.t - 0.55)) / 0.55);
+  const landed = t >= v.t;
+  const zz = v.z + (1 - easeOutBounce(p)) * 8;
+  let faces = 7;
+  if (landed) {
+    faces = 0;
+    if (!solidAt(v.x, v.y, v.z + 1, t, v)) faces |= 1;
+    if (!solidAt(v.x + 1, v.y, v.z, t, v)) faces |= 2;
+    if (!solidAt(v.x, v.y + 1, v.z, t, v)) faces |= 4;
+    if (!faces) return;
+  }
+  let x = v.x, y = v.y;
+  if (v.flag) x += Math.sin(t * 5 + v.x * 0.9 + v.y) * 0.12;
+  const alpha = (v.tr ? 0.55 + Math.sin(t * 6 + v.z) * 0.12 : 1) * clamp(p * 3);
+  drawBrick(x, y, zz, v.pl ? 1 / 3 : 1, v.c, faces, !v.ns && (faces & 1), alpha);
+  if (landed && v.clock) faceDecal(v.x, v.y, v.z, () => drawSBBClock(t));
+  if (landed && v.sbb) faceDecal(v.x, v.y, v.z, () => {
+    ctx.fillStyle = '#fff'; ctx.fillRect(0.42, 0.2, 0.16, 0.6); ctx.fillRect(0.2, 0.42, 0.6, 0.16);
+  });
+}
+function drawSBBClock(t) {
+  ctx.fillStyle = '#fff'; ctx.strokeStyle = '#222'; ctx.lineWidth = 0.05;
+  ctx.beginPath(); ctx.arc(0.5, 0.5, 0.42, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  const hand = (ang, len, w, c) => {
+    ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(0.5, 0.5);
+    ctx.lineTo(0.5 + Math.sin(ang) * len, 0.5 - Math.cos(ang) * len); ctx.stroke();
+  };
+  hand(t * 0.05 + 2.1, 0.22, 0.07, '#222');
+  hand(t * 0.6, 0.34, 0.05, '#222');
+  const sec = t * 1.2;
+  hand(sec, 0.34, 0.025, '#e30613');
+  ctx.fillStyle = '#e30613'; ctx.beginPath(); ctx.arc(0.5 + Math.sin(sec) * 0.3, 0.5 - Math.cos(sec) * 0.3, 0.06, 0, Math.PI * 2); ctx.fill();
+}
+function drawDynamic(v) {
+  if (v.thin) { // sail
+    const [ox, oy] = proj(v.x + 0.5, v.y + 0.5, v.z);
+    ctx.fillStyle = v.c === C.white ? '#ffffff' : v.c;
+    ctx.beginPath(); ctx.moveTo(ox, oy - BH * 3); ctx.lineTo(ox + 13, oy - 3); ctx.lineTo(ox, oy); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = .6; ctx.stroke();
+    return;
+  }
+  drawBrick(v.x, v.y, v.z, v.pl ? 1 / 3 : 1, v.c, 7, !v.ns);
+}
+function drawWorld(t) {
+  const dyn = dynamicVoxels(t);
+  let j = 0;
+  const k = v => v.x + v.y + v.z;
+  for (let i = 0; i < voxels.length; i++) {
+    const v = voxels[i];
+    while (j < dyn.length && k(dyn[j]) < k(v)) drawDynamic(dyn[j++]);
+    drawStatic(v, t);
+  }
+  while (j < dyn.length) drawDynamic(dyn[j++]);
+}
+
+// ---------- Jet d'Eau spray & seagulls ----------
+const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+function drawSpray(t) {
+  const on = clamp((t - (segStart(0) + 3.6)) / 1.5);
+  if (on <= 0) return;
+  const N = 110, P = 2.6;
+  for (let i = 0; i < N; i++) {
+    const age = (t + i * P / N) % P;
+    const ang = hash(i) * Math.PI * 2, sp = 0.25 + hash(i + 50) * 0.55;
+    const x = 46.5 + Math.cos(ang) * sp * age + 0.9 * age * age;
+    const y = 12.5 + Math.sin(ang) * sp * age - 0.3 * age * age;
+    const z = 14.5 + Math.sin(t * 2.3) * 1.5 + 2.6 * age - 1.9 * age * age;
+    if (z < 0) continue;
+    const [sx, sy] = proj(x, y, z);
+    ctx.fillStyle = `rgba(255,255,255,${on * 0.55 * (1 - age / P)})`;
+    ctx.beginPath(); ctx.arc(sx, sy, 1.5 + age * 2.2, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function drawGulls(t) {
+  if (t < segStart(0) + 4) return;
+  ctx.strokeStyle = 'rgba(40,40,50,.8)'; ctx.lineWidth = 1.2;
+  for (let i = 0; i < 5; i++) {
+    const a = t * 0.3 + i * 1.3;
+    const [sx, sy] = proj(44 + Math.cos(a) * (5 + i), 12 + Math.sin(a) * (4 + i * .5), 17 + i * 0.6);
+    const f = Math.sin(t * 9 + i) * 3;
+    ctx.beginPath(); ctx.moveTo(sx - 6, sy - f); ctx.quadraticCurveTo(sx - 3, sy - 3, sx, sy); ctx.quadraticCurveTo(sx + 3, sy - 3, sx + 6, sy - f); ctx.stroke();
+  }
+}
+
+// =========================================================
+//  TYPOGRAPHY OVERLAYS (drawn on canvas so they end up in the video)
+// =========================================================
+const FONT = '"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic","Helvetica Neue",Arial,sans-serif';
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+function studRow(x, y, w, n, col, r) {
+  for (let i = 0; i < n; i++) {
+    const cx = x + w * (i + 0.5) / n;
+    ctx.fillStyle = col; rrect(cx - r, y - r * 0.8, r * 2, r * 0.9, [r * 0.4, r * 0.4, 0, 0]); ctx.fill();
+  }
+}
+function drawTitle(t) {
+  const a = clamp((t - 0.2) / 0.5) * clamp((T_INTRO - 0.3 - t) / 0.5);
+  if (a <= 0) return;
+  const S = Math.min(W, H) / 800;
+  const k = easeOutBack(clamp((t - 0.2) / 0.8));
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(W / 2, H * 0.42); ctx.rotate(-0.05); ctx.scale(k * S, k * S);
+  ctx.font = `900 96px ${FONT}`;
+  const tw = ctx.measureText('GENÈVE').width, bw = tw + 80, bh = 130;
+  ctx.fillStyle = '#8a0a0b'; rrect(-bw / 2, -bh / 2 + 10, bw, bh, 22); ctx.fill();
+  studRow(-bw / 2 + 20, -bh / 2, bw - 40, 6, C.red, 16);
+  ctx.fillStyle = C.red; rrect(-bw / 2, -bh / 2, bw, bh, 22); ctx.fill();
+  ctx.lineWidth = 9; ctx.strokeStyle = C.yellow; rrect(-bw / 2 + 8, -bh / 2 + 8, bw - 16, bh - 16, 16); ctx.stroke();
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowOffsetY = 4; ctx.fillText('GENÈVE', 0, 6);
+  ctx.shadowColor = 'transparent';
+  ctx.restore();
+  const k2 = clamp((t - 0.9) / 0.6);
+  ctx.save(); ctx.globalAlpha = a * k2; ctx.fillStyle = '#fff';
+  ctx.font = `800 ${28 * S}px ${FONT}`; ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 12;
+  ctx.fillText('G E N E V A   I N   L E G O', W / 2, H * 0.42 + 120 * S + (1 - k2) * 20);
+  ctx.font = `600 ${15 * S}px ${FONT}`; ctx.globalAlpha = a * k2 * 0.85;
+  ctx.fillText('6 LANDMARKS · BUILT BRICK BY BRICK', W / 2, H * 0.42 + 152 * S);
+  ctx.restore();
+}
+function drawCard(t) {
+  const g = Math.floor((t - T_INTRO) / T_SEG);
+  if (g < 0 || g >= N_SEG) return;
+  const local = t - segStart(g);
+  const kin = easeOutBack(clamp((local - 1.0) / 0.7)), kout = easeInOut(clamp((T_SEG - 0.2 - local) / 0.45));
+  const k = Math.min(kin, kout);
+  if (k <= 0) return;
+  const s = SEGMENTS[g], S = Math.min(W, H) / 820;
+  ctx.save(); ctx.translate(lerp(-640 * S, 36 * S, k), H - 190 * S); ctx.scale(S, S);
+  ctx.font = `900 40px ${FONT}`; const w1 = ctx.measureText(s.ko).width;
+  ctx.font = `700 16px ${FONT}`; const w2 = ctx.measureText(s.fr).width;
+  ctx.font = `500 15px ${FONT}`; const w3 = ctx.measureText(s.desc).width;
+  const bw = Math.max(w1, w2, w3) + 52, nw = 96, h = 128;
+  ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+  ctx.fillStyle = '#fff'; rrect(nw, 0, bw, h, [0, 14, 14, 0]); ctx.fill();
+  ctx.shadowColor = 'transparent';
+  studRow(nw + 10, 0, bw - 20, Math.max(3, Math.round(bw / 60)), '#fff', 10);
+  studRow(10, 0, nw - 20, 2, C.yellow, 11);
+  ctx.fillStyle = C.yellow; rrect(0, 0, nw, h, [14, 0, 0, 14]); ctx.fill();
+  ctx.fillStyle = '#222'; ctx.font = `900 50px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(String(g + 1).padStart(2, '0'), nw / 2, h / 2 + 2);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  const reveal = clamp((local - 1.4) / 0.5);
+  ctx.globalAlpha = reveal;
+  ctx.fillStyle = '#1b1b1b'; ctx.font = `900 40px ${FONT}`; ctx.fillText(s.ko, nw + 26, 52);
+  ctx.fillStyle = C.red; ctx.font = `700 16px ${FONT}`; ctx.fillText(s.fr, nw + 26, 80);
+  ctx.fillStyle = '#555'; ctx.font = `500 15px ${FONT}`; ctx.fillText(s.desc, nw + 26, 106);
+  ctx.restore();
+  // progress pips (top right)
+  ctx.save();
+  for (let i = 0; i < N_SEG; i++) {
+    const x = W - 36 * S - (N_SEG - 1 - i) * 26 * S, y = 36 * S;
+    ctx.fillStyle = i < g ? C.yellow : i === g ? C.red : 'rgba(255,255,255,.55)';
+    rrect(x - 9 * S, y - 9 * S, 18 * S, 18 * S, 4 * S); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawFinale(t) {
+  const a = clamp((t - T_FINALE - 2.0) / 1.0);
+  if (a <= 0) return;
+  const S = Math.min(W, H) / 820;
+  ctx.save(); ctx.globalAlpha = a; ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 16; ctx.fillStyle = '#fff';
+  ctx.font = `900 ${58 * S}px ${FONT}`; ctx.fillText('GENÈVE · Geneva', W / 2, 92 * S + (1 - a) * -20);
+  ctx.font = `700 ${16 * S}px ${FONT}`; ctx.globalAlpha = a * 0.9;
+  ctx.fillText('B U I L T   B R I C K   B Y   B R I C K', W / 2, 126 * S);
+  ctx.shadowColor = 'transparent';
+  // landmark chips
+  ctx.font = `800 ${15 * S}px ${FONT}`;
+  const names = SEGMENTS.map(s => s.ko), pad = 16 * S, gap = 10 * S;
+  const ws = names.map(n => ctx.measureText(n).width + pad * 2);
+  let x = W / 2 - (ws.reduce((p, c) => p + c, 0) + gap * (names.length - 1)) / 2;
+  names.forEach((n, i) => {
+    const ki = easeOutBack(clamp((t - T_FINALE - 2.6 - i * 0.15) / 0.5));
+    if (ki <= 0) { x += ws[i] + gap; return; }
+    const y = H - 70 * S + (1 - ki) * 30 * S;
+    ctx.globalAlpha = a * clamp(ki);
+    ctx.fillStyle = [C.red, C.yellow, '#2f8a45', C.blue, C.orange, '#4b92db'][i];
+    rrect(x, y, ws[i], 34 * S, 8 * S); ctx.fill();
+    ctx.fillStyle = i === 1 ? '#222' : '#fff'; ctx.textBaseline = 'middle'; ctx.fillText(n, x + ws[i] / 2, y + 17 * S + 1);
+    x += ws[i] + gap;
+  });
+  ctx.restore();
+}
+
+// =========================================================
+//  MAIN LOOP & CONTROLS
+// =========================================================
+let T = 0, playing = true, last = performance.now(), recorder = null;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing) T += dt;
+  if (T > T_END) {
+    if (recorder) { recorder.stop(); recorder = null; T = T_END; playing = false; }
+    else if (T > T_END + 2) T = 0;
+  }
+  render(Math.min(T, T_END));
+  bar.style.width = (Math.min(T, T_END) / T_END * 100) + '%';
+  timeEl.textContent = `${Math.min(T, T_END).toFixed(1)} / ${T_END.toFixed(0)}s`;
+  requestAnimationFrame(frame);
+}
+function render(t) {
+  const dusk = clamp((t - T_FINALE - 1) / 7) * 0.8;
+  const cam = camAt(t);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  drawSky(t, dusk, cam);
+  // world transform
+  ctx.setTransform(DPR * cam.z, 0, 0, DPR * cam.z, DPR * (W / 2 - cam.x * cam.z), DPR * (H / 2 - cam.y * cam.z));
+  VIEW = { l: cam.x - W / 2 / cam.z, r: cam.x + W / 2 / cam.z, t: cam.y - H / 2 / cam.z, b: cam.y + H / 2 / cam.z };
+  // soft shadow under the baseplate
+  const pa = clamp((t - 0.5) / 1.5);
+  if (pa > 0) {
+    ctx.fillStyle = `rgba(10,30,60,${0.25 * pa})`;
+    const [x0, y0] = proj(0, 0, 0), [x1, y1] = proj(GW, 0, 0), [x2, y2] = proj(GW, GH, 0), [x3, y3] = proj(0, GH, 0);
+    ctx.beginPath(); ctx.moveTo(x0, y0 + 26); ctx.lineTo(x1 + 10, y1 + 26); ctx.lineTo(x2, y2 + 30); ctx.lineTo(x3 - 10, y3 + 26); ctx.closePath(); ctx.fill();
+  }
+  drawBase(t);
+  drawWorld(t);
+  drawSpray(t);
+  drawGulls(t);
+  // screen-space grading
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  if (dusk > 0) {
+    ctx.globalCompositeOperation = 'soft-light';
+    ctx.fillStyle = `rgba(255,120,40,${dusk * 0.55})`; ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.45, W / 2, H / 2, Math.max(W, H) * 0.75);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,10,30,.35)');
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  drawTitle(t);
+  drawCard(t);
+  drawFinale(t);
+}
+
+// ---------- Controls ----------
+const bar = document.querySelector('#bar i'), timeEl = document.getElementById('time');
+const playBtn = document.getElementById('play');
+function setPlaying(p) { playing = p; playBtn.textContent = p ? '❚❚ Pause' : '▶ Play'; }
+playBtn.onclick = () => setPlaying(!playing);
+document.getElementById('replay').onclick = () => { T = 0; setPlaying(true); };
+document.getElementById('bar').onclick = e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  T = clamp((e.clientX - r.left) / r.width) * T_END;
+};
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+  if (e.code === 'ArrowRight') T = Math.min(T_END, T + 2);
+  if (e.code === 'ArrowLeft') T = Math.max(0, T - 2);
+  if (e.key === 'r') { T = 0; setPlaying(true); }
+});
+document.getElementById('rec').onclick = () => {
+  if (recorder || !window.MediaRecorder) return;
+  const types = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+  const mimeType = types.find(m => MediaRecorder.isTypeSupported(m)) || '';
+  const chunks = [];
+  recorder = new MediaRecorder(cv.captureStream(60), { mimeType, videoBitsPerSecond: 16e6 });
+  recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: mimeType || 'video/webm' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'geneve-lego.' + (mimeType.includes('mp4') ? 'mp4' : 'webm'); a.click();
+    document.getElementById('rec').textContent = '● Save video';
+  };
+  T = 0; setPlaying(true); recorder.start();
+  document.getElementById('rec').textContent = '■ Recording…';
+};
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

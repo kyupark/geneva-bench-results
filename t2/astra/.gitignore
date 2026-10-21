@@ -1,0 +1,7 @@
+node_modules/
+.venv/
+.render/
+output/*.h264
+output/encoding-check.*
+data/center.osm
+data/test-ch.json

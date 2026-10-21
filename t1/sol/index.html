@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f5ef" />
+    <meta name="description" content="An interactive motion graphic of Geneva’s six places in LEGO bricks." />
+    <title>Geneva, brick by brick — A little Swiss adventure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="./assets/index-DRwY_BPm.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BjfkMIrt.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <a class="brand" href="./" aria-label="Geneva home"><span class="brand-brick"><i></i><i></i><i></i><i></i></span><span>little<span class="brand-light"> places</span><span class="brand-dot">.</span></span></a>
+        <div class="header-center"><span class="swiss-cross">+</span> GENEVA, SWITZERLAND <span class="header-line"></span> A BRICK-BUILT JOURNEY</div>
+        <button id="about-button" class="about-button">About the project <span>↗</span></button>
+      </header>
+      <main>
+        <section class="intro" aria-label="Geneva, brick by brick">
+          <div class="eyebrow"><span></span> SMALL BRICKS. BIG WONDERS.</div>
+          <h1>Geneva,<br>brick by <span>brick.</span></h1>
+          <p>A slightly special Geneva, in small bricks.</p>
+          <div class="intro-meta"><span class="mini-spark">✳</span> 6 iconic places <span class="meta-dot">·</span> One little adventure</div>
+        </section>
+        <div class="edition"><span>THE SWISS COLLECTION</span><strong>No. 001 <i>—</i> Genève</strong><span class="edition-coordinate">46°12′ N &nbsp; 6°09′ E</span></div>
+        <div id="scene" aria-label="Geneva in LEGO bricks, a 3D motion graphic"></div>
+        <div id="labels" aria-hidden="true"></div>
+        <div class="stage-tools">
+          <button id="reset-view" class="icon-button" aria-label="Reset view" title="Reset view"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></svg></button>
+          <span></span>
+          <button id="zoom-in" class="icon-button" aria-label="Zoom in" title="Zoom in"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button id="zoom-out" class="icon-button" aria-label="Zoom out" title="Zoom out"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+          <span></span>
+          <button id="fullscreen" class="icon-button" aria-label="Fullscreen" title="Fullscreen"><svg viewBox="0 0 24 24"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/></svg></button>
+        </div>
+        <div class="drag-hint"><svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4m8-8 4 4-4 4M4 12h16"/></svg> Drag to explore <span>·</span> Scroll to zoom</div>
+        <aside class="chapter-description" aria-live="polite"><div class="chapter-overline"><span class="chapter-index">01</span><span class="chapter-rule"></span><span>THE OLD SOUL</span></div><h2 id="place-name">Old Town</h2><p id="place-korean">Old Town lanes, stories stacked on time.</p><div class="place-detail"><span class="location-pin">⌖</span><span id="place-detail">VIEILLE-VILLE</span></div></aside>
+        <div class="playback-panel">
+          <div class="playback-top"><div class="playback-title"><span class="live-dot"></span> THE LITTLE GRAND TOUR <span class="tour-divider">/</span> <span id="current-title">Old Town</span></div><div class="playback-options"><button id="sound" title="Unmute music" aria-label="Unmute music" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4zM16 9l5 6m0-6-5 6"/></svg><span>Sound off</span></button><button id="speed" title="Change playback speed">1×</button><span class="time"><span id="elapsed">00:00</span><span> / 00:54</span></span></div></div>
+          <div class="playback-main"><button class="play-button" id="play" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg></button><div class="chapters" id="chapters"></div></div>
+          <div class="progress-track"><input id="progress" type="range" min="0" max="54" step="0.01" value="0" aria-label="Motion graphic position"/><div id="progress-fill"></div></div>
+        </div>
+        <footer><span>A little love letter to Geneva.</span><span>DESIGNED TO MAKE YOU WANDER <span class="footer-spark">✳</span></span><span>Built with imagination. <span class="heart">♡</span></span></footer>
+      </main>
+      <dialog id="about"><button id="close-about" class="close-dialog" aria-label="Close">×</button><span class="eyebrow">A LITTLE LOVE LETTER</span><h2>Big stories.<br>Little bricks.</h2><p>Geneva’s six places, rebuilt in small bricks. From the Old Town roofs to the lake fountain, the central station, the UN, Place de Neuve and the Bastions, — meet the city’s story piece by piece.</p><p class="about-instructions">Pick a place to jump to its scene. Drag to rotate the city, scroll to look closer. Press Space to play or pause.</p><div class="about-note">An independent, LEGO-inspired digital miniature.<br>Not affiliated with the LEGO Group.</div></dialog>
+    </div>
+  </body>
+</html>

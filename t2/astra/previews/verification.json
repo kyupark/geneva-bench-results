@@ -1,0 +1,15 @@
+{
+  "video": "geneva-3d-drone-tour.mp4",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 3000,
+  "duration_seconds": 100,
+  "audio": "AAC stereo 48 kHz",
+  "audio_integrated_lufs": -17.85,
+  "audio_true_peak_dbfs": -5.49,
+  "chapters": 6,
+  "full_decode": "passed",
+  "browser_playback_and_seek": "passed",
+  "mobile_layout_width": 390
+}

@@ -1,0 +1,12 @@
+import puppeteer from 'puppeteer-core';
+const browser=await puppeteer.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--no-sandbox','--use-angle=metal','--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows'],defaultViewport:{width:1920,height:1080,deviceScaleFactor:1}});
+const page=await browser.newPage();
+page.on('console',m=>{if(['error','warn'].includes(m.type()))console.log('BROWSER',m.text().slice(0,300));});
+page.on('pageerror',e=>console.log('PAGEERROR',e.message));
+await page.goto('http://127.0.0.1:18765/?capture',{timeout:120000,waitUntil:'domcontentloaded'});
+await page.waitForFunction(()=>window.ready,{timeout:120000});
+console.log('READY');
+await new Promise(r=>setTimeout(r,15000));
+console.log(await page.evaluate(()=>({status:sceneReady(),renderer:viewer.scene.context._gl.getParameter(viewer.scene.context._gl.RENDERER)})));
+await page.screenshot({path:'previews/oldtown-test.jpg',type:'jpeg',quality:93});
+await browser.close();

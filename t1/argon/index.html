@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEGO® GENEVA: Geneva’s 6 Landmarks · LEGO Brick Motion Graphic</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div id="viewport-container">
+    <!-- 3D WebGL LEGO Diorama Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- 2D Broadcast Motion Graphic Callout & Telemetry Overlay Canvas -->
+    <canvas id="mg-overlay-canvas"></canvas>
+
+    <!-- Subtle Studio Vignette -->
+    <div class="broadcast-vignette"></div>
+
+    <!-- Top Broadcast Header Bar -->
+    <header class="hud-header">
+      <div class="brand-cluster">
+        <div class="lego-badge">
+          <span class="lego-stud-dot"></span>
+          <span>LEGO®</span>
+        </div>
+        <div class="brand-titles">
+          <span class="brand-kicker">GENEVA ARCHITECTURE MOTION GRAPHIC</span>
+          <h1 class="brand-main">Geneva LEGO Brick City · 6 Landmarks</h1>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="telemetry-pill">
+          <span class="rec-dot"></span>
+          <span>LIVE BRICKS</span>
+          <strong id="total-bricks-readout">8,420 BRICKS</strong>
+        </div>
+
+        <button id="btn-rebuild" class="ctrl-btn primary-action" title="Play brick-building motion for current landmark (shortcut R)">
+          <span>🧱</span>
+          <span class="btn-label">Brick build motion</span>
+        </button>
+
+        <button id="btn-stopmotion" class="ctrl-btn" title="LEGO Movie style 12 FPS stop-motion frame switching">
+          <span>🎞️</span>
+          <span class="btn-label">12 FPS Stop motion</span>
+        </button>
+
+        <button id="btn-isolate" class="ctrl-btn" title="Toggle full city view / single landmark focus">
+          <span>🔍</span>
+          <span class="btn-label">Full city view</span>
+        </button>
+
+        <div class="lighting-group" role="group" aria-label="Lighting">
+          <button class="light-btn active" data-light="day">Day</button>
+          <button class="light-btn" data-light="sunset">Sunset</button>
+          <button class="light-btn" data-light="night">Night</button>
+        </div>
+
+        <button id="btn-audio" class="ctrl-btn" title="LEGO brick sound & Background synth soundtrack">
+          <span>🔊</span>
+          <span class="btn-label">Sound OFF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Lower-Third Kinetic Typography Landmark Information Card -->
+    <aside id="landmark-card" class="landmark-card">
+      <div class="card-top-row">
+        <span id="chapter-code" class="chapter-code-badge">GENEVA · CH</span>
+        <span class="brick-spec-badge">
+          <span class="lego-stud-dot"></span>
+          <span id="chapter-brick-count">8,420 LEGO PCS</span>
+        </span>
+      </div>
+      <div class="card-title-row">
+        <h2 id="card-title-ko" class="card-title-ko">Geneva LEGO City overview</h2>
+        <span id="card-title-fr" class="card-title-fr">GENÈVE EN BRIQUES LEGO®</span>
+      </div>
+      <p id="card-subtitle" class="card-subtitle">
+        A diorama of Geneva’s 6 landmarks around Lake Geneva
+      </p>
+      <p id="card-desc" class="card-desc">
+        A motion graphic linking St. Pierre Cathedral in the Old Town, the 140 m Jet d’Eau, Cornavin Station, the UN Office, Place de Neuve and Parc des Bastions into one giant LEGO brick city.
+      </p>
+    </aside>
+
+    <!-- Bottom Interactive Chapter Selector & Timeline Scrubber Dock -->
+    <footer class="timeline-dock">
+      <div id="chapter-tabs" class="chapter-Grid"></div>
+
+      <div class="scrubber-row">
+        <button id="btn-prev" class="transport-btn" title="Previous landmark">◀</button>
+        <button id="btn-play-pause" class="transport-btn" title="Play / Pause (Space)">❚❚</button>
+        <button id="btn-next" class="transport-btn" title="Next landmark">▶</button>
+
+        <div id="scrubber-track" class="scrubber-track" title="Seek timeline">
+          <div id="scrubber-fill" class="scrubber-fill"></div>
+        </div>
+
+        <div id="timecode-readout" class="timecode-readout">00:00:00 / 01:06:00</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Local Vendor & Modular LEGO Motion Graphic Scripts -->
+  <script src="./vendor/three.min.js"></script>
+  <script src="./js/lego-engine.js"></script>
+  <script src="./js/geneva-landmarks.js"></script>
+  <script src="./js/motion-director.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

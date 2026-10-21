@@ -1,0 +1,20 @@
+{
+  "name": "geneva-aerial-film",
+  "version": "1.0.0",
+  "description": "A 3D aerial film of six Geneva landmarks using swisstopo geodata",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "preview": "node src/render.mjs --preview",
+    "render": "node src/render.mjs",
+    "finalize": "python3 src/finalize.py",
+    "validate": "python3 src/validate.py"
+  },
+  "keywords": [],
+  "author": "",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "cesium": "^1.146.0",
+    "puppeteer-core": "^25.14.0"
+  }
+}

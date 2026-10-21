@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Crazy Taxi Genève — Brick Edition</title>
+  <meta name="description" content="A LEGO-style Crazy Taxi game across a brick-built Geneva. Pick up fares and race to ten real city landmarks." />
+  <meta name="theme-color" content="#0b1c2c" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" aria-label="Crazy Taxi Geneva game world"></canvas>
+    <div class="world-vignette" aria-hidden="true"></div>
+    <div id="speed-vignette" aria-hidden="true"></div>
+
+    <div id="loader" class="loader">
+      <div class="loader-brick"><i></i><i></i><i></i><i></i></div>
+      <p>BUILDING GENÈVE…</p>
+      <span>snapping 10 landmarks into place</span>
+    </div>
+
+    <div id="hud" class="hud is-hidden" aria-live="off">
+      <div class="hud-top-left">
+        <div class="brand-mini">
+          <div class="swiss-mini" aria-hidden="true"><span></span><span></span></div>
+          <div><strong>CRAZY TAXI</strong><small>GENÈVE</small></div>
+        </div>
+        <div class="stat-panel">
+          <div class="stat-row">
+            <span class="stat-label">FARES</span>
+            <strong id="fare-count" class="stat-value">0</strong>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">TAKINGS</span>
+            <strong id="cash" class="stat-value cash">CHF 0</strong>
+          </div>
+        </div>
+        <div id="timer-panel" class="timer-panel">
+          <span class="timer-label">SHIFT CLOCK</span>
+          <strong id="timer" class="timer-value">1:35</strong>
+          <span id="timer-plus" class="timer-plus"></span>
+        </div>
+      </div>
+
+      <div id="objective" class="objective-card" data-mode="pickup">
+        <div class="objective-icon-wrap">
+          <span id="objective-icon" class="objective-icon">🚉</span>
+          <i class="objective-pulse"></i>
+        </div>
+        <div class="objective-copy">
+          <span id="objective-kicker" class="objective-kicker">PICK UP</span>
+          <strong id="objective-name" class="objective-name">Gare Cornavin</strong>
+          <span id="objective-distance" class="objective-distance">— m away</span>
+        </div>
+        <div class="objective-compass" aria-hidden="true">
+          <span id="objective-arrow" class="compass-arrow">➤</span>
+        </div>
+        <div id="objective-bar" class="objective-bar"></div>
+      </div>
+
+      <div class="hud-top-right">
+        <div class="minimap-panel">
+          <div class="minimap-head"><span>GENEVA</span><span class="north">N ↑</span></div>
+          <canvas id="minimap" width="420" height="460" aria-label="Mini map of Geneva"></canvas>
+          <div class="minimap-foot"><span id="map-scale">1 UNIT = 10 M</span><span id="district">CENTRE</span></div>
+        </div>
+        <div class="hud-icon-stack">
+          <button id="pause-btn" class="icon-btn pause-btn" aria-label="Pause game" title="Pause (P)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor" stroke="none"/></svg>
+          </button>
+          <button id="audio-btn" class="icon-btn audio-btn" aria-label="Mute sound" title="Mute sound (M)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-wave" d="M16 8c1.2 1 1.2 7 0 8M19 5.5c3 3 3 10 0 13"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="hud-bottom-left">
+        <div class="speedo">
+          <div class="speedo-inner">
+            <span id="speed" class="speed-value">0</span>
+            <span class="speed-unit">KM/H</span>
+          </div>
+          <div id="gear" class="gear">D</div>
+        </div>
+        <div class="boost-panel">
+          <div class="boost-label"><span>BRICK BOOST</span><kbd>SHIFT</kbd></div>
+          <div class="boost-track"><div id="boost-fill" class="boost-fill"></div><i class="boost-shine"></i></div>
+          <div id="drift-label" class="drift-label">DRIFT TO CHARGE</div>
+        </div>
+      </div>
+
+      <div class="hud-bottom-right">
+        <div id="combo-chip" class="combo-chip is-hidden"><span>COMBO</span><strong id="combo">x1</strong></div>
+        <div class="controls-hint">
+          <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> DRIVE</span>
+          <span><kbd>SPACE</kbd> DRIFT</span>
+          <span><kbd>SHIFT</kbd> BOOST</span>
+          <span><kbd>H</kbd> HORN</span>
+        </div>
+      </div>
+
+      <div id="stamp-tray" class="stamp-tray" aria-label="Destinations visited"></div>
+
+      <div id="zone-hint" class="zone-hint is-hidden"><span class="zone-hint-dot"></span><strong id="zone-hint-text">SLOW DOWN TO PICK UP</strong></div>
+    </div>
+
+    <div id="toast" class="toast" role="status"></div>
+    <div id="cash-float-layer" class="cash-float-layer" aria-hidden="true"></div>
+
+    <section id="intro" class="intro-screen overlay">
+      <div class="intro-top">
+        <div class="intro-lockup">
+          <div class="swiss-badge" aria-hidden="true"><span></span><span></span></div>
+          <div><strong>GENEVA CITY TAXI CO.</strong><small>EST. 2026 · BRICK BY BRICK</small></div>
+        </div>
+        <div class="intro-weather"><span class="sun-dot">☀</span> 22°C <span class="divider"></span> LAKE BREEZE 8 KM/H</div>
+      </div>
+
+      <div class="intro-hero">
+        <div class="eyebrow"><span></span> THE LAKE CITY NEEDS A HERO</div>
+        <h1 class="game-title" aria-label="Crazy Taxi Genève">
+          <span class="title-crazy">CRAZY</span>
+          <span class="title-taxi">TAXI</span>
+        </h1>
+        <div class="place-lockup">
+          <span class="place-name">GENÈVE</span>
+          <span class="place-rule"></span>
+          <span class="place-edition">BRICK EDITION</span>
+        </div>
+        <p class="tagline">Ten landmarks. One tiny yellow taxi.<br/> Pick up fares and floor it across a brick-built Geneva before the shift clock runs dry.</p>
+        <div class="intro-actions">
+          <button id="start-btn" class="start-btn">
+            <span class="start-brick" aria-hidden="true"></span>
+            <span>START THE METER</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="start-meta"><span>FIRST FARE: GARE CORNAVIN</span><span class="dot"></span><span>SHIFT 1:35</span></div>
+        </div>
+        <div class="intro-controls">
+          <div class="control-card"><span class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span><strong>DRIVE</strong> · arrow keys work too</span></div>
+          <div class="control-card"><span class="keys"><kbd>SPACE</kbd></span><span><strong>DRIFT</strong> · fill your boost</span></div>
+          <div class="control-card"><span class="keys"><kbd>SHIFT</kbd></span><span><strong>BOOST</strong> · serious speed</span></div>
+        </div>
+        <div class="intro-mobile-stops">
+          <div class="mobile-stops-head"><span>THE ROUTE</span><span>10 STOPS</span></div>
+          <div class="mobile-stops-grid">
+            <span><i>🚉</i> Gare Cornavin</span><span><i>🪑</i> Broken Chair</span>
+            <span><i>🛁</i> Bains des Pâquis</span><span><i>🌉</i> Pont du Mont-Blanc</span>
+            <span><i>⛲</i> Jet d’Eau</span><span><i>🌷</i> Jardin Anglais</span>
+            <span><i>🏙️</i> Place Bel-Air</span><span><i>⛪</i> Old Town</span>
+            <span><i>🎭</i> Place de Neuve</span><span><i>🌳</i> Parc des Bastions</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="intro-side">
+        <div class="tour-card">
+          <div class="tour-head"><span>YOUR ROUTE</span><span class="tour-count">10 STOPS</span></div>
+          <div class="tour-list">
+            <span><i>🚉</i> Gare Cornavin</span><span><i>🪑</i> Broken Chair</span>
+            <span><i>🛁</i> Bains des Pâquis</span><span><i>🌉</i> Pont du Mont-Blanc</span>
+            <span><i>⛲</i> Jet d'Eau</span><span><i>🌷</i> Jardin Anglais</span>
+            <span><i>🏙️</i> Place Bel-Air</span><span><i>⛪</i> Old Town</span>
+            <span><i>🎭</i> Place de Neuve</span><span><i>🌳</i> Parc des Bastions</span>
+          </div>
+          <div class="tour-note">Real coordinates. Real distances.<br/>Ridiculous driving.</div>
+        </div>
+        <div class="intro-stamp">GVA<br/><small>204</small></div>
+      </aside>
+
+      <footer class="intro-footer">
+        <span>A FAN-MADE LEGO-STYLE CITY RUSH</span>
+        <span class="foot-sep">✦</span>
+        <span>BEST PLAYED WITH SOUND</span>
+        <span class="intro-high-score" id="intro-high-score"></span>
+      </footer>
+    </section>
+
+    <section id="pause" class="modal-screen overlay is-hidden">
+      <div class="modal-card pause-card">
+        <span class="modal-kicker">SHIFT PAUSED</span>
+        <h2>TAKING A BRICK BREAK?</h2>
+        <p>The meter is stopped. Geneva can wait — but not for long.</p>
+        <div class="pause-stats">
+          <div><span>TAKINGS</span><strong id="pause-cash">CHF 0</strong></div>
+          <div><span>FARES</span><strong id="pause-fares">0</strong></div>
+          <div><span>SHIFT LEFT</span><strong id="pause-time">1:35</strong></div>
+        </div>
+        <button id="resume-btn" class="big-btn">BACK TO THE DRIVER'S SEAT <span>→</span></button>
+        <div class="pause-controls"><span><kbd>WASD</kbd> drive</span><span><kbd>SPACE</kbd> drift</span><span><kbd>SHIFT</kbd> boost</span><span><kbd>H</kbd> horn</span><span><kbd>R</kbd> recover</span><span><kbd>C</kbd> camera</span></div>
+        <div class="modal-small"><kbd>ESC</kbd> or <kbd>P</kbd> to resume <span>·</span> <button id="pause-audio-btn" class="text-btn">toggle sound</button></div>
+      </div>
+    </section>
+
+    <section id="gameover" class="modal-screen overlay is-hidden">
+      <div class="modal-card gameover-card">
+        <div class="gameover-top">
+          <span class="modal-kicker">SHIFT COMPLETE</span>
+          <span class="rank-badge" id="rank-badge">BRICK CABBIE</span>
+        </div>
+        <h2>THE METER<br/>RAN OUT.</h2>
+        <p id="gameover-blurb">Not bad for a first shift. Geneva has seen worse drivers. Not many, but some.</p>
+        <div class="results-grid">
+          <div class="result-main"><span>TAKINGS</span><strong id="final-cash">CHF 0</strong><small id="best-cash">BEST CHF 0</small></div>
+          <div><span>FARES</span><strong id="final-fares">0</strong></div>
+          <div><span>BEST COMBO</span><strong id="final-combo">x1</strong></div>
+          <div><span>DISTANCE</span><strong id="final-distance">0.0 km</strong></div>
+        </div>
+        <div class="final-stamps"><div class="final-stamps-head"><span>CITY STAMPS</span><span id="stamp-count">0 / 10</span></div><div id="final-stamp-list" class="final-stamp-list"></div></div>
+        <div class="gameover-actions">
+          <button id="restart-btn" class="big-btn">DRIVE AGAIN <span>↻</span></button>
+          <button id="menu-btn" class="ghost-btn">MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="touch-controls" class="touch-controls">
+      <div class="touch-steer">
+        <button class="touch-btn steer-left" data-key="ArrowLeft" aria-label="Steer left">◀</button>
+        <button class="touch-btn steer-right" data-key="ArrowRight" aria-label="Steer right">▶</button>
+      </div>
+      <div class="touch-pedals">
+        <button class="touch-btn pedal brake" data-key="ArrowDown" aria-label="Brake">STOP</button>
+        <button class="touch-btn pedal gas" data-key="ArrowUp" aria-label="Accelerate">GO</button>
+      </div>
+      <button class="touch-btn mini-action boost" data-key="ShiftLeft" aria-label="Boost">BOOST</button>
+      <button class="touch-btn mini-action drift" data-key="Space" aria-label="Drift">DRIFT</button>
+    </div>
+
+    <div id="unsupported" class="unsupported is-hidden">
+      <strong>WEBGL NEEDED</strong>
+      <p>This brick city needs a browser with WebGL enabled. Try Chrome, Safari or Firefox.</p>
+    </div>
+  </div>
+
+  <noscript><div class="noscript">This game needs JavaScript to build Geneva.</div></noscript>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

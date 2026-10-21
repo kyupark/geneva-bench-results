@@ -1,0 +1,201 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.4 2390de5a",
+  "osm3s": {
+    "timestamp_osm_base": "117851",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "relation",
+  "id": 332617,
+  "center": {
+    "lat": 46.3613590,
+    "lon": 6.5394684
+  },
+  "tags": {
+    "alt_name": "Lac Léman;Lac de Genève",
+    "alt_name:da": "Genevesøen",
+    "alt_name:de": "Genfer See",
+    "alt_name:en": "Lake Leman",
+    "alt_name:es": "Lago de Ginebra",
+    "alt_name:et": "Leman järv",
+    "alt_name:fr": "Lac Léman;Lac de Genève",
+    "alt_name:hr": "Lemansko jezero",
+    "alt_name:hu": "Leman-tó",
+    "alt_name:it": "Lago di Ginevra",
+    "alt_name:lb": "Lemanerséi",
+    "alt_name:sr": "Леманско језеро",
+    "alt_name:sr-Latn": "Lemansko jezero",
+    "boat": "yes",
+    "ele": "372",
+    "intermittent": "no",
+    "name": "Le Léman",
+    "name:ca": "Llac Léman",
+    "name:cs": "Ženevské jezero",
+    "name:da": "Lemansøen",
+    "name:de": "Genfersee",
+    "name:en": "Lake Geneva",
+    "name:es": "Lago Lemán",
+    "name:et": "Genfi järv",
+    "name:fr": "Le Léman",
+    "name:frp": "Lèman",
+    "name:he": "אגם ז'נבה",
+    "name:hr": "Ženevsko jezero",
+    "name:hu": "Genfi-tó",
+    "name:is": "Genfarvatn",
+    "name:it": "Lago Lemano",
+    "name:ja": "レマン湖",
+    "name:language": "fr",
+    "name:lb": "Genferséia",
+    "name:nl": "Meer van Genève",
+    "name:pl": "Jezioro Genewskie",
+    "name:ru": "Женевское озеро",
+    "name:sk": "Ženevské jazero",
+    "name:sl": "Ženevsko jezero",
+    "name:sr": "Женевско језеро",
+    "name:sr-Latn": "Ženevsko jezero",
+    "name:tt": "Женева күле",
+    "name:uk": "Женевське озеро",
+    "natural": "water",
+    "ref:CH:bafu.vec25-seen": "24",
+    "ref:CH:hls-dhs": "008657",
+    "ref:gewiss": "9757",
+    "ref:gwlnr": "CH0097570000",
+    "salt": "no",
+    "short_name": "Léman",
+    "swimming": "yes",
+    "tidal": "no",
+    "type": "multipolygon",
+    "water": "lake",
+    "wikidata": "Q6403",
+    "wikimedia_commons": "Category:Lake Geneva",
+    "wikipedia": "fr:Léman"
+  }
+},
+{
+  "type": "relation",
+  "id": 413555,
+  "center": {
+    "lat": -22.3993211,
+    "lon": -96.9393923
+  },
+  "tags": {
+    "natural": "water",
+    "type": "multipolygon",
+    "water": "river"
+  }
+},
+{
+  "type": "relation",
+  "id": 660056,
+  "center": {
+    "lat": -22.3939838,
+    "lon": -97.0593474
+  },
+  "tags": {
+    "alt_name:ar": "نهر رون;نهر الرادنة;ردانس",
+    "intermittent": "no",
+    "name": "Le Rhône",
+    "name:ar": "نهر الرون",
+    "name:azb": "رون",
+    "name:de": "Rhone",
+    "name:en": "Rhone",
+    "name:es": "Ródano",
+    "name:fa": "رون",
+    "name:fr": "Le Rhône",
+    "name:grc": "Ῥοδανός",
+    "name:kk-Arab": "رونا",
+    "name:pa": "ਰੋਨ ਦਰਿਆ",
+    "name:pnb": "دریائے رون",
+    "name:ru": "Рона",
+    "name:ur": "دریائے رون",
+    "natural": "water",
+    "tidal": "no",
+    "type": "site",
+    "water": "river",
+    "wikidata": "Q602",
+    "wikipedia": "fr:Rhône"
+  }
+},
+{
+  "type": "relation",
+  "id": 1289173,
+  "center": {
+    "lat": 46.1985315,
+    "lon": 6.1233115
+  },
+  "tags": {
+    "natural": "water",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 2280972,
+  "center": {
+    "lat": 46.2360510,
+    "lon": 6.1428347
+  },
+  "tags": {
+    "natural": "water",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 9238828,
+  "center": {
+    "lat": 46.2260722,
+    "lon": 6.1422123
+  },
+  "tags": {
+    "name": "Celestial Sphere pond",
+    "natural": "water",
+    "type": "multipolygon",
+    "water": "pond"
+  }
+},
+{
+  "type": "relation",
+  "id": 11696013,
+  "center": {
+    "lat": -22.3939838,
+    "lon": -97.0593474
+  },
+  "tags": {
+    "natural": "water",
+    "type": "multipolygon",
+    "water": "river"
+  }
+},
+{
+  "type": "relation",
+  "id": 12823915,
+  "center": {
+    "lat": 46.2291981,
+    "lon": 6.1335591
+  },
+  "tags": {
+    "natural": "water",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 21363177,
+  "center": {
+    "lat": 46.2076693,
+    "lon": 6.1553133
+  },
+  "tags": {
+    "name": "Rade de Genève",
+    "natural": "water",
+    "type": "multipolygon",
+    "water": "bay"
+  }
+}
+
+  ]
+}

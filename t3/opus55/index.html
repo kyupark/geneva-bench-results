@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Geneva Royale — Battle Royale in Genève</title>
+    <script type="module" crossorigin src="./assets/index-BADb9B9T.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-B9Z37f8r.css">
+  </head>
+  <body>
+    <div id="app">
+      <!-- loading -->
+      <div id="loading" class="screen">
+        <div class="logo">GENEVA<span>ROYALE</span></div>
+        <div class="tagline">Post Tenebras Lux — the last one standing takes the fondue</div>
+        <div class="loadbar"><div id="loadFill"></div></div>
+        <div id="loadText">Starting…</div>
+      </div>
+
+      <!-- main menu -->
+      <div id="menu" class="screen hidden">
+        <div class="menu-left">
+          <div class="logo">GENEVA<span>ROYALE</span></div>
+          <div class="tagline">A battle royale across the Old Town, the lakefront, Cornavin, Place de Neuve and the Parc des Bastions</div>
+          <div class="menu-buttons">
+            <button id="btnPlay" class="big">PLAY</button>
+            <button id="btnSettings">SETTINGS</button>
+            <button id="btnControls">CONTROLS</button>
+          </div>
+          <div class="namebox"><label>Name</label><input id="playerName" maxlength="16" /></div>
+          <div id="menuStats" class="menu-stats"></div>
+        </div>
+        <div id="menuPanel" class="menu-panel hidden"></div>
+      </div>
+
+      <!-- HUD -->
+      <div id="hud" class="hidden">
+        <div id="blueTint"></div>
+        <div id="damageFlash"></div>
+        <div id="scope" class="hidden"><div class="scope-ring"></div><div class="reticle"></div></div>
+        <div id="compass"><canvas id="compassCanvas" width="640" height="44"></canvas></div>
+        <div id="topRight">
+          <div class="counter"><span id="aliveNum">50</span><small>ALIVE</small></div>
+          <div class="counter kills"><span id="killNum">0</span><small>KILLED</small></div>
+        </div>
+        <div id="killfeed"></div>
+        <div id="zoneInfo"><div id="zoneText"></div><div id="zoneTime"></div></div>
+        <div id="minimapWrap"><canvas id="minimap" width="236" height="236"></canvas><div id="mmCoords"></div></div>
+        <div id="crosshair"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i><i class="dot"></i></div>
+        <div id="hitmarker"><i></i><i></i><i></i><i></i></div>
+        <div id="dmgIndicators"></div>
+        <div id="prompt"></div>
+        <div id="toast"></div>
+        <div id="centerMsg"><div class="big"></div><div class="small"></div></div>
+        <div id="actionBar" class="hidden"><div id="actionText"></div><div class="track"><div id="actionFill"></div></div></div>
+        <div id="bottom">
+          <div id="equip"></div>
+          <div id="healthWrap">
+            <div id="boostBar"><i></i><i></i><i></i><i></i></div>
+            <div id="healthBar"><div id="healthLag"></div><div id="healthFill"></div></div>
+          </div>
+        </div>
+        <div id="weaponPanel"></div>
+        <div id="fps"></div>
+        <div id="hint"></div>
+      </div>
+
+      <div id="fullmap" class="hidden"><canvas id="fullmapCanvas"></canvas><div class="fm-legend">M / Esc to close · Right-click to place a marker</div></div>
+      <div id="inventory" class="hidden"></div>
+      <div id="pause" class="screen hidden">
+        <div class="pause-box">
+          <h2>PAUSED</h2>
+          <button id="btnResume" class="big">RESUME</button>
+          <button id="btnPauseSettings">SETTINGS</button>
+          <button id="btnQuit">LEAVE MATCH</button>
+          <div id="pausePanel" class="menu-panel hidden"></div>
+        </div>
+      </div>
+      <div id="endScreen" class="screen hidden"></div>
+      <div id="clickToPlay" class="hidden">Click to resume</div>
+    </div>
+  </body>
+</html>

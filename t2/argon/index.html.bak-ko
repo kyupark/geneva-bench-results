@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GENEVA 3D DRONE TOUR — 제네바 6대 명소 3D 드론 시네마</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0d1826;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Helvetica Neue", sans-serif;
+      color: #f7f9fc;
+    }
+    #canvas-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Subtle cinematic letterbox & vignette */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(0,0,0,0) 64%, rgba(6, 12, 22, 0.48) 100%);
+      z-index: 2;
+    }
+
+    /* Drone Viewfinder Corner Brackets */
+    .reticle-frame {
+      position: absolute;
+      inset: 28px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .corner {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: rgba(255, 255, 255, 0.42);
+      border-style: solid;
+    }
+    .corner.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+    .corner.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+    /* Center subtle drone crosshair */
+    .center-crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 36px;
+      height: 36px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0.32;
+    }
+    .center-crosshair::before, .center-crosshair::after {
+      content: '';
+      position: absolute;
+      background: #ffffff;
+    }
+    .center-crosshair::before {
+      top: 17px; left: 8px; right: 8px; height: 1.5px;
+    }
+    .center-crosshair::after {
+      left: 17px; top: 8px; bottom: 8px; width: 1.5px;
+    }
+
+    /* Top Telemetry Bar */
+    .hud-top {
+      position: absolute;
+      top: 38px;
+      left: 48px;
+      right: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 4;
+      pointer-events: none;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.65);
+    }
+    .hud-pill {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(12, 20, 32, 0.62);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 9px 18px;
+      border-radius: 999px;
+    }
+    .rec-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 700;
+      color: #ff4d4d;
+    }
+    .rec-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ff3b3b;
+      box-shadow: 0 0 10px #ff3b3b;
+    }
+    .telemetry-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .telemetry-label {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .telemetry-val {
+      color: #ffffff;
+      font-weight: 600;
+      font-family: "SF Mono", "Menlo", monospace;
+    }
+
+    /* Bottom-Left Landmark Title Card */
+    .landmark-card {
+      position: absolute;
+      bottom: 48px;
+      left: 48px;
+      z-index: 4;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(12, 21, 34, 0.80) 0%, rgba(18, 32, 50, 0.62) 100%);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 4px solid #f5b942;
+      border-radius: 14px;
+      padding: 20px 26px;
+      min-width: 440px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .landmark-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .chapter-badge {
+      background: rgba(245, 185, 66, 0.2);
+      border: 1px solid rgba(245, 185, 66, 0.6);
+      color: #ffd166;
+      font-family: "SF Mono", "Menlo", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+    }
+    .landmark-fr {
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .landmark-ko {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 6px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    }
+    .landmark-desc {
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(235, 242, 250, 0.88);
+      margin-bottom: 14px;
+    }
+    /* Chapter Progress Stepper inside card */
+    .chapter-steps {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+    .step-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .step-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f5b942, #ffdf85);
+    }
+
+    /* Bottom-Right Geneva Mini Radar Map */
+    .radar-card {
+      position: absolute;
+      bottom: 48px;
+      right: 48px;
+      width: 220px;
+      height: 220px;
+      z-index: 4;
+      pointer-events: none;
+      background: rgba(11, 20, 33, 0.74);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.45);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .radar-title {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.68);
+    }
+    .radar-svg {
+      width: 100%;
+      height: 170px;
+      border-radius: 10px;
+      background: rgba(18, 34, 52, 0.7);
+    }
+
+    /* Interactive Controls Bar (hidden during automated video capture) */
+    .interactive-controls {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      background: rgba(12, 20, 32, 0.78);
+      backdrop-filter: blur(10px);
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .ctrl-btn {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ctrl-btn:hover, .ctrl-btn.active {
+      background: #f5b942;
+      color: #0d1826;
+      border-color: #f5b942;
+    }
+    body.capture-mode .interactive-controls {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div class="vignette"></div>
+
+  <div class="reticle-frame">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+  </div>
+  <div class="center-crosshair"></div>
+
+  <!-- Top Drone Telemetry Bar -->
+  <div class="hud-top">
+    <div class="hud-pill">
+      <div class="rec-badge">
+        <span class="rec-dot" id="rec-dot"></span>
+        <span>REC</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">TC</span>
+        <span class="telemetry-val" id="hud-tc">00:00:00:00</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">GPS</span>
+        <span class="telemetry-val" id="hud-gps">46°12'04.3"N  06°08'55.0"E</span>
+      </div>
+    </div>
+
+    <div class="hud-pill">
+      <div class="telemetry-item">
+        <span class="telemetry-label">ALT</span>
+        <span class="telemetry-val" id="hud-alt">88 m</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">SPD</span>
+        <span class="telemetry-val" id="hud-spd">46 km/h</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">HDG</span>
+        <span class="telemetry-val" id="hud-hdg">312° NW</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">GIMBAL</span>
+        <span class="telemetry-val" id="hud-pitch">-16°</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-val" style="color:#ffd166;">GENEVA 3D · 1080P</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom-Left Landmark Title Card -->
+  <div class="landmark-card" id="landmark-card">
+    <div class="landmark-header">
+      <span class="chapter-badge" id="card-index">01 / 06</span>
+      <span class="landmark-fr" id="card-fr">VIEILLE VILLE · CATHÉDRALE SAINT-PIERRE</span>
+    </div>
+    <div class="landmark-ko" id="card-ko">제네바 올드타운</div>
+    <div class="landmark-desc" id="card-desc">생피에르 대성당 첨탑 · 부르드푸르 광장 · 구시가지 중세 지붕</div>
+    <div class="chapter-steps">
+      <div class="step-bar"><div class="step-fill" id="step-0"></div></div>
+      <div class="step-bar"><div class="step-fill" id="step-1"></div></div>
+      <div class="step-bar"><div class="step-fill" id="step-2"></div></div>
+      <div class="step-bar"><div class="step-fill" id="step-3"></div></div>
+      <div class="step-bar"><div class="step-fill" id="step-4"></div></div>
+      <div class="step-bar"><div class="step-fill" id="step-5"></div></div>
+    </div>
+  </div>
+
+  <!-- Bottom-Right Mini Radar Map of Geneva -->
+  <div class="radar-card">
+    <div class="radar-title">
+      <span>GENEVA FLIGHT RADAR</span>
+      <span id="radar-pct">0%</span>
+    </div>
+    <svg class="radar-svg" viewBox="0 0 200 170">
+      <!-- Lake Geneva & Rhône River silhouette -->
+      <path d="M 0,92 Q 65,90 95,85 L 200,45 L 200,108 L 95,98 Q 65,102 0,104 Z" fill="rgba(34, 139, 184, 0.45)" stroke="rgba(95, 195, 240, 0.5)" stroke-width="1" />
+      <!-- Planned Drone Flight Route Loop -->
+      <path d="M 108,116 C 95,105 148,84 135,75 C 115,62 76,55 76,51 C 75,38 90,20 90,22 C 92,35 62,115 62,128 C 65,138 88,136 96,134" fill="none" stroke="rgba(255, 255, 255, 0.26)" stroke-width="1.5" stroke-dasharray="3 3" />
+      <!-- 6 Landmark Pins -->
+      <circle cx="108" cy="116" r="3.5" fill="#ffd166" />
+      <text x="114" y="119" fill="#d9e4f0" font-size="7.5" font-weight="600">올드타운</text>
+
+      <circle cx="144" cy="82" r="3.5" fill="#ffd166" />
+      <text x="149" y="85" fill="#d9e4f0" font-size="7.5" font-weight="600">호숫가</text>
+
+      <circle cx="76" cy="51" r="3.5" fill="#ffd166" />
+      <text x="42" y="54" fill="#d9e4f0" font-size="7.5" font-weight="600">중앙역</text>
+
+      <circle cx="90" cy="22" r="3.5" fill="#ffd166" />
+      <text x="96" y="25" fill="#d9e4f0" font-size="7.5" font-weight="600">UN</text>
+
+      <circle cx="62" cy="128" r="3.5" fill="#ffd166" />
+      <text x="12" y="131" fill="#d9e4f0" font-size="7.5" font-weight="600">플라스드뇌브</text>
+
+      <circle cx="92" cy="138" r="3.5" fill="#ffd166" />
+      <text x="98" y="142" fill="#d9e4f0" font-size="7.5" font-weight="600">바스티옹</text>
+
+      <!-- Live Moving Drone Icon & View Cone -->
+      <g id="radar-drone" transform="translate(108, 116)">
+        <polygon points="0,0 -12,-22 12,-22" fill="rgba(245, 185, 66, 0.28)" />
+        <circle cx="0" cy="0" r="4.5" fill="#ff4d4d" stroke="#ffffff" stroke-width="1.5" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- Interactive Chapter Jump Buttons (shown in browser mode, hidden in ?capture=1) -->
+  <div class="interactive-controls" id="interactive-controls">
+    <button class="ctrl-btn" data-t="0.5">1. 올드타운</button>
+    <button class="ctrl-btn" data-t="5.5">2. 호숫가</button>
+    <button class="ctrl-btn" data-t="10.5">3. 중앙역</button>
+    <button class="ctrl-btn" data-t="15.5">4. UN</button>
+    <button class="ctrl-btn" data-t="20.5">5. 플라스 드 뇌브</button>
+    <button class="ctrl-btn" data-t="25.5">6. 바스티옹</button>
+    <button class="ctrl-btn" id="btn-playpause">⏸ 일시정지</button>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js';
+    import { createGenevaTextures } from './src/textures.js';
+    import { buildTerrainAndWater } from './src/terrain_and_water.js';
+    import { buildSouthLandmarks } from './src/landmarks_south.js';
+    import { buildNorthAndLakeLandmarks } from './src/landmarks_north_lake.js';
+    import { createDroneFlightController, TOUR_DURATION, LANDMARK_CHAPTERS } from './src/drone_flight.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const isCaptureMode = params.get('capture') === '1';
+    if (isCaptureMode) {
+      document.body.classList.add('capture-mode');
+    }
+
+    const container = document.getElementById('canvas-container');
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(isCaptureMode ? 1 : Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.12;
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0xd8c6b0, 0.00038);
+
+    const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 1.5, 4500);
+
+    // Golden-Hour Alpine Lighting
+    const hemiLight = new THREE.HemisphereLight(0xfff5e4, 0x3b4d5e, 0.95);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffe2b8, 2.25);
+    sunLight.position.set(520, 360, 180);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 50;
+    sunLight.shadow.camera.far = 1800;
+    const d = 620;
+    sunLight.shadow.camera.left = -d;
+    sunLight.shadow.camera.right = d;
+    sunLight.shadow.camera.top = d;
+    sunLight.shadow.camera.bottom = -d;
+    sunLight.shadow.bias = -0.0005;
+    scene.add(sunLight);
+
+    const fillLight = new THREE.DirectionalLight(0x9bc4e2, 0.65);
+    fillLight.position.set(-400, 220, -300);
+    scene.add(fillLight);
+
+    // Build Geneva 3D World
+    const animatedObjects = [];
+    const textures = createGenevaTextures();
+    buildTerrainAndWater(scene, textures, animatedObjects);
+    buildSouthLandmarks(scene, textures);
+    buildNorthAndLakeLandmarks(scene, textures, animatedObjects);
+
+    const droneController = createDroneFlightController(camera);
+
+    // HUD Elements
+    const elTc = document.getElementById('hud-tc');
+    const elGps = document.getElementById('hud-gps');
+    const elAlt = document.getElementById('hud-alt');
+    const elSpd = document.getElementById('hud-spd');
+    const elHdg = document.getElementById('hud-hdg');
+    const elPitch = document.getElementById('hud-pitch');
+    const elCardIndex = document.getElementById('card-index');
+    const elCardFr = document.getElementById('card-fr');
+    const elCardKo = document.getElementById('card-ko');
+    const elCardDesc = document.getElementById('card-desc');
+    const elRadarPct = document.getElementById('radar-pct');
+    const elRadarDrone = document.getElementById('radar-drone');
+    const elRecDot = document.getElementById('rec-dot');
+    const stepEls = [0, 1, 2, 3, 4, 5].map(i => document.getElementById(`step-${i}`));
+
+    const compassDirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+    function formatTimecode(t) {
+      const totalSec = Math.floor(t);
+      const frames = Math.floor((t - totalSec) * 30);
+      const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const ss = String(totalSec % 60).padStart(2, '0');
+      const ff = String(frames).padStart(2, '0');
+      return `00:${mm}:${ss}:${ff}`;
+    }
+
+    function updateSceneAndHud(t) {
+      const loopedT = ((t % TOUR_DURATION) + TOUR_DURATION) % TOUR_DURATION;
+
+      // Update animated 3D elements (Jet d'Eau particles, steamers, SBB/TGV trains, UN flags, water ripples)
+      for (const fn of animatedObjects) {
+        fn(loopedT);
+      }
+
+      // Update Drone Camera & Telemetry
+      const state = droneController.updateAtTime(loopedT);
+
+      // Update Top Telemetry
+      elTc.textContent = formatTimecode(loopedT);
+      elGps.textContent = state.chapter.gps;
+      elAlt.textContent = `${state.altitudeMeters} m`;
+      elSpd.textContent = `${state.speedKmh} km/h`;
+      const dirStr = compassDirs[Math.round(state.headingDeg / 45) % 8];
+      elHdg.textContent = `${String(state.headingDeg).padStart(3, '0')}° ${dirStr}`;
+      elPitch.textContent = `${state.pitchDeg}°`;
+      elRecDot.style.opacity = Math.sin(loopedT * Math.PI * 2) >= -0.2 ? '1' : '0.25';
+
+      // Update Landmark Title Card
+      elCardIndex.textContent = state.chapter.index;
+      elCardFr.textContent = state.chapter.titleFr;
+      elCardKo.textContent = state.chapter.titleKo;
+      elCardDesc.textContent = state.chapter.descKo;
+
+      // Update Chapter Progress Bars
+      LANDMARK_CHAPTERS.forEach((ch, idx) => {
+        if (loopedT >= ch.endTime) {
+          stepEls[idx].style.width = '100%';
+        } else if (loopedT <= ch.startTime) {
+          stepEls[idx].style.width = '0%';
+        } else {
+          const pct = ((loopedT - ch.startTime) / (ch.endTime - ch.startTime)) * 100;
+          stepEls[idx].style.width = `${pct.toFixed(1)}%`;
+        }
+      });
+
+      // Update Mini Radar Drone Position (mapping world X [-300..450], Z [-750..520] to radar SVG [200x170])
+      const rx = Math.max(12, Math.min(188, 95 + (state.pos.x / 480) * 85));
+      const rz = Math.max(12, Math.min(158, 90 + (state.pos.z / 760) * 68));
+      elRadarDrone.setAttribute('transform', `translate(${rx.toFixed(1)}, ${rz.toFixed(1)}) rotate(${state.headingDeg})`);
+      elRadarPct.textContent = `${Math.round((loopedT / TOUR_DURATION) * 100)}%`;
+
+      renderer.render(scene, camera);
+      return state;
+    }
+
+    // Expose deterministic frame render API for Playwright video recorder
+    window.renderAtTime = (t) => {
+      return updateSceneAndHud(t);
+    };
+    window.TOUR_DURATION = TOUR_DURATION;
+    window.sceneReady = true;
+
+    // Interactive Browser Playback Loop
+    let currentTime = 0;
+    let isPlaying = !isCaptureMode;
+    let lastTimestamp = performance.now();
+
+    function animate(now) {
+      const dt = (now - lastTimestamp) / 1000;
+      lastTimestamp = now;
+      if (isPlaying) {
+        currentTime = (currentTime + Math.min(dt, 0.1)) % TOUR_DURATION;
+        updateSceneAndHud(currentTime);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    // Initial render at t = 0
+    updateSceneAndHud(0);
+    if (!isCaptureMode) {
+      requestAnimationFrame(animate);
+    }
+
+    // Interactive Controls
+    document.querySelectorAll('.ctrl-btn[data-t]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTime = parseFloat(btn.getAttribute('data-t'));
+        updateSceneAndHud(currentTime);
+      });
+    });
+
+    const btnPlayPause = document.getElementById('btn-playpause');
+    btnPlayPause.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      btnPlayPause.textContent = isPlaying ? '⏸ 일시정지' : '▶ 재생';
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      updateSceneAndHud(currentTime);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+const C=Cesium;
+C.Ion.defaultAccessToken='';
+C.RequestScheduler.maximumRequestsPerServer=16;
+const terrain=await C.CesiumTerrainProvider.fromUrl('/geo/3d.geo.admin.ch/ch.swisstopo.terrain.3d/v1/',{requestVertexNormals:true});
+const imagery=new C.UrlTemplateImageryProvider({url:'/geo/wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',maximumLevel:19,credit:'© swisstopo',rectangle:C.Rectangle.fromDegrees(5.9,45.8,10.6,47.9)});
+const viewer=new C.Viewer('world',{terrainProvider:terrain,baseLayer:new C.ImageryLayer(imagery),animation:false,timeline:false,baseLayerPicker:false,geocoder:false,homeButton:false,sceneModePicker:false,navigationHelpButton:false,fullscreenButton:false,selectionIndicator:false,infoBox:false,shouldAnimate:false,shadows:false,contextOptions:{webgl:{preserveDrawingBuffer:true,alpha:false,antialias:true}},useBrowserRecommendedResolution:false,msaaSamples:4});
+window.viewer=viewer;
+const scene=viewer.scene;
+scene.globe.maximumScreenSpaceError=1.3;
+scene.globe.tileCacheSize=3500;
+scene.globe.preloadAncestors=true;
+scene.globe.preloadSiblings=true;
+scene.fog.enabled=true;
+scene.fog.density=0.00009;
+scene.skyAtmosphere.brightnessShift=.03;
+scene.globe.baseColor=C.Color.fromCssColorString('#294752');
+scene.screenSpaceCameraController.enableCollisionDetection=false;
+scene.highDynamicRange=true;
+scene.postProcessStages.fxaa.enabled=true;
+viewer.resolutionScale=1;
+viewer.clock.currentTime=C.JulianDate.fromIso8601('2026-06-21T10:30:00Z');
+const buildings=await C.Cesium3DTileset.fromUrl('/geo/3d.geo.admin.ch/ch.swisstopo.swissbuildings3d.3d/v1/tileset.json',{maximumScreenSpaceError:2,cacheBytes:1536*1024*1024,maximumCacheOverflowBytes:1024*1024*1024,skipLevelOfDetail:false,preloadWhenHidden:true});
+scene.primitives.add(buildings);
+window.buildings=buildings;
+const textureBounds=await (await fetch('/cache/texture-bounds.json')).json();
+buildings.customShader=new C.CustomShader({
+ lightingModel:C.LightingModel.UNLIT,
+ uniforms:{
+  u_toLocal:{type:C.UniformType.MAT4,value:C.Matrix4.inverseTransformation(C.Transforms.eastNorthUpToFixedFrame(C.Cartesian3.fromDegrees(6.145,46.21,372)),new C.Matrix4())},
+  u_photo:{type:C.UniformType.SAMPLER_2D,value:new C.TextureUniform({url:'/cache/geneva-roofs.jpg',repeat:false})},
+  u_bounds:{type:C.UniformType.VEC4,value:new C.Cartesian4(textureBounds.minX,textureBounds.minY,textureBounds.spanX,textureBounds.spanY)}
+ },
+ varyings:{v_photoUV:C.VaryingType.VEC2,v_localPosition:C.VaryingType.VEC3},
+ vertexShaderText:`void vertexMain(VertexInput vsInput, inout czm_modelVertexOutput vsOutput){
+   vec3 p=(czm_model*vec4(vsInput.attributes.positionMC,1.0)).xyz;
+   v_localPosition=(u_toLocal*vec4(p,1.0)).xyz;
+   float r=length(p.xy);
+   float theta=atan(p.z*6378137.0,r*6356752.314245);
+   float latitude=atan(p.z+42841.3115*pow(sin(theta),3.0),r-42697.6727*pow(cos(theta),3.0));
+   vec2 merc=vec2((atan(p.y,p.x)+czm_pi)/czm_twoPi,(1.0-log(tan(czm_pi/4.0+latitude/2.0))/czm_pi)/2.0);
+   v_photoUV=(merc-u_bounds.xy)/u_bounds.zw;
+   v_photoUV.y=1.0-v_photoUV.y;
+ }`,
+ fragmentShaderText:`void fragmentMain(FragmentInput fsInput,inout czm_modelMaterial material){
+   vec3 n=normalize(czm_inverseViewRotation*fsInput.attributes.normalEC);
+   vec3 up=normalize(fsInput.attributes.positionWC);
+   float rooftop=smoothstep(0.28,0.68,abs(dot(n,up)));
+   vec3 photo=texture(u_photo,clamp(v_photoUV,0.001,0.999)).rgb;
+   float daylight=0.78+0.22*max(dot(n,normalize(vec3(-0.25,-0.4,0.9))),0.0);
+   vec3 stone=mix(vec3(0.74,0.72,0.66),photo,0.18)*daylight;
+   vec3 local=v_localPosition;
+   vec3 localN=mat3(u_toLocal)*n;
+   float along=dot(local.xy,normalize(vec2(-localN.y,localN.x)+vec2(0.0001)));
+   vec2 cell=fract(vec2(along/3.5,local.z/3.6));
+   float windowMask=step(.25,cell.x)*(1.0-step(.64,cell.x))*step(.28,cell.y)*(1.0-step(.76,cell.y));
+   stone=mix(stone,vec3(.22,.29,.31),windowMask*.68*(1.0-rooftop));
+   material.diffuse=pow(mix(stone,photo*1.04,rooftop),vec3(2.2));
+   material.alpha=1.0;
+ }`
+});
+try{
+ const trees=await C.Cesium3DTileset.fromUrl('/geo/3d.geo.admin.ch/ch.swisstopo.vegetation.3d/v1/tileset.json',{maximumScreenSpaceError:6,cacheBytes:256*1024*1024});
+ scene.primitives.add(trees);window.trees=trees;
+}catch(e){console.warn('Vegetation unavailable',String(e));}
+const chapters=[
+ {start:0,end:16,fr:'La Vieille-Ville',ko:'올드타운',sub:'생 피에르 대성당과 오래된 지붕 사이로',short:'올드타운',lon:6.1486,lat:46.2011,z:420},
+ {start:16,end:30,fr:'Au bord du Léman',ko:'레만 호숫가',sub:'도시와 물빛이 만나는 곳, 제 도 분수',short:'호숫가',lon:6.1559,lat:46.2074,z:375},
+ {start:30,end:42,fr:'Gare de Cornavin',ko:'코르나뱅 중앙역',sub:'제네바를 잇는 철길 위를 지나',short:'중앙역',lon:6.14255,lat:46.21015,z:395},
+ {start:42,end:57,fr:'Palais des Nations',ko:'UN · 팔레 데 나시옹',sub:'아리아나 공원 속 국제도시의 풍경',short:'UN',lon:6.1403,lat:46.2267,z:435},
+ {start:57,end:69,fr:'Place de Neuve',ko:'플라스 드 뇌브',sub:'그랑 테아트르와 뒤푸르 동상이 있는 광장',short:'플라스 드 뇌브',lon:6.14343,lat:46.20095,z:385},
+ {start:69,end:84,fr:'Le Parc des Bastions',ko:'바스티옹 공원',sub:'나무 사이로 이어지는 길, 종교개혁 기념벽',short:'바스티옹',lon:6.1456,lat:46.1995,z:385}
+];
+window.chapters=chapters;
+document.querySelector('#route').innerHTML=chapters.map((v,i)=>`<span class="stop" id="stop${i}">${v.short}</span>`).join('');
+// Each point is [time, longitude, latitude, focal elevation, heading, pitch, range].
+const keys=[
+ [0,6.1484,46.2012,423,-75,-40,760],
+ [5,6.1485,46.2011,423,-48,-34,490],
+ [12,6.1487,46.2012,420,12,-31,365],
+ [15,6.1520,46.2035,398,35,-35,640],
+ [19,6.1559,46.2073,415,58,-28,620],
+ [25,6.1559,46.2074,420,110,-26,560],
+ [28,6.1505,46.2085,398,132,-38,760],
+ [32,6.1427,46.2104,398,158,-36,520],
+ [38,6.1426,46.2102,400,204,-33,360],
+ [41,6.1418,46.2160,415,225,-40,880],
+ [45,6.1403,46.2267,435,245,-32,660],
+ [52,6.1403,46.2267,435,290,-32,490],
+ [55,6.1385,46.223,425,320,-40,850],
+ [58.5,6.14335,46.201,386,345,-39,460],
+ [65,6.14345,46.20095,388,398,-34,275],
+ [68,6.144,46.2005,389,420,-36,320],
+ [72,6.1458,46.19945,387,455,-38,335],
+ [77,6.146,46.1995,389,492,-33,380],
+ [81,6.1510,46.2032,400,535,-40,1400],
+ [84,6.1530,46.2050,400,552,-42,2100]
+];
+const smooth=(a,b,t)=>a+(b-a)*t;
+function state(t){
+ let j=0;while(j<keys.length-2&&t>keys[j+1][0])j++;
+ const a=keys[j],b=keys[j+1],u=Math.max(0,Math.min(1,(t-a[0])/(b[0]-a[0])));
+ // Cubic Hermite interpolation gives a continuous camera velocity across waypoints.
+ const out=[];
+ for(let k=1;k<7;k++){
+  const prev=keys[Math.max(0,j-1)],next=keys[Math.min(keys.length-1,j+2)];
+  const ma=(b[k]-prev[k])/(b[0]-prev[0])*(b[0]-a[0]);
+  const mb=(next[k]-a[k])/(next[0]-a[0])*(b[0]-a[0]);
+  out.push((2*u*u*u-3*u*u+1)*a[k]+(u*u*u-2*u*u+u)*ma+(-2*u*u*u+3*u*u)*b[k]+(u*u*u-u*u)*mb);
+ }
+ return out;
+}
+const clamp=x=>Math.min(1,Math.max(0,x));
+// Animated water droplets follow a ballistic rise to 140 m over the lake.
+const jetFrame=C.Transforms.eastNorthUpToFixedFrame(C.Cartesian3.fromDegrees(6.155904,46.207389,372.2));
+const jet=scene.primitives.add(new C.PointPrimitiveCollection());
+viewer.entities.add({position:C.Cartesian3.fromDegrees(6.155904,46.207389,423),cylinder:{length:100,topRadius:.9,bottomRadius:.5,material:C.Color.fromCssColorString('#f4fdff').withAlpha(.68)}});
+const drops=Array.from({length:1000},(_,i)=>jet.add({position:C.Cartesian3.fromDegrees(6.155904,46.207389,372.2),pixelSize:1.5+(i%5)*.35,color:C.Color.fromCssColorString('#f5fcff').withAlpha(.20+(i%4)*.10),disableDepthTestDistance:0}));
+function updateJet(t){
+ const flight=10.69;
+ for(let i=0;i<drops.length;i++){
+  const a=((i/drops.length*flight+t*1.1)%flight),height=52.45*a-4.905*a*a;
+  const spread=.22+Math.pow(a/flight,2)*9;
+  const angle=i*2.399963;
+  const local=new C.Cartesian3(Math.cos(angle)*spread+a*.75,Math.sin(angle)*spread,Math.max(0,height));
+  drops[i].position=C.Matrix4.multiplyByPoint(jetFrame,local,new C.Cartesian3());
+ }
+}
+window.setTime=(t)=>{
+ const [lon,lat,z,heading,pitch,range]=state(t);
+ viewer.camera.lookAt(C.Cartesian3.fromDegrees(lon,lat,z),new C.HeadingPitchRange(C.Math.toRadians(heading),C.Math.toRadians(pitch),range));
+ let n=chapters.findIndex(c=>t>=c.start&&t<c.end);if(n<0)n=5;
+ const ch=chapters[n];
+ document.querySelector('#number').textContent=`${String(n+1).padStart(2,'0')} / 06  ·  GENÈVE VUE DU CIEL`;
+ document.querySelector('#name').textContent=ch.fr;
+ document.querySelector('#korean').textContent=ch.ko;
+ document.querySelector('#subtitle').textContent=ch.sub;
+ const alpha=clamp((t-ch.start-.4)/1.0)*clamp((ch.end-t-.2)/.8);
+ document.querySelector('#chapter').style.opacity=alpha*(t<6?0:1)*(t>78?0:1);
+ document.querySelector('#intro').style.opacity=t<8?clamp((t-.7)/1.2)*clamp((7.3-t)/1.3):clamp((t-79)/1.5)*clamp((84.0-t)/1.3);
+ document.querySelector('#intro small').textContent=t<8?'SWITZERLAND · AN AERIAL JOURNEY':'SIX PLACES · ONE CITY';
+ document.querySelector('#coordinates').innerHTML=`${lat.toFixed(4)}° N &nbsp; ${lon.toFixed(4)}° E<br>GENEVA, SWITZERLAND`;
+ document.querySelector('#progress').style.width=`${100*t/84}%`;
+ document.querySelector('#fade').style.opacity=Math.max(clamp((1.2-t)/1.2),clamp((t-82.5)/1.5));
+ chapters.forEach((_,i)=>document.querySelector('#stop'+i).className='stop'+(i===n?' active':i<n?' done':''));
+ updateJet(t);
+ viewer.render();
+ return {lon,lat,z,heading,pitch,range,chapter:n};
+};
+window.sceneReady=()=>({tiles:scene.globe.tilesLoaded,buildings:buildings.tilesLoaded,trees:window.trees?.tilesLoaded??true,pending:C.RequestScheduler.statistics.numberOfActiveRequests});
+window.setTime(8);
+window.ready=true;
+if(!new URLSearchParams(location.search).has('capture')){
+ const play=document.querySelector('#play');play.style.display='flex';
+ play.onclick=()=>{play.style.display='none';const begin=performance.now();function loop(now){window.setTime(((now-begin)/1000)%84);requestAnimationFrame(loop)}requestAnimationFrame(loop)};
+}

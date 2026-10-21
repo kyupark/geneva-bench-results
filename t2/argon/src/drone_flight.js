@@ -1,0 +1,199 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js';
+
+export const TOUR_DURATION = 30.0; // seconds
+
+export const LANDMARK_CHAPTERS = [
+  {
+    id: 'oldtown',
+    index: '01 / 06',
+    startTime: 0.0,
+    endTime: 5.0,
+    titleKo: 'Geneva Old Town',
+    titleFr: 'VIEILLE VILLE · CATHÉDRALE SAINT-PIERRE',
+    descKo: 'St. Pierre Cathedral spire · Place du Bourg-de-Four · medieval Old Town roofs',
+    gps: '46°12\'04.3"N  06°08\'55.0"E',
+    altitudeBase: 88,
+    mapPos: [0.54, 0.68]
+  },
+  {
+    id: 'lakeside',
+    index: '02 / 06',
+    startTime: 5.0,
+    endTime: 10.0,
+    titleKo: 'Geneva Lakeside & Jet d’Eau',
+    titleFr: 'RADE DE GENÈVE · JET D\'EAU · JARDIN ANGLAIS',
+    descKo: '140m Jet d’Eau fountain · English Garden Flower Clock · Belle Époque lake steamers · Mont-Blanc Bridge',
+    gps: '46°12\'26.6"N  06°09\'21.2"E',
+    altitudeBase: 54,
+    mapPos: [0.74, 0.49]
+  },
+  {
+    id: 'cornavin',
+    index: '03 / 06',
+    startTime: 10.0,
+    endTime: 15.0,
+    titleKo: 'Geneva Cornavin Central Station',
+    titleFr: 'GARE DE GENÈVE-CORNAVIN · CFF FFS',
+    descKo: 'Cornavin square tram hub · Art Deco stone station · SBB & TGV High-speed train platform',
+    gps: '46°12\'36.7"N  06°08\'32.6"E',
+    altitudeBase: 46,
+    mapPos: [0.38, 0.30]
+  },
+  {
+    id: 'un',
+    index: '04 / 06',
+    startTime: 15.0,
+    endTime: 20.0,
+    titleKo: 'UN Office at Geneva (UN)',
+    titleFr: 'PALAIS DES NATIONS · PLACE DES NATIONS',
+    descKo: 'Broken Chair · Allée des Drapeaux · Ariana Park & Celestial sphere',
+    gps: '46°13\'35.8"N  06°08\'25.8"E',
+    altitudeBase: 62,
+    mapPos: [0.45, 0.12]
+  },
+  {
+    id: 'placedeneuve',
+    index: '05 / 06',
+    startTime: 20.0,
+    endTime: 25.0,
+    titleKo: 'Place de Neuve',
+    titleFr: 'PLACE DE NEUVE · GRAND THÉÂTRE · MUSÉE RATH',
+    descKo: 'Grand Théâtre (opera) · Musée Rath · Geneva Conservatory · General Dufour statue',
+    gps: '46°12\'05.4"N  06°08\'35.5"E',
+    altitudeBase: 38,
+    mapPos: [0.31, 0.75]
+  },
+  {
+    id: 'bastions',
+    index: '06 / 06',
+    startTime: 25.0,
+    endTime: 30.0,
+    titleKo: 'Parc des Bastions',
+    titleFr: 'PARC DES BASTIONS · MUR DES RÉFORMATEURS',
+    descKo: 'Reformation Wall’s four statues · University of Geneva (Uni Bastions) · giant outdoor chessboard',
+    gps: '46°11\'57.1"N  06°08\'44.2"E',
+    altitudeBase: 32,
+    mapPos: [0.44, 0.80]
+  }
+];
+
+export function createDroneFlightController(camera) {
+  // 16 Carefully Choreographed Keyframes (every 2.0 seconds from t = 0s to t = 30s)
+  const keyframeData = [
+    // --- 01: OLD TOWN (0.0s - 5.0s) ---
+    { t: 0.0, pos: [148, 92, 372], look: [45, 54, 310], roll: -0.05 },   // Sweeping over Bourg-de-Four toward St. Pierre Cathedral
+    { t: 2.0, pos: [-22, 82, 245], look: [48, 56, 312], roll: 0.10 },    // Wide orbit showing West Portico, Twin Towers & Full Green Spire
+    { t: 4.0, pos: [72, 52, 190],  look: [185, 38, 85], roll: -0.08 },   // Diving down Old Town hill toward Jardin Anglais & Lake
+
+    // --- 02: LAKESIDE & JET D'EAU (5.0s - 10.0s) ---
+    { t: 6.0, pos: [135, 34, 108], look: [335, 58, 15], roll: -0.10 },   // Skimming Jardin Anglais & Flower Clock toward Jet d'Eau
+    { t: 8.0, pos: [195, 56, -72], look: [340, 62, 15], roll: 0.13 },    // Orbiting over Lake Geneva framing 140m Jet d'Eau & Mont Blanc
+    { t: 9.8, pos: [28, 38, -68],  look: [-95, 22, -295], roll: -0.12 }, // Passing Bains des Pâquis & Pont du Mont-Blanc flags
+
+    // --- 03: CENTRAL STATION / GARE CORNAVIN (10.0s - 15.0s) ---
+    { t: 11.4, pos: [-72, 35, -246], look: [-115, 24, -345], roll: 0.06 },  // Approaching Gare Cornavin up Rue du Mont-Blanc
+    { t: 13.2, pos: [-152, 46, -310], look: [-105, 16, -382], roll: 0.11 }, // Banking over clock facade to reveal SBB & TGV platforms
+    { t: 14.8, pos: [-96, 42, -438], look: [-75, 25, -555], roll: -0.06 },  // Gliding north over rail corridor toward UN
+
+    // --- 04: UN / PALAIS DES NATIONS (15.0s - 20.0s) ---
+    { t: 16.2, pos: [-92, 31, -516], look: [-65, 26, -595], roll: -0.05 },  // Passing closely beside the giant red Broken Chair
+    { t: 18.0, pos: [-32, 54, -610], look: [-20, 38, -715], roll: 0.09 },   // Soaring down Allée des Drapeaux into Cour d'Honneur
+    { t: 19.6, pos: [35, 65, -635],  look: [-55, 28, -420], roll: 0.14 },   // High bank over Parc de l'Ariana & Golden Sphere turning south
+
+    // --- 05: PLACE DE NEUVE (20.0s - 25.0s) ---
+    { t: 21.2, pos: [-152, 54, 215], look: [-195, 22, 415], roll: -0.11 },  // Expressive aerial dive across the Rhône & Corraterie
+    { t: 22.8, pos: [-146, 27, 412], look: [-235, 22, 412], roll: 0.10 },   // Orbiting General Dufour statue facing Grand Théâtre Opera
+    { t: 24.5, pos: [-192, 24, 452], look: [-115, 16, 428], roll: -0.09 },  // Sweeping past Conservatoire & Musée Rath toward Bastions gate
+
+    // --- 06: PARC DES BASTIONS & GRAND FINALE (25.0s - 30.0s) ---
+    { t: 26.0, pos: [-102, 19, 436], look: [-25, 15, 405], roll: 0.05 },    // Flying over Giant Chessboards down chestnut tree alley
+    { t: 27.6, pos: [-25, 16, 436],  look: [-20, 21, 382], roll: 0.02 },    // Close-up along Mur des Réformateurs (4 Reformer Statues)
+    { t: 30.0, pos: [-55, 114, 492], look: [85, 38, 165],  roll: 0.0 }      // Grand Finale Panorama: Bastions + Old Town + Jet d'Eau + Lake!
+  ];
+
+  // Sample dense uniform spline points using smooth cubic interpolation over time
+  const posPoints = keyframeData.map(k => new THREE.Vector3(...k.pos));
+  const lookPoints = keyframeData.map(k => new THREE.Vector3(...k.look));
+
+  const posCurve = new THREE.CatmullRomCurve3(posPoints, false, 'centripetal', 0.5);
+  const lookCurve = new THREE.CatmullRomCurve3(lookPoints, false, 'centripetal', 0.5);
+
+  // Map time t in [0, TOUR_DURATION] to normalized parameter u in [0, 1] matching keyframe timestamps
+  function timeToParam(t) {
+    const clamped = Math.max(0, Math.min(TOUR_DURATION, t));
+    for (let i = 0; i < keyframeData.length - 1; i++) {
+      const t0 = keyframeData[i].t;
+      const t1 = keyframeData[i + 1].t;
+      if (clamped >= t0 && clamped <= t1) {
+        const local = (clamped - t0) / (t1 - t0);
+        // Smoothstep blend within segment only slightly to preserve C1 continuity
+        return (i + local) / (keyframeData.length - 1);
+      }
+    }
+    return 1.0;
+  }
+
+  function getRollAtTime(t) {
+    const clamped = Math.max(0, Math.min(TOUR_DURATION, t));
+    for (let i = 0; i < keyframeData.length - 1; i++) {
+      const t0 = keyframeData[i].t;
+      const t1 = keyframeData[i + 1].t;
+      if (clamped >= t0 && clamped <= t1) {
+        const local = (clamped - t0) / (t1 - t0);
+        const s = local * local * (3 - 2 * local);
+        return keyframeData[i].roll * (1 - s) + keyframeData[i + 1].roll * s;
+      }
+    }
+    return 0;
+  }
+
+  function getChapterAtTime(t) {
+    const clamped = Math.max(0, Math.min(TOUR_DURATION - 0.001, t));
+    return LANDMARK_CHAPTERS.find(c => clamped >= c.startTime && clamped < c.endTime) || LANDMARK_CHAPTERS[LANDMARK_CHAPTERS.length - 1];
+  }
+
+  function updateAtTime(t) {
+    const u = timeToParam(t);
+    const pos = posCurve.getPoint(u);
+    const look = lookCurve.getPoint(u);
+    const tangent = posCurve.getTangent(u);
+
+    // Subtle organic drone gimbal micro-float (100% deterministic function of t)
+    pos.y += Math.sin(t * 2.1) * 0.35;
+
+    camera.position.copy(pos);
+    camera.up.set(0, 1, 0);
+    camera.lookAt(look);
+
+    // Apply realistic drone banking roll around view axis
+    const roll = getRollAtTime(t) + Math.sin(t * 1.7) * 0.012;
+    camera.rotateZ(roll);
+
+    // Compute telemetry for HUD
+    const headingRad = Math.atan2(look.x - pos.x, -(look.z - pos.z));
+    const headingDeg = ((headingRad * 180 / Math.PI) + 360) % 360;
+    const pitchDeg = Math.asin((look.y - pos.y) / Math.max(1, pos.distanceTo(look))) * 180 / Math.PI;
+    const speedKmh = Math.round(38 + tangent.length() * 14 + Math.sin(t * 1.3) * 6);
+    const chapter = getChapterAtTime(t);
+
+    return {
+      time: t,
+      progress: t / TOUR_DURATION,
+      pos,
+      look,
+      rollDeg: (roll * 180 / Math.PI).toFixed(1),
+      headingDeg: Math.round(headingDeg),
+      pitchDeg: Math.round(pitchDeg),
+      altitudeMeters: Math.round(pos.y + 12),
+      speedKmh,
+      chapter
+    };
+  }
+
+  return {
+    updateAtTime,
+    getChapterAtTime,
+    posCurve,
+    lookCurve
+  };
+}

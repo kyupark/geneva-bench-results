@@ -1,0 +1,9 @@
+{
+  "image": "./data/minimap.jpg",
+  "widthPx": 1000,
+  "heightPx": 1540,
+  "x0": -1150,
+  "x1": 1350,
+  "y0": -550,
+  "y1": 3300
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Geneva Royale</title>
+  <script type="module" crossorigin src="./assets/index-BYkQtL05.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-2TWA0zAU.css">
+</head>
+<body>
+  <canvas id="view"></canvas>
+  <div id="flash"></div>
+  <div id="hud" hidden></div>
+  <section id="menu">
+    <div class="brand">
+      <div class="cross" aria-hidden="true"></div>
+      <div>
+        <p class="eyebrow">Battle royale · 30 drop</p>
+        <h1>Geneva Royale</h1>
+      </div>
+    </div>
+    <p class="lede">Last one standing on the lake. The plane crosses the Old Town, the lakefront, Cornavin, Place de Neuve, and the Parc des Bastions.</p>
+    <ul class="districts">
+      <li><b>Old Town</b><span>St-Pierre on the hill</span></li>
+      <li><b>Lakefront</b><span>Jet d’Eau and the quays</span></li>
+      <li><b>Cornavin</b><span>Main station and hotels</span></li>
+      <li><b>Place de Neuve</b><span>Theatre square</span></li>
+      <li><b>Parc des Bastions</b><span>Reformation Wall</span></li>
+    </ul>
+    <button id="drop" type="button" disabled>Preparing the city…</button>
+    <dl class="controls">
+      <div><dt>Move</dt><dd>WASD · mouse look</dd></div>
+      <div><dt>Stance</dt><dd>Shift sprint · Ctrl crouch · Space jump</dd></div>
+      <div><dt>Fight</dt><dd>Fire · aim · R reload · wheel swaps</dd></div>
+      <div><dt>Drop</dt><dd>F leave the plane · F chute · Shift dive</dd></div>
+      <div><dt>Gear</dt><dd>F loot · 1 2 weapons · Q bandage · G heal · V drink</dd></div>
+      <div><dt>Match</dt><dd>M mute · Esc pause</dd></div>
+    </dl>
+  </section>
+  <section id="pause" hidden>
+    <div class="card">
+      <p class="eyebrow">Paused</p>
+      <h2>Hold the quay</h2>
+      <p>The circle keeps its time while you are away from the mouse.</p>
+      <button id="resume" type="button">Resume</button>
+      <button id="leave" type="button" class="ghost">Main menu</button>
+    </div>
+  </section>
+  <section id="result" hidden>
+    <div class="card">
+      <p class="eyebrow" id="result-kicker">Match over</p>
+      <h2 id="result-title">Eliminated</h2>
+      <p id="result-place"></p>
+      <dl class="stats">
+        <div><dt>Kills</dt><dd id="stat-kills">0</dd></div>
+        <div><dt>Damage</dt><dd id="stat-dmg">0</dd></div>
+        <div><dt>Accuracy</dt><dd id="stat-acc">0%</dd></div>
+        <div><dt>Seed</dt><dd id="stat-seed">0</dd></div>
+      </dl>
+      <button id="again" type="button">Drop again</button>
+      <button id="result-menu" type="button" class="ghost">Main menu</button>
+    </div>
+  </section>
+  <pre id="test-out"></pre>
+</body>
+</html>

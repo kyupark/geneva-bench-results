@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brick Taxi · Genève</title>
+    <script type="module" crossorigin src="./assets/index-DSKkuVeV.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D_Nflqm-.css">
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+
+    <div id="hud" class="hidden">
+      <div id="cash-panel" class="panel tl">
+        <span class="label">Fares</span>
+        <span id="cash" class="big">CHF 0</span>
+        <span id="best" class="small"></span>
+      </div>
+
+      <div id="clock-panel" class="panel tc">
+        <span class="label">Shift clock</span>
+        <span id="clock" class="big">2:00</span>
+        <div class="bar"><i id="clock-bar"></i></div>
+      </div>
+
+      <div id="fare" class="panel tr">
+        <span id="stage" class="label">Pick up</span>
+        <div class="fare-head">
+          <svg id="arrow" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 L29 28 L16 22 L3 28 Z" /></svg>
+          <div class="fare-text">
+            <div id="fare-title" class="title">Gare Cornavin</div>
+            <div id="fare-trip" class="small"></div>
+          </div>
+        </div>
+        <div class="row">
+          <span id="fare-dist" class="big-small">0 m</span>
+          <span id="fare-timer" class="timer"></span>
+        </div>
+        <div id="fare-metres" class="small"></div>
+      </div>
+
+      <div id="map-panel" class="panel bl">
+        <canvas id="minimap"></canvas>
+      </div>
+
+      <div id="crazy-panel" class="panel bc">
+        <span id="multiplier" class="big">x1</span>
+        <span class="label">Crazy meter</span>
+        <div class="bar wide"><i id="crazy-bar"></i></div>
+      </div>
+
+      <div id="speed-panel" class="panel br">
+        <span id="speed" class="big">0</span>
+        <span class="label">km/h</span>
+        <span class="label">Turbo</span>
+        <div class="bar"><i id="turbo-bar"></i></div>
+      </div>
+
+      <div id="toasts"></div>
+    </div>
+
+    <div id="hint" class="hint hidden">
+      W/↑ gas · S/↓ brake &amp; reverse · A/D steer · Space drift · Shift turbo · R back on road · P pause · M mute
+    </div>
+
+    <div id="title" class="overlay">
+      <div class="card">
+        <h1 class="logo"><span class="b1">B</span><span class="b2">R</span><span class="b3">I</span><span class="b4">C</span><span class="b5">K</span> <span class="b6">T</span><span class="b7">A</span><span class="b8">X</span><span class="b9">I</span></h1>
+        <p class="subtitle">Crazy fares through Genève</p>
+        <p class="blurb">Pick up passengers at ten real Geneva landmarks and race them to their stop before the clock runs out. Drift, jump and nearly-miss traffic to build your crazy multiplier.</p>
+        <button id="title-start" class="start">Start shift</button>
+        <p class="keys">Press <kbd>Enter</kbd> to start · <kbd>Space</kbd> drift · <kbd>Shift</kbd> turbo</p>
+        <p class="credit">Map data © OpenStreetMap contributors. Distances and positions are to scale (1 unit = 1 m).</p>
+      </div>
+    </div>
+
+    <div id="paused" class="overlay hidden">
+      <div class="card small-card">
+        <h2>Paused</h2>
+        <p>Press <kbd>P</kbd> or <kbd>Enter</kbd> to carry on.</p>
+      </div>
+    </div>
+
+    <div id="over" class="overlay hidden">
+      <div class="card">
+        <h2>End of shift</h2>
+        <p id="over-cash" class="score">CHF 0</p>
+        <p id="over-stats" class="small"></p>
+        <p id="over-best" class="small"></p>
+        <button id="over-restart" class="start">Another shift</button>
+        <p class="keys">Press <kbd>Enter</kbd> to start again</p>
+      </div>
+    </div>
+
+  </body>
+</html>

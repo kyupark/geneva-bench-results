@@ -1,0 +1,2719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geneva 3D Drone Cinematic Tour | Geneva 3D Drone Cinematic Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
+  <style>
+    :root {
+      --primary: #e63946;
+      --primary-glow: rgba(230, 57, 70, 0.4);
+      --accent: #457b9d;
+      --gold: #e0a96d;
+      --hud-green: #39ff14;
+      --hud-cyan: #00f0ff;
+      --hud-amber: #ffb703;
+      --bg-dark: #07090e;
+      --panel-bg: rgba(10, 15, 26, 0.82);
+      --panel-border: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #fff;
+    }
+
+    #viewport {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Cinematic Letterbox */
+    .letterbox {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: #000;
+      z-index: 10;
+      transition: height 0.4s ease;
+      pointer-events: none;
+    }
+    .letterbox.top { top: 0; }
+    .letterbox.bottom { bottom: 0; }
+
+    /* HUD Overlay Layer */
+    #hud-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Top HUD Telemetry Bar */
+    .hud-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 48px 36px 12px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+      pointer-events: auto;
+    }
+
+    .telemetry-group {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .telemetry-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(10, 20, 35, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--hud-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+      backdrop-filter: blur(8px);
+    }
+
+    .telemetry-badge .val {
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .rec-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(230, 57, 70, 0.2);
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .rec-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--primary);
+      border-radius: 50%;
+      animation: blink 1s infinite alternate;
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+
+    /* Crosshair & Framing Overlay */
+    .reticle-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 360px;
+      height: 240px;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.75;
+      transition: opacity 0.3s;
+    }
+
+    .reticle-center {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(0, 240, 255, 0.6);
+      border-radius: 50%;
+    }
+
+    .reticle-center::before, .reticle-center::after {
+      content: '';
+      position: absolute;
+      background: rgba(0, 240, 255, 0.8);
+    }
+    .reticle-center::before {
+      top: 50%;
+      left: -12px;
+      width: 56px;
+      height: 1px;
+      transform: translateY(-50%);
+    }
+    .reticle-center::after {
+      left: 50%;
+      top: -12px;
+      height: 56px;
+      width: 1px;
+      transform: translateX(-50%);
+    }
+
+    .artificial-horizon {
+      position: absolute;
+      width: 200px;
+      height: 2px;
+      background: rgba(57, 255, 20, 0.4);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s linear;
+    }
+
+    .grid-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px dashed rgba(255,255,255,0.1);
+      box-sizing: border-box;
+    }
+
+    /* Subtitle & Narration HUD Box */
+    .cinematic-caption-box {
+      align-self: center;
+      text-align: center;
+      max-width: 820px;
+      background: linear-gradient(180deg, rgba(8, 14, 25, 0.85) 0%, rgba(5, 8, 15, 0.95) 100%);
+      border: 1px solid rgba(224, 169, 109, 0.35);
+      border-radius: 12px;
+      padding: 18px 32px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255,255,255,0.15);
+      pointer-events: auto;
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .caption-tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .caption-title {
+      font-family: 'Cinzel', 'Noto Sans KR', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .caption-sub {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #d1d5db;
+      font-weight: 300;
+    }
+
+    .caption-coords {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--hud-cyan);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Bottom Control Bar */
+    .hud-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 36px 48px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+      pointer-events: auto;
+    }
+
+    .playback-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--panel-border);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--hud-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-icon.active {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: var(--hud-cyan);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    }
+
+    .btn-record {
+      background: rgba(230, 57, 70, 0.3);
+      border-color: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+    .btn-record:hover {
+      background: rgba(230, 57, 70, 0.5);
+      box-shadow: 0 0 16px rgba(230, 57, 70, 0.6);
+    }
+    .btn-record.recording {
+      background: var(--primary);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.7); }
+      70% { box-shadow: 0 0 0 14px rgba(230, 57, 70, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
+    }
+
+    /* Timeline & Landmark Navigator */
+    .timeline-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      max-width: 650px;
+      margin: 0 24px;
+    }
+
+    .timeline-progress-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .timeline-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--hud-cyan) 100%);
+      border-radius: 3px;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px var(--hud-cyan);
+    }
+
+    /* Landmark Fast-Jump Dock */
+    .landmark-dock {
+      position: absolute;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 30;
+      pointer-events: auto;
+    }
+
+    .landmark-tab {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(12px);
+      font-size: 13px;
+    }
+
+    .landmark-tab:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      transform: translateX(4px);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .landmark-tab.active {
+      background: rgba(0, 240, 255, 0.18);
+      border-color: var(--hud-cyan);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+      font-weight: bold;
+    }
+
+    .landmark-icon {
+      font-size: 16px;
+    }
+
+    /* Right Control Toolset */
+    .toolset-dock {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 30;
+      pointer-events: auto;
+    }
+
+    .toolset-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 14px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 170px;
+    }
+
+    .panel-header {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--hud-cyan);
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 4px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .tool-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #d1d5db;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .tool-btn.active {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--hud-cyan);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Radar / Minimap */
+    .minimap-container {
+      position: absolute;
+      right: 28px;
+      bottom: 60px;
+      width: 160px;
+      height: 160px;
+      background: rgba(8, 14, 25, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 25;
+      pointer-events: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,240,255,0.15);
+    }
+
+    #minimap-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .radar-sweep {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(0, 240, 255, 0.25) 0deg, rgba(0, 240, 255, 0) 60deg);
+      animation: rotateSweep 4s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotateSweep {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Modal Gallery */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px;
+      max-width: 960px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 30px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover {
+      background: var(--primary);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .gallery-item {
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.2s;
+    }
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+    .gallery-img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+    .gallery-desc {
+      padding: 12px 14px;
+    }
+    .gallery-desc h4 {
+      font-size: 15px;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+    .gallery-desc p {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    /* Controls Instruction Toast */
+    .controls-hint {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 12px;
+      color: #e2e8f0;
+      backdrop-filter: blur(8px);
+      z-index: 22;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* Mobile / Responsive Adjustments */
+    @media (max-width: 900px) {
+      .landmark-dock { display: none; }
+      .toolset-dock { display: none; }
+      .minimap-container { display: none; }
+      .cinematic-caption-box { width: 90%; padding: 12px 16px; margin-bottom: 12px; }
+      .caption-title { font-size: 18px; }
+      .caption-sub { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 3D Canvas Viewport -->
+  <div id="viewport"></div>
+
+  <!-- Cinematic Letterbox Borders -->
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+
+  <!-- Drone HUD Controls & Telemetry -->
+  <div id="hud-overlay">
+    
+    <!-- Top HUD Bar -->
+    <div class="hud-top-bar">
+      <div class="telemetry-group">
+        <div class="rec-indicator" id="rec-badge">
+          <div class="rec-dot"></div>
+          <span>REC <span id="rec-timer">00:00</span></span>
+        </div>
+        <div class="telemetry-badge">
+          <span>RES</span>
+          <span class="val">4K UHD 60FPS</span>
+        </div>
+        <div class="telemetry-badge">
+          <span>ALT</span>
+          <span class="val" id="hud-alt">85m</span>
+        </div>
+        <div class="telemetry-badge">
+          <span>SPD</span>
+          <span class="val" id="hud-spd">38 km/h</span>
+        </div>
+      </div>
+
+      <div class="telemetry-group">
+        <div class="telemetry-badge">
+          <span>HDG</span>
+          <span class="val" id="hud-hdg">215° SW</span>
+        </div>
+        <div class="telemetry-badge">
+          <span>GPS</span>
+          <span class="val" id="hud-gps">46.2044° N, 6.1432° E</span>
+        </div>
+        <div class="telemetry-badge">
+          <span>BAT</span>
+          <span class="val" id="hud-bat" style="color: var(--hud-green)">92%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Reticle & Framing Overlay -->
+    <div class="reticle-container" id="hud-reticle">
+      <div class="grid-lines"></div>
+      <div class="artificial-horizon" id="hud-horizon"></div>
+      <div class="reticle-center"></div>
+    </div>
+
+    <div class="controls-hint" id="controls-hint">
+      🎮 Manual control: W/A/S/D (move forward/back/left/right) | Space/Shift (altitude up/down) | Mouse drag (rotate camera)
+    </div>
+
+    <!-- Subtitle & Cinematic Narration Display -->
+    <div class="cinematic-caption-box" id="caption-box">
+      <div class="caption-tag" id="caption-chapter">CHAPTER 01 / 06 • GENEVA LANDMARK</div>
+      <div class="caption-title" id="caption-title">Old Town & St. Pierre Cathedral</div>
+      <div class="caption-sub" id="caption-desc">
+        12th-century Romanesque-Gothic cathedral and center of Calvin’s Reformation.
+        It rises above the lovely Old Town hill, overlooking all of Geneva and Lake Geneva.
+      </div>
+      <div class="caption-coords" id="caption-coords">LOC: Vieille-Ville • ELEV: 405m • LAT/LON: 46°12′04″N, 06°08′55″E</div>
+    </div>
+
+    <!-- Bottom Flight Control Bar -->
+    <div class="hud-bottom-bar">
+      <div class="playback-controls">
+        <button class="btn-icon" id="btn-play-pause" title="Play/Pause">
+          <span id="play-icon">⏸</span> <span id="play-text">Pause</span>
+        </button>
+        <button class="btn-icon" id="btn-restart" title="Watch from the start">
+          ↺ Restart
+        </button>
+        <button class="btn-icon btn-record" id="btn-record" title="3D Record and download video">
+          ● 3D Record video
+        </button>
+      </div>
+
+      <!-- Tour Progress Timeline -->
+      <div class="timeline-container">
+        <span style="font-size: 11px; color: #9ca3af;" id="time-current">00:00</span>
+        <div class="timeline-progress-bar" id="timeline-bar">
+          <div class="timeline-fill" id="timeline-fill"></div>
+        </div>
+        <span style="font-size: 11px; color: #9ca3af;" id="time-total">02:30</span>
+      </div>
+
+      <div class="playback-controls">
+        <button class="btn-icon" id="btn-audio" title="Sound on/off">
+          <span id="audio-icon">🔊</span> Sound ON
+        </button>
+        <button class="btn-icon" id="btn-gallery" title="4K High-res drone photo gallery">
+          📸 4K Gallery
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Landmark Fast Navigation Dock -->
+  <div class="landmark-dock">
+    <div class="landmark-tab active" data-landmark="0">
+      <span class="landmark-icon">⛪</span>
+      <span>1. Old Town (Old Town)</span>
+    </div>
+    <div class="landmark-tab" data-landmark="1">
+      <span class="landmark-icon">🌊</span>
+      <span>2. Lakeside & Jet d’Eau (Jet d'Eau)</span>
+    </div>
+    <div class="landmark-tab" data-landmark="2">
+      <span class="landmark-icon">🚉</span>
+      <span>3. Geneva Central Station (Cornavin)</span>
+    </div>
+    <div class="landmark-tab" data-landmark="3">
+      <span class="landmark-icon">🇺🇳</span>
+      <span>4. UN European HQ & Broken Chair</span>
+    </div>
+    <div class="landmark-tab" data-landmark="4">
+      <span class="landmark-icon">🎭</span>
+      <span>5. Place de Neuve (Pl. Neuve)</span>
+    </div>
+    <div class="landmark-tab" data-landmark="5">
+      <span class="landmark-icon">♟️</span>
+      <span>6. Parc des Bastions (Bastions)</span>
+    </div>
+    <div class="landmark-tab" data-landmark="6">
+      <span class="landmark-icon">🏔️</span>
+      <span>7. Alps Panorama (Finale)</span>
+    </div>
+  </div>
+
+  <!-- Right Setting & Camera Mode Dock -->
+  <div class="toolset-dock">
+    <div class="toolset-panel">
+      <div class="panel-header">Camera flight mode</div>
+      <button class="tool-btn active" id="mode-tour">🎬 Cinematic drone</button>
+      <button class="tool-btn" id="mode-fpv">⚡ FPV Fast flight</button>
+      <button class="tool-btn" id="mode-orbit">🔄 360° Orbit</button>
+      <button class="tool-btn" id="mode-manual">🕹️ Free control mode</button>
+    </div>
+
+    <div class="toolset-panel">
+      <div class="panel-header">Time of day & Lighting</div>
+      <button class="tool-btn active" id="tod-golden">🌅 Golden hour (sunset)</button>
+      <button class="tool-btn" id="tod-day">☀️ Clear day</button>
+      <button class="tool-btn" id="tod-blue">🌆 Blue hour (dusk)</button>
+      <button class="tool-btn" id="tod-night">🌙 Geneva at night</button>
+    </div>
+
+    <div class="toolset-panel">
+      <div class="panel-header">Flight speed</div>
+      <button class="tool-btn" id="speed-slow">0.5x Slow motion</button>
+      <button class="tool-btn active" id="speed-normal">1.0x Standard cruise</button>
+      <button class="tool-btn" id="speed-fast">2.0x Fast flight</button>
+    </div>
+  </div>
+
+  <!-- Live Radar Minimap -->
+  <div class="minimap-container">
+    <canvas id="minimap-canvas" width="160" height="160"></canvas>
+    <div class="radar-sweep"></div>
+  </div>
+
+  <!-- 4K Aerial Photo Gallery Modal -->
+  <div class="modal-backdrop" id="gallery-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <h2 style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 6px;">
+        Geneva’s 6 Landmarks · 4K Aerial Drone Photo Gallery
+      </h2>
+      <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
+        AI A 4K ultra-high-res aerial photo collection shot over Geneva by professional drone photographers.
+      </p>
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Image Lightbox -->
+  <div class="modal-backdrop" id="lightbox-modal" style="z-index: 150;">
+    <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+      <button class="modal-close" id="lightbox-close-btn" style="top: -40px; right: 0;">&times;</button>
+      <img id="lightbox-img" src="" style="max-width: 100%; max-height: 85vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.2);">
+      <div id="lightbox-caption" style="margin-top: 10px; color: #e2e8f0; font-size: 14px; text-align: center;"></div>
+    </div>
+  </div>
+
+  <!-- Main Three.js Drone Video Simulation Script -->
+  <script>
+    // --- Landmark Metadata & Flight Waypoints ---
+    const LANDMARKS = [
+      {
+        id: "oldtown",
+        nameKr: "Old Town & St. Pierre Cathedral",
+        nameEn: "Old Town (Vieille-Ville) & St. Pierre Cathedral",
+        coords: "46°12′04″N, 06°08′55″E",
+        elev: "405m",
+        desc: "12th-century Romanesque-Gothic cathedral and heart of Calvin’s Reformation. It overlooks the hilltop Old Town lined with old red terracotta roofs.",
+        pos: { x: 80, y: 35, z: 160 },
+        cameraPos: { x: 120, y: 70, z: 230 },
+        lookAt: { x: 70, y: 30, z: 150 },
+        image: "assets/geneva_old_town_cathedral_1792440646107.jpg"
+      },
+      {
+        id: "lake",
+        nameKr: "Lake Geneva & Jet d’Eau fountain",
+        nameEn: "Lake Geneva (Lac Léman) & Jet d'Eau",
+        coords: "46°12′26″N, 06°09′22″E",
+        elev: "372m",
+        desc: "Geneva’s symbol, the Jet d’Eau, shoots 500 liters of water per second 140 meters into the air. The Mont-Blanc Bridge and snowy Alps spread grandly over Lake Geneva.",
+        pos: { x: 120, y: 15, z: -180 },
+        cameraPos: { x: 70, y: 45, z: -80 },
+        lookAt: { x: 120, y: 70, z: -180 },
+        image: "assets/geneva_aerial_golden_hour_1792440625001.jpg"
+      },
+      {
+        id: "cornavin",
+        nameKr: "Geneva Central Station (Cornavin)",
+        nameEn: "Geneva Central Station (Gare de Cornavin)",
+        coords: "46°12′38″N, 06°08′34″E",
+        elev: "385m",
+        desc: "1858Western Switzerland’s main rail hub, opened in this year, with a classic clock tower and a great arched glass hall. SBB trains and trams come and go.",
+        pos: { x: -180, y: 15, z: -120 },
+        cameraPos: { x: -140, y: 55, z: -40 },
+        lookAt: { x: -190, y: 20, z: -130 },
+        image: "assets/geneva_cornavin_station_aerial_1792440650394.jpg"
+      },
+      {
+        id: "un",
+        nameKr: "UN European HQ & Broken Chair",
+        nameEn: "UN Headquarters (Palais des Nations) & Broken Chair",
+        coords: "46°13′36″N, 06°08′26″E",
+        elev: "398m",
+        desc: "The UN Office at Geneva, where world peace and human rights are discussed. At the entrance stand 193 member state flags and the giant 12-meter 'Broken Chair' sculpture calling for a ban on landmines.",
+        pos: { x: -140, y: 20, z: -420 },
+        cameraPos: { x: -100, y: 50, z: -350 },
+        lookAt: { x: -150, y: 25, z: -440 },
+        image: "assets/geneva_un_palais_des_nations_broken_chair_1792440647479.jpg"
+      },
+      {
+        id: "neuve",
+        nameKr: "Place de Neuve & General Dufour statue",
+        nameEn: "Place de Neuve & Grand Théâtre",
+        coords: "46°12′03″N, 06°08′32″E",
+        elev: "380m",
+        desc: "Geneva’s signature arts square, with the Grand Théâtre opera house, the Conservatoire, and the bronze equestrian statue of Swiss federal hero General Guillaume-Henri Dufour on a Jura granite base.",
+        pos: { x: -90, y: 10, z: 170 },
+        cameraPos: { x: -70, y: 35, z: 120 },
+        lookAt: { x: -90, y: 15, z: 180 },
+        image: "assets/place_de_neuve_geneva_1792440646568.jpg"
+      },
+      {
+        id: "bastions",
+        nameKr: "Parc des Bastions & Reformation Wall",
+        nameEn: "Parc des Bastions & Reformation Wall",
+        coords: "46°12′01″N, 06°08′44″E",
+        elev: "382m",
+        desc: "A historic park behind Place de Neuve, whose 100-meter 'Reformation Wall'bears 5-meter statues of Calvin, Farel, Beza and Knox and 'POST TENEBRAS LUX(after darkness, light)'and is famous for its big outdoor chessboard.",
+        pos: { x: -40, y: 10, z: 270 },
+        cameraPos: { x: -20, y: 28, z: 240 },
+        lookAt: { x: -45, y: 14, z: 280 },
+        image: "assets/parc_des_bastions_reformation_wall_1792440646163.jpg"
+      },
+      {
+        id: "panoramic",
+        nameKr: "Geneva Alps Panorama (Grand Finale)",
+        nameEn: "Geneva Alpine Panorama & Mont Blanc Vista",
+        coords: "46°12′18″N, 06°09′10″E",
+        elev: "580m",
+        desc: "The flight’s climax: a vertical climb to 200 meters for a 360° view of Lake Geneva, the Rhône, the Old Town, the UN, and Mont Blanc and the Salève glowing gold at sunset.",
+        pos: { x: 0, y: 120, z: 0 },
+        cameraPos: { x: -30, y: 160, z: 180 },
+        lookAt: { x: 30, y: 20, z: -50 },
+        image: "assets/geneva_aerial_golden_hour_1792440625001.jpg"
+      }
+    ];
+
+    // --- State Variables ---
+    let scene, camera, renderer;
+    let waterMesh, jetParticles, jetGeometry, jetVelocities;
+    let trainMesh, trainTrackProgress = 0;
+    let cloudsGroup, flagMeshes = [];
+    let sunLight, hemiLight, ambientLight;
+    
+    // Flight Path Curve
+    let flightCurve, lookAtCurve;
+    let tourDuration = 150; // seconds for full tour
+    let tourProgress = 0;
+    let isPlaying = true;
+    let flightSpeedMultiplier = 1.0;
+    let currentCameraMode = "tour"; // 'tour', 'fpv', 'orbit', 'manual'
+    let currentLandmarkIndex = 0;
+    
+    // Manual Flight Controls
+    const manualDrone = {
+      pos: new THREE.Vector3(120, 70, 230),
+      rot: new THREE.Euler(0, 0, 0, 'YXZ'),
+      speed: 1.2,
+      keys: {}
+    };
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    let droneHumGain, windGain, fountainGain, isAudioMuted = false;
+
+    // Video Recording
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isRecording = false;
+    let recordStartTime = 0;
+
+    // Minimap
+    let minimapCtx;
+
+    // --- Initialization ---
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        initThree();
+        buildGenevaCity();
+        setupFlightCurves();
+        setupMinimap();
+        setupGallery();
+        setupEventListeners();
+        setupAudio();
+        animate();
+        console.log("Geneva 3D Drone Flight initialized successfully.");
+      } catch (err) {
+        console.error("Initialization error:", err);
+        const errDiv = document.createElement('div');
+        errDiv.style.cssText = "position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(220,38,38,0.9);color:white;padding:16px 24px;border-radius:8px;z-index:9999;font-family:sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.5);";
+        errDiv.innerHTML = "<strong>3D Init error:</strong> " + err.message;
+        document.body.appendChild(errDiv);
+      }
+    });
+
+    // --- Setup Three.js Scene ---
+    function initThree() {
+      const container = document.getElementById('viewport');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf6af83); // Golden hour dusk sky
+      scene.fog = new THREE.FogExp2(0xf0a775, 0.0012);
+
+      camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.5, 3000);
+      camera.position.set(120, 70, 230);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
+      container.appendChild(renderer.domElement);
+
+      // Lights
+      hemiLight = new THREE.HemisphereLight(0xffeedd, 0x334466, 0.85);
+      scene.add(hemiLight);
+
+      sunLight = new THREE.DirectionalLight(0xffaa55, 1.8);
+      sunLight.position.set(300, 250, 400);
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 2048;
+      sunLight.shadow.mapSize.height = 2048;
+      sunLight.shadow.camera.near = 10;
+      sunLight.shadow.camera.far = 1200;
+      const d = 500;
+      sunLight.shadow.camera.left = -d;
+      sunLight.shadow.camera.right = d;
+      sunLight.shadow.camera.top = d;
+      sunLight.shadow.camera.bottom = -d;
+      sunLight.shadow.bias = -0.0005;
+      scene.add(sunLight);
+
+      ambientLight = new THREE.AmbientLight(0x223344, 0.4);
+      scene.add(ambientLight);
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // --- Build Geneva Procedural 3D City ---
+    function buildGenevaCity() {
+      createSkyAndMountains();
+      createWaterAndLake();
+      createOldTownAndCathedral();
+      createJetDeau();
+      createBridgesAndBoats();
+      createGareCornavin();
+      createPalaisDesNations();
+      createPlaceDeNeuve();
+      createParcDesBastions();
+      createVegetationAndProps();
+    }
+
+    // Sky Dome & Distant Alps (Mont Blanc, Salève)
+    function createSkyAndMountains() {
+      // Mountain Backdrop Ring
+      const mtnGeo = new THREE.CylinderGeometry(1400, 1500, 320, 64, 1, true);
+      const mtnMat = new THREE.MeshBasicMaterial({
+        color: 0x5a4a58,
+        side: THREE.BackSide,
+        fog: true
+      });
+      const mountainRing = new THREE.Mesh(mtnGeo, mtnMat);
+      mountainRing.position.y = 80;
+      scene.add(mountainRing);
+
+      // Mont Blanc Peak (Massive snow peak in the southeast)
+      const mbGeo = new THREE.ConeGeometry(220, 380, 5);
+      const mbMat = new THREE.MeshStandardMaterial({
+        color: 0xfffafa,
+        roughness: 0.8,
+        metalness: 0.1
+      });
+      const montBlanc = new THREE.Mesh(mbGeo, mbMat);
+      montBlanc.position.set(650, 180, 750);
+      scene.add(montBlanc);
+
+      // Flanking Alpine Ridges
+      const ridgeColors = [0x4d3b47, 0x6e5c6a, 0x8a7985];
+      for (let i = 0; i < 16; i++) {
+        const h = 180 + Math.random() * 160;
+        const r = 90 + Math.random() * 80;
+        const ridge = new THREE.Mesh(
+          new THREE.ConeGeometry(r, h, 4),
+          new THREE.MeshStandardMaterial({
+            color: (h > 260) ? 0xf0f0f5 : ridgeColors[i % 3],
+            roughness: 0.9
+          })
+        );
+        const angle = (i / 16) * Math.PI * 2;
+        const dist = 1100 + Math.random() * 200;
+        ridge.position.set(Math.cos(angle) * dist, h * 0.45, Math.sin(angle) * dist);
+        ridge.rotation.y = Math.random() * Math.PI;
+        scene.add(ridge);
+      }
+
+      // Moving Fluffy Low-Poly Clouds
+      cloudsGroup = new THREE.Group();
+      const cloudGeo = new THREE.DodecahedronGeometry(18, 1);
+      const cloudMat = new THREE.MeshStandardMaterial({
+        color: 0xffe8d6,
+        roughness: 1.0,
+        transparent: true,
+        opacity: 0.82
+      });
+
+      for (let i = 0; i < 35; i++) {
+        const cloudCluster = new THREE.Group();
+        const numPuffs = 4 + Math.floor(Math.random() * 4);
+        for (let j = 0; j < numPuffs; j++) {
+          const puff = new THREE.Mesh(cloudGeo, cloudMat);
+          puff.position.set(
+            (Math.random() - 0.5) * 45,
+            (Math.random() - 0.5) * 12,
+            (Math.random() - 0.5) * 35
+          );
+          puff.scale.set(1 + Math.random(), 0.6 + Math.random() * 0.5, 1 + Math.random());
+          cloudCluster.add(puff);
+        }
+        cloudCluster.position.set(
+          (Math.random() - 0.5) * 1800,
+          180 + Math.random() * 90,
+          (Math.random() - 0.5) * 1800
+        );
+        cloudsGroup.add(cloudCluster);
+      }
+      scene.add(cloudsGroup);
+    }
+
+    // Lake Geneva (Lac Léman) & Rhône River
+    function createWaterAndLake() {
+      // Main Ground Base
+      const groundGeo = new THREE.PlaneGeometry(2400, 2400, 32, 32);
+      const groundMat = new THREE.MeshStandardMaterial({
+        color: 0x3d4a36, // Rich alpine park greenery
+        roughness: 0.85,
+        metalness: 0.1
+      });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -0.5;
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      // Lake Basin Geometry (Deep vibrant alpine blue)
+      const waterGeo = new THREE.PlaneGeometry(800, 1100, 64, 64);
+      const waterMat = new THREE.MeshStandardMaterial({
+        color: 0x0f4c5c,
+        roughness: 0.15,
+        metalness: 0.8,
+        flatShading: true
+      });
+      waterMesh = new THREE.Mesh(waterGeo, waterMat);
+      waterMesh.rotation.x = -Math.PI / 2;
+      waterMesh.position.set(160, 0, -320);
+      waterMesh.receiveShadow = true;
+      scene.add(waterMesh);
+
+      // Rhône River Cutout Channel
+      const riverGeo = new THREE.PlaneGeometry(90, 480);
+      const riverMat = new THREE.MeshStandardMaterial({
+        color: 0x145a68,
+        roughness: 0.18,
+        metalness: 0.75
+      });
+      const river = new THREE.Mesh(riverGeo, riverMat);
+      river.rotation.x = -Math.PI / 2;
+      river.rotation.z = Math.PI / 7;
+      river.position.set(-60, 0.1, 80);
+      scene.add(river);
+
+      // Quays and Stone Embankments (Quai du Mont-Blanc, Quai Gustave-Ador)
+      const quayMat = new THREE.MeshStandardMaterial({ color: 0xd6c7b2, roughness: 0.8 });
+      const leftQuay = new THREE.Mesh(new THREE.BoxGeometry(24, 4, 700), quayMat);
+      leftQuay.position.set(-35, 1.5, -280);
+      leftQuay.castShadow = true;
+      leftQuay.receiveShadow = true;
+      scene.add(leftQuay);
+
+      const rightQuay = new THREE.Mesh(new THREE.BoxGeometry(24, 4, 700), quayMat);
+      rightQuay.position.set(360, 1.5, -280);
+      rightQuay.castShadow = true;
+      scene.add(rightQuay);
+    }
+
+    // Jet d'Eau 140m Towering Water Plume
+    function createJetDeau() {
+      // Stone Pier (Jetée des Eaux-Vives)
+      const pierGeo = new THREE.BoxGeometry(16, 3, 140);
+      const pierMat = new THREE.MeshStandardMaterial({ color: 0x8d99ae, roughness: 0.9 });
+      const pier = new THREE.Mesh(pierGeo, pierMat);
+      pier.position.set(120, 1.2, -180);
+      pier.castShadow = true;
+      scene.add(pier);
+
+      // Particle System for the 140m Water Spout
+      const particleCount = 2800;
+      jetGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      jetVelocities = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3 + 0] = 120 + (Math.random() - 0.5) * 2;
+        positions[i * 3 + 1] = Math.random() * 140; // Initial elevation
+        positions[i * 3 + 2] = -180 + (Math.random() - 0.5) * 2;
+
+        jetVelocities[i * 3 + 0] = (Math.random() - 0.5) * 0.45;
+        jetVelocities[i * 3 + 1] = 2.2 + Math.random() * 1.8;
+        jetVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.45;
+      }
+
+      jetGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      // Canvas generated circular particle texture for soft water mist
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 32;
+      pCanvas.height = 32;
+      const pCtx = pCanvas.getContext('2d');
+      const grad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      grad.addColorStop(0.35, 'rgba(230, 245, 255, 0.6)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      pCtx.fillStyle = grad;
+      pCtx.fillRect(0, 0, 32, 32);
+      const particleTexture = new THREE.CanvasTexture(pCanvas);
+
+      const jetMat = new THREE.PointsMaterial({
+        size: 3.5,
+        map: particleTexture,
+        transparent: true,
+        opacity: 0.72,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        color: 0xe8f4f8
+      });
+
+      jetParticles = new THREE.Points(jetGeometry, jetMat);
+      scene.add(jetParticles);
+
+      // Light beam illuminating the jet
+      const jetLight = new THREE.PointLight(0xffffff, 2.5, 90);
+      jetLight.position.set(120, 30, -180);
+      scene.add(jetLight);
+    }
+
+    // Old Town Hill & Cathédrale Saint-Pierre
+    function createOldTownAndCathedral() {
+      const oldTownGroup = new THREE.Group();
+
+      // Hill Plateau
+      const hillGeo = new THREE.CylinderGeometry(150, 190, 28, 16);
+      const hillMat = new THREE.MeshStandardMaterial({
+        color: 0x47553b,
+        roughness: 0.9
+      });
+      const hill = new THREE.Mesh(hillGeo, hillMat);
+      hill.position.set(80, 14, 180);
+      hill.receiveShadow = true;
+      oldTownGroup.add(hill);
+
+      // Retaining stone walls around hill
+      const wallGeo = new THREE.CylinderGeometry(152, 152, 10, 16, 1, true);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x9c8b73, roughness: 0.85 });
+      const wall = new THREE.Mesh(wallGeo, wallMat);
+      wall.position.set(80, 20, 180);
+      oldTownGroup.add(wall);
+
+      // --- Cathédrale Saint-Pierre ---
+      const cathGroup = new THREE.Group();
+      cathGroup.position.set(75, 28, 160);
+
+      // Cathedral Nave & Transept
+      const stoneMat = new THREE.MeshStandardMaterial({ color: 0xd5c7b0, roughness: 0.75 });
+      const roofMat = new THREE.MeshStandardMaterial({ color: 0x48525b, roughness: 0.6 }); // Dark slate
+      const copperSpireMat = new THREE.MeshStandardMaterial({ color: 0x489679, roughness: 0.45, metalness: 0.3 }); // Green copper verdigris
+
+      const nave = new THREE.Mesh(new THREE.BoxGeometry(36, 26, 68), stoneMat);
+      nave.position.y = 13;
+      nave.castShadow = true;
+      cathGroup.add(nave);
+
+      const naveRoof = new THREE.Mesh(new THREE.ConeGeometry(26, 16, 4), roofMat);
+      naveRoof.rotation.y = Math.PI / 4;
+      naveRoof.position.y = 34;
+      naveRoof.scale.set(1, 1, 1.8);
+      cathGroup.add(naveRoof);
+
+      // Neoclassical Triangular Portico with Columns
+      const portico = new THREE.Mesh(new THREE.BoxGeometry(26, 4, 12), stoneMat);
+      portico.position.set(0, 18, 38);
+      cathGroup.add(portico);
+
+      // Corinthian Columns
+      for (let i = -2; i <= 2; i++) {
+        const col = new THREE.Mesh(new THREE.CylinderGeometry(1, 1.2, 18, 12), stoneMat);
+        col.position.set(i * 5.2, 9, 42);
+        col.castShadow = true;
+        cathGroup.add(col);
+      }
+
+      const pediment = new THREE.Mesh(new THREE.ConeGeometry(16, 8, 3), stoneMat);
+      pediment.rotation.z = Math.PI;
+      pediment.rotation.y = Math.PI / 2;
+      pediment.position.set(0, 24, 38);
+      cathGroup.add(pediment);
+
+      // Neoclassical Twin Towers (South & North Romanesque Towers)
+      const towerL = new THREE.Mesh(new THREE.BoxGeometry(12, 44, 12), stoneMat);
+      towerL.position.set(-16, 22, 18);
+      towerL.castShadow = true;
+      cathGroup.add(towerL);
+
+      const towerR = new THREE.Mesh(new THREE.BoxGeometry(12, 44, 12), stoneMat);
+      towerR.position.set(16, 22, 18);
+      towerR.castShadow = true;
+      cathGroup.add(towerR);
+
+      // Central Tall Green Copper Spire (Flèche)
+      const spireBase = new THREE.Mesh(new THREE.CylinderGeometry(6, 7, 10, 8), stoneMat);
+      spireBase.position.set(0, 38, -6);
+      cathGroup.add(spireBase);
+
+      const spireCone = new THREE.Mesh(new THREE.ConeGeometry(5, 48, 8), copperSpireMat);
+      spireCone.position.set(0, 67, -6);
+      spireCone.castShadow = true;
+      cathGroup.add(spireCone);
+
+      // Golden Cross on Spire
+      const crossMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
+      const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.8, 6, 0.8), crossMat);
+      crossV.position.set(0, 92, -6);
+      cathGroup.add(crossV);
+      const crossH = new THREE.Mesh(new THREE.BoxGeometry(4, 0.8, 0.8), crossMat);
+      crossH.position.set(0, 93, -6);
+      cathGroup.add(crossH);
+
+      // Swiss Flag atop the tower
+      const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 14), new THREE.MeshStandardMaterial({ color: 0xcccccc }));
+      flagPole.position.set(-16, 48, 18);
+      cathGroup.add(flagPole);
+
+      const swissFlag = createSwissFlagMesh();
+      swissFlag.position.set(-11, 51, 18);
+      cathGroup.add(swissFlag);
+      flagMeshes.push(swissFlag);
+
+      oldTownGroup.add(cathGroup);
+
+      // Clustered Historic Medieval Townhouses with Terracotta Hip Roofs
+      const terracottaMat = new THREE.MeshStandardMaterial({ color: 0xb85d38, roughness: 0.7 });
+      const houseWalls = [0xe2d6c3, 0xd8c8b4, 0xf1e5d3, 0xcaba9e];
+
+      for (let i = 0; i < 48; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const rad = 35 + Math.random() * 85;
+        const hx = 80 + Math.cos(angle) * rad;
+        const hz = 180 + Math.sin(angle) * rad;
+
+        // Skip cathedral footprint
+        if (Math.hypot(hx - 75, hz - 160) < 32) continue;
+
+        const w = 12 + Math.random() * 10;
+        const d = 12 + Math.random() * 10;
+        const h = 14 + Math.random() * 16;
+
+        const house = new THREE.Mesh(
+          new THREE.BoxGeometry(w, h, d),
+          new THREE.MeshStandardMaterial({ color: houseWalls[i % 4], roughness: 0.8 })
+        );
+        house.position.set(hx, 28 + h * 0.5, hz);
+        house.castShadow = true;
+        house.receiveShadow = true;
+        oldTownGroup.add(house);
+
+        // Mansard / Hip Roof
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(w, d) * 0.75, 8 + Math.random() * 4, 4), terracottaMat);
+        roof.rotation.y = Math.PI / 4;
+        roof.position.set(hx, 28 + h + 4, hz);
+        roof.castShadow = true;
+        oldTownGroup.add(roof);
+
+        // Chimney
+        const chimney = new THREE.Mesh(new THREE.BoxGeometry(1.6, 4, 1.6), terracottaMat);
+        chimney.position.set(hx + 3, 28 + h + 8, hz + 2);
+        oldTownGroup.add(chimney);
+      }
+
+      scene.add(oldTownGroup);
+    }
+
+    // Gare de Genève-Cornavin (Geneva Central Station)
+    function createGareCornavin() {
+      const cornavinGroup = new THREE.Group();
+      cornavinGroup.position.set(-180, 0, -120);
+
+      const stationStone = new THREE.MeshStandardMaterial({ color: 0xd9cbb6, roughness: 0.7 });
+      const glassMat = new THREE.MeshStandardMaterial({ color: 0x1b3b4b, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.85 });
+
+      // Main Monumental Historic Facade
+      const mainHall = new THREE.Mesh(new THREE.BoxGeometry(110, 24, 28), stationStone);
+      mainHall.position.set(0, 12, 0);
+      mainHall.castShadow = true;
+      mainHall.receiveShadow = true;
+      cornavinGroup.add(mainHall);
+
+      // Central Grand Arched Portal
+      const archPortal = new THREE.Mesh(new THREE.CylinderGeometry(18, 18, 8, 16, 1, false, 0, Math.PI), glassMat);
+      archPortal.rotation.z = Math.PI / 2;
+      archPortal.position.set(0, 16, 14);
+      cornavinGroup.add(archPortal);
+
+      // Central Clock Tower
+      const clockTower = new THREE.Mesh(new THREE.BoxGeometry(18, 52, 18), stationStone);
+      clockTower.position.set(0, 26, 0);
+      clockTower.castShadow = true;
+      cornavinGroup.add(clockTower);
+
+      // Clock Faces on 4 sides
+      const clockMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      for (let r = 0; r < 4; r++) {
+        const clockDial = new THREE.Mesh(new THREE.CircleGeometry(5.5, 24), clockMat);
+        clockDial.rotation.y = (r * Math.PI) / 2;
+        const offset = 9.1;
+        clockDial.position.set(
+          Math.sin((r * Math.PI) / 2) * offset,
+          42,
+          Math.cos((r * Math.PI) / 2) * offset
+        );
+        cornavinGroup.add(clockDial);
+
+        // Clock Hands
+        const hand = new THREE.Mesh(new THREE.BoxGeometry(0.6, 4, 0.2), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+        hand.position.copy(clockDial.position);
+        hand.rotation.y = clockDial.rotation.y;
+        hand.position.y += 1.5;
+        cornavinGroup.add(hand);
+      }
+
+      // Tower Swiss Flag
+      const swissFlag = createSwissFlagMesh();
+      swissFlag.position.set(6, 56, 0);
+      cornavinGroup.add(swissFlag);
+      flagMeshes.push(swissFlag);
+
+      // Huge Glass-Vaulted Train Sheds
+      const shedGeo = new THREE.CylinderGeometry(24, 24, 140, 16, 1, true, 0, Math.PI);
+      const shedMat = new THREE.MeshStandardMaterial({
+        color: 0x3d5a6c,
+        roughness: 0.3,
+        metalness: 0.8,
+        wireframe: false,
+        side: THREE.DoubleSide
+      });
+      for (let s = -1; s <= 1; s++) {
+        const shed = new THREE.Mesh(shedGeo, shedMat);
+        shed.rotation.z = Math.PI / 2;
+        shed.rotation.y = Math.PI / 2;
+        shed.position.set(s * 42, 14, -80);
+        cornavinGroup.add(shed);
+      }
+
+      // Railway Tracks (Ballasted Gravel & Rails)
+      const trackBed = new THREE.Mesh(new THREE.BoxGeometry(130, 1, 160), new THREE.MeshStandardMaterial({ color: 0x4a4744, roughness: 0.95 }));
+      trackBed.position.set(0, 0.5, -80);
+      cornavinGroup.add(trackBed);
+
+      // Animated Swiss SBB CFF FFS Train (Red Engine + White Carriages)
+      const trainGroup = new THREE.Group();
+      const sbbRed = new THREE.MeshStandardMaterial({ color: 0xd90429, roughness: 0.4 });
+      const sbbWhite = new THREE.MeshStandardMaterial({ color: 0xf4f3ee, roughness: 0.4 });
+
+      // Locomotive
+      const loco = new THREE.Mesh(new THREE.BoxGeometry(6.5, 8, 24), sbbRed);
+      loco.position.set(-15, 5, 0);
+      loco.castShadow = true;
+      trainGroup.add(loco);
+
+      // Train Headlights
+      const headlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const hl1 = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 8), headlightMat);
+      hl1.position.set(-17, 3, 12.1);
+      const hl2 = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 8), headlightMat);
+      hl2.position.set(-13, 3, 12.1);
+      trainGroup.add(hl1);
+      trainGroup.add(hl2);
+
+      // 3 Carriages
+      for (let c = 1; c <= 3; c++) {
+        const carriage = new THREE.Mesh(new THREE.BoxGeometry(6.5, 7.5, 26), sbbWhite);
+        carriage.position.set(-15, 4.8, -c * 28);
+        carriage.castShadow = true;
+        trainGroup.add(carriage);
+
+        // Carriage Red Accent Stripe
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(6.7, 1.2, 26), sbbRed);
+        stripe.position.set(-15, 5.5, -c * 28);
+        trainGroup.add(stripe);
+      }
+
+      trainMesh = trainGroup;
+      cornavinGroup.add(trainMesh);
+
+      // Place de Cornavin Forecourt & Tram
+      const plaza = new THREE.Mesh(new THREE.BoxGeometry(130, 1, 60), new THREE.MeshStandardMaterial({ color: 0x6c757d, roughness: 0.9 }));
+      plaza.position.set(0, 0.5, 40);
+      cornavinGroup.add(plaza);
+
+      // Geneva TPG Green-and-White Tram
+      const tramMat = new THREE.MeshStandardMaterial({ color: 0x2b9348, roughness: 0.4 });
+      const tram = new THREE.Mesh(new THREE.BoxGeometry(5.5, 6, 42), tramMat);
+      tram.position.set(25, 3.8, 42);
+      cornavinGroup.add(tram);
+
+      scene.add(cornavinGroup);
+    }
+
+    // Palais des Nations (UN Headquarters) & Broken Chair
+    function createPalaisDesNations() {
+      const unGroup = new THREE.Group();
+      unGroup.position.set(-140, 0, -420);
+
+      const unStone = new THREE.MeshStandardMaterial({ color: 0xe6e1da, roughness: 0.7 });
+      const unRoof = new THREE.MeshStandardMaterial({ color: 0x778da9, roughness: 0.5 });
+
+      // Curved Central Assembly Hall
+      const assemblyGeo = new THREE.CylinderGeometry(28, 30, 26, 32, 1, false, -Math.PI / 3, (2 * Math.PI) / 3);
+      const assemblyHall = new THREE.Mesh(assemblyGeo, unStone);
+      assemblyHall.position.set(0, 13, -30);
+      assemblyHall.castShadow = true;
+      unGroup.add(assemblyHall);
+
+      // Assembly Hall Copper Dome
+      const domeGeo = new THREE.SphereGeometry(18, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      const dome = new THREE.Mesh(domeGeo, new THREE.MeshStandardMaterial({ color: 0x489679, roughness: 0.4 }));
+      dome.position.set(0, 26, -30);
+      unGroup.add(dome);
+
+      // Colonnaded East and West Grand Wings
+      const wingL = new THREE.Mesh(new THREE.BoxGeometry(75, 20, 20), unStone);
+      wingL.position.set(-50, 10, -20);
+      wingL.rotation.y = 0.25;
+      wingL.castShadow = true;
+      unGroup.add(wingL);
+
+      const wingR = new THREE.Mesh(new THREE.BoxGeometry(75, 20, 20), unStone);
+      wingR.position.set(50, 10, -20);
+      wingR.rotation.y = -0.25;
+      wingR.castShadow = true;
+      unGroup.add(wingR);
+
+      // Courtyard Park Lawn
+      const courtyard = new THREE.Mesh(new THREE.BoxGeometry(110, 1, 90), new THREE.MeshStandardMaterial({ color: 0x2d6a4f, roughness: 0.9 }));
+      courtyard.position.set(0, 0.5, 20);
+      unGroup.add(courtyard);
+
+      // Avenue of 193 UN Member State Flags (Allée des Nations)
+      const flagColors = [
+        0xe63946, 0x1d3557, 0x457b9d, 0x2a9d8f, 0xe76f51,
+        0xffb703, 0x023e8a, 0x588157, 0x9d0208, 0xffffff
+      ];
+
+      for (let i = 0; i < 28; i++) {
+        const poleX = (i % 2 === 0 ? -12 : 12);
+        const poleZ = -10 + i * 4.5;
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 14), new THREE.MeshStandardMaterial({ color: 0xd8d8d8 }));
+        pole.position.set(poleX, 7, poleZ);
+        unGroup.add(pole);
+
+        const flagGeo = new THREE.PlaneGeometry(3.5, 2.2);
+        const flagMat = new THREE.MeshStandardMaterial({
+          color: flagColors[i % flagColors.length],
+          side: THREE.DoubleSide
+        });
+        const flag = new THREE.Mesh(flagGeo, flagMat);
+        flag.position.set(poleX + (poleX > 0 ? 1.8 : -1.8), 12.5, poleZ);
+        unGroup.add(flag);
+        flagMeshes.push(flag);
+      }
+
+      // Place des Nations & The Famous "Broken Chair" (Chaise Cassée)
+      const placeNations = new THREE.Mesh(new THREE.BoxGeometry(80, 1.2, 80), new THREE.MeshStandardMaterial({ color: 0xc9ada7, roughness: 0.9 }));
+      placeNations.position.set(0, 0.6, 95);
+      unGroup.add(placeNations);
+
+      // Fountain jets in Place des Nations
+      for (let f = 0; f < 8; f++) {
+        const jet = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.8, 6 + Math.random() * 4), new THREE.MeshBasicMaterial({ color: 0xe0fbfc, transparent: true, opacity: 0.8 }));
+        jet.position.set(-20 + f * 5.5, 3, 85);
+        unGroup.add(jet);
+      }
+
+      // --- The 12-Meter Broken Chair Sculpture ---
+      const chairGroup = new THREE.Group();
+      chairGroup.position.set(0, 0.6, 95);
+      const woodMat = new THREE.MeshStandardMaterial({ color: 0x7f4f24, roughness: 0.7 }); // Monumental treated timber
+
+      // Seat
+      const seat = new THREE.Mesh(new THREE.BoxGeometry(9, 1.4, 9), woodMat);
+      seat.position.y = 8;
+      seat.castShadow = true;
+      chairGroup.add(seat);
+
+      // Chair Back Slats
+      const backPostL = new THREE.Mesh(new THREE.BoxGeometry(1.2, 12, 1.2), woodMat);
+      backPostL.position.set(-3.8, 14, -3.8);
+      backPostL.castShadow = true;
+      chairGroup.add(backPostL);
+
+      const backPostR = new THREE.Mesh(new THREE.BoxGeometry(1.2, 12, 1.2), woodMat);
+      backPostR.position.set(3.8, 14, -3.8);
+      backPostR.castShadow = true;
+      chairGroup.add(backPostR);
+
+      for (let s = 0; s < 3; s++) {
+        const slat = new THREE.Mesh(new THREE.BoxGeometry(7, 1.1, 0.8), woodMat);
+        slat.position.set(0, 11 + s * 3.5, -3.8);
+        chairGroup.add(slat);
+      }
+
+      // 3 Complete Legs
+      const legFL = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8, 1.2), woodMat);
+      legFL.position.set(-3.8, 4, 3.8);
+      legFL.castShadow = true;
+      chairGroup.add(legFL);
+
+      const legBL = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8, 1.2), woodMat);
+      legBL.position.set(-3.8, 4, -3.8);
+      legBL.castShadow = true;
+      chairGroup.add(legBL);
+
+      const legBR = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8, 1.2), woodMat);
+      legBR.position.set(3.8, 4, -3.8);
+      legBR.castShadow = true;
+      chairGroup.add(legBR);
+
+      // The 4th BROKEN LEG (shattered midway!)
+      const brokenLeg = new THREE.Mesh(new THREE.BoxGeometry(1.2, 3.8, 1.2), woodMat);
+      brokenLeg.position.set(3.8, 6.1, 3.8);
+      brokenLeg.castShadow = true;
+      chairGroup.add(brokenLeg);
+
+      // Splintered wood end effect
+      const splinter = new THREE.Mesh(new THREE.ConeGeometry(0.7, 1.5, 4), woodMat);
+      splinter.rotation.x = Math.PI;
+      splinter.position.set(3.8, 4.1, 3.8);
+      chairGroup.add(splinter);
+
+      unGroup.add(chairGroup);
+      scene.add(unGroup);
+    }
+
+    // Place de Neuve & Grand Théâtre
+    function createPlaceDeNeuve() {
+      const neuveGroup = new THREE.Group();
+      neuveGroup.position.set(-90, 0, 170);
+
+      // Cobblestone Plaza Floor
+      const plaza = new THREE.Mesh(new THREE.CylinderGeometry(55, 55, 1.2, 32), new THREE.MeshStandardMaterial({ color: 0x7c7f84, roughness: 0.9 }));
+      plaza.position.y = 0.6;
+      plaza.receiveShadow = true;
+      neuveGroup.add(plaza);
+
+      // General Dufour Equestrian Bronze Statue (General Guillaume-Henri Dufour)
+      const statueGroup = new THREE.Group();
+      statueGroup.position.set(0, 1.2, 0);
+
+      // High Granite Pedestal
+      const pedestal = new THREE.Mesh(new THREE.BoxGeometry(7, 8, 11), new THREE.MeshStandardMaterial({ color: 0xa8a29e, roughness: 0.8 }));
+      pedestal.position.y = 4;
+      pedestal.castShadow = true;
+      statueGroup.add(pedestal);
+
+      // Bronze General on Horseback
+      const bronzeMat = new THREE.MeshStandardMaterial({ color: 0x2f3e36, roughness: 0.35, metalness: 0.7 });
+      
+      // Horse Body & Neck
+      const horseBody = new THREE.Mesh(new THREE.BoxGeometry(4, 3.8, 8), bronzeMat);
+      horseBody.position.y = 9.8;
+      horseBody.castShadow = true;
+      statueGroup.add(horseBody);
+
+      const horseNeck = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.6, 4.5), bronzeMat);
+      horseNeck.position.set(0, 12, 3.2);
+      horseNeck.rotation.x = -0.5;
+      statueGroup.add(horseNeck);
+
+      // General Dufour Rider
+      const rider = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.4, 4.8), bronzeMat);
+      rider.position.set(0, 13.5, 0);
+      rider.castShadow = true;
+      statueGroup.add(rider);
+
+      // Officer Hat
+      const hat = new THREE.Mesh(new THREE.ConeGeometry(1.8, 1.2, 4), bronzeMat);
+      hat.position.set(0, 16.2, 0);
+      statueGroup.add(hat);
+
+      neuveGroup.add(statueGroup);
+
+      // Grand Théâtre de Genève (Opera House)
+      const theatreGroup = new THREE.Group();
+      theatreGroup.position.set(40, 0, 15);
+      theatreGroup.rotation.y = -Math.PI / 4;
+
+      const theatreStone = new THREE.MeshStandardMaterial({ color: 0xded8ce, roughness: 0.75 });
+      const mainBuilding = new THREE.Mesh(new THREE.BoxGeometry(36, 26, 48), theatreStone);
+      mainBuilding.position.y = 13;
+      mainBuilding.castShadow = true;
+      theatreGroup.add(mainBuilding);
+
+      // Corinthian Facade with Colonnade
+      const facade = new THREE.Mesh(new THREE.BoxGeometry(38, 5, 8), theatreStone);
+      facade.position.set(0, 21, 26);
+      theatreGroup.add(facade);
+
+      for (let c = -2; c <= 2; c++) {
+        const col = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 20, 12), theatreStone);
+        col.position.set(c * 7.5, 10, 26);
+        col.castShadow = true;
+        theatreGroup.add(col);
+      }
+
+      // Sculpted Pediment
+      const ped = new THREE.Mesh(new THREE.ConeGeometry(22, 7, 3), theatreStone);
+      ped.rotation.z = Math.PI;
+      ped.rotation.y = Math.PI / 2;
+      ped.position.set(0, 26.5, 26);
+      theatreGroup.add(ped);
+
+      neuveGroup.add(theatreGroup);
+
+      // Conservatoire de Musique
+      const conservatoire = new THREE.Mesh(new THREE.BoxGeometry(28, 18, 38), theatreStone);
+      conservatoire.position.set(-42, 9, 20);
+      conservatoire.rotation.y = Math.PI / 5;
+      conservatoire.castShadow = true;
+      neuveGroup.add(conservatoire);
+
+      // Monumental Wrought Iron Entrance Gates to Parc des Bastions
+      const gateGroup = new THREE.Group();
+      gateGroup.position.set(10, 0, -42);
+      const ironMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, metalness: 0.8, roughness: 0.3 });
+      const goldTip = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.2 });
+
+      for (let p = -15; p <= 15; p += 2.5) {
+        const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 10), ironMat);
+        bar.position.set(p, 5, 0);
+        gateGroup.add(bar);
+        const tip = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.2, 4), goldTip);
+        tip.position.set(p, 10.6, 0);
+        gateGroup.add(tip);
+      }
+      neuveGroup.add(gateGroup);
+
+      scene.add(neuveGroup);
+    }
+
+    // Parc des Bastions & Mur des Réformateurs
+    function createParcDesBastions() {
+      const bastionsGroup = new THREE.Group();
+      bastionsGroup.position.set(-40, 0, 270);
+
+      // Park Ground & Gravel Paths
+      const parkLawn = new THREE.Mesh(new THREE.BoxGeometry(110, 1, 150), new THREE.MeshStandardMaterial({ color: 0x2b5329, roughness: 0.9 }));
+      parkLawn.position.y = 0.5;
+      parkLawn.receiveShadow = true;
+      bastionsGroup.add(parkLawn);
+
+      const gravelPath = new THREE.Mesh(new THREE.BoxGeometry(32, 1.1, 150), new THREE.MeshStandardMaterial({ color: 0xd4c2ad, roughness: 0.95 }));
+      gravelPath.position.y = 0.55;
+      bastionsGroup.add(gravelPath);
+
+      // --- The Monumental Reformation Wall (Mur des Réformateurs) ---
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xd6cbb8, roughness: 0.85 });
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(90, 16, 6), wallMat);
+      wall.position.set(0, 8, -45);
+      wall.castShadow = true;
+      bastionsGroup.add(wall);
+
+      // "POST TENEBRAS LUX" Inscription Band
+      const band = new THREE.Mesh(new THREE.BoxGeometry(84, 2.5, 0.6), new THREE.MeshStandardMaterial({ color: 0x93836d, roughness: 0.9 }));
+      band.position.set(0, 13.5, -41.8);
+      bastionsGroup.add(band);
+
+      // Four Giant 5-meter Statues of Reformers (Calvin, Farel, Beza, Knox)
+      const statueStone = new THREE.MeshStandardMaterial({ color: 0xe3dbcf, roughness: 0.7 });
+      const reformerNames = ["Jean Calvin", "Guillaume Farel", "Théodore de Bèze", "John Knox"];
+
+      for (let r = 0; r < 4; r++) {
+        const xOffset = -15 + r * 10;
+        const reformer = new THREE.Group();
+        reformer.position.set(xOffset, 2, -41.5);
+
+        // Long Gown Robe
+        const robe = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 2.4, 10, 12), statueStone);
+        robe.position.y = 5;
+        robe.castShadow = true;
+        reformer.add(robe);
+
+        // Head & Reformer Hat
+        const head = new THREE.Mesh(new THREE.SphereGeometry(1.1, 12, 12), statueStone);
+        head.position.y = 10.6;
+        reformer.add(head);
+
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.4, 0.8), statueStone);
+        cap.position.y = 11.5;
+        reformer.add(cap);
+
+        bastionsGroup.add(reformer);
+      }
+
+      // --- Giant Outdoor Chessboards & Oversized 3D Chess Pieces ---
+      for (let b = 0; b < 2; b++) {
+        const boardZ = 15 + b * 40;
+        const boardGroup = new THREE.Group();
+        boardGroup.position.set(0, 1.1, boardZ);
+
+        // 8x8 Chessboard Tiles
+        const tileSize = 2.2;
+        const blackTileMat = new THREE.MeshStandardMaterial({ color: 0x1f2421, roughness: 0.6 });
+        const whiteTileMat = new THREE.MeshStandardMaterial({ color: 0xf5ebe0, roughness: 0.6 });
+
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < 8; col++) {
+            const isWhite = (row + col) % 2 === 0;
+            const tile = new THREE.Mesh(
+              new THREE.BoxGeometry(tileSize, 0.4, tileSize),
+              isWhite ? whiteTileMat : blackTileMat
+            );
+            tile.position.set((col - 3.5) * tileSize, 0, (row - 3.5) * tileSize);
+            tile.receiveShadow = true;
+            boardGroup.add(tile);
+          }
+        }
+
+        // Giant 3D Chess Pieces on board
+        const pieceWhite = new THREE.MeshStandardMaterial({ color: 0xf8f9fa, roughness: 0.5 });
+        const pieceBlack = new THREE.MeshStandardMaterial({ color: 0x343a40, roughness: 0.5 });
+
+        // King & Queen
+        const kingW = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.9, 3.2, 10), pieceWhite);
+        kingW.position.set(0, 1.6, -2.5 * tileSize);
+        boardGroup.add(kingW);
+
+        const queenB = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.85, 2.8, 10), pieceBlack);
+        queenB.position.set(tileSize, 1.4, 1.5 * tileSize);
+        boardGroup.add(queenB);
+
+        // Pawns scattered
+        for (let p = 0; p < 6; p++) {
+          const pawn = new THREE.Mesh(
+            new THREE.SphereGeometry(0.45, 8, 8),
+            (p % 2 === 0) ? pieceWhite : pieceBlack
+          );
+          pawn.position.set((p - 2.5) * tileSize, 1.0, (Math.random() - 0.5) * 5 * tileSize);
+          pawn.castShadow = true;
+          boardGroup.add(pawn);
+        }
+
+        bastionsGroup.add(boardGroup);
+      }
+
+      // Grand Chestnut Tree Avenues
+      const treeMat = new THREE.MeshStandardMaterial({ color: 0x245501, roughness: 0.9 });
+      const trunkMat = new THREE.MeshStandardMaterial({ color: 0x582f0e, roughness: 0.9 });
+
+      for (let side of [-35, 35]) {
+        for (let tz = -60; tz <= 60; tz += 18) {
+          const tree = new THREE.Group();
+          tree.position.set(side, 0, tz);
+
+          const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.2, 8), trunkMat);
+          trunk.position.y = 4;
+          trunk.castShadow = true;
+          tree.add(trunk);
+
+          const foliage = new THREE.Mesh(new THREE.SphereGeometry(6 + Math.random() * 2, 8, 8), treeMat);
+          foliage.position.y = 11;
+          foliage.scale.set(1, 1.3, 1);
+          foliage.castShadow = true;
+          tree.add(foliage);
+
+          bastionsGroup.add(tree);
+        }
+      }
+
+      scene.add(bastionsGroup);
+    }
+
+    // Mont-Blanc Bridge & Lake Shuttle Boats (Mouettes genevoises)
+    function createBridgesAndBoats() {
+      // Pont du Mont-Blanc crossing between Rive Gauche & Rive Droite
+      const bridgeMat = new THREE.MeshStandardMaterial({ color: 0x8a929a, roughness: 0.7 });
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(22, 3, 380), bridgeMat);
+      bridge.rotation.y = Math.PI / 2.3;
+      bridge.position.set(80, 2, -20);
+      bridge.castShadow = true;
+      bridge.receiveShadow = true;
+      scene.add(bridge);
+
+      // Swiss and Geneva cantonal flags along bridge
+      for (let f = -120; f <= 120; f += 30) {
+        const flagPole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 8), new THREE.MeshStandardMaterial({ color: 0xdddddd }));
+        flagPole.position.set(80 + f * 0.8, 5, -20 - f * 0.4);
+        scene.add(flagPole);
+
+        const flag = (f % 60 === 0) ? createSwissFlagMesh() : createGenevaFlagMesh();
+        flag.position.set(80 + f * 0.8 + 1.6, 8, -20 - f * 0.4);
+        scene.add(flag);
+        flagMeshes.push(flag);
+      }
+
+      // Mouettes Genevoises (Yellow/Red shuttle passenger boats on lake)
+      for (let b = 0; b < 4; b++) {
+        const boat = new THREE.Group();
+        const hull = new THREE.Mesh(
+          new THREE.BoxGeometry(6, 2.5, 16),
+          new THREE.MeshStandardMaterial({ color: 0xf4a261, roughness: 0.5 })
+        );
+        hull.position.y = 0.5;
+        boat.add(hull);
+
+        const cabin = new THREE.Mesh(
+          new THREE.BoxGeometry(4.5, 2, 9),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 })
+        );
+        cabin.position.y = 2.2;
+        boat.add(cabin);
+
+        boat.position.set(60 + b * 80, 0, -120 - b * 90);
+        boat.rotation.y = Math.PI / 4 + b * 0.6;
+        scene.add(boat);
+      }
+
+      // Sailboats on Lake Geneva
+      for (let s = 0; s < 8; s++) {
+        const yacht = new THREE.Group();
+        const yHull = new THREE.Mesh(new THREE.ConeGeometry(2, 10, 4), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+        yHull.rotation.x = Math.PI / 2;
+        yacht.add(yHull);
+
+        const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 14), new THREE.MeshStandardMaterial({ color: 0x8d99ae }));
+        mast.position.y = 7;
+        yacht.add(mast);
+
+        const sailGeo = new THREE.BufferGeometry();
+        const vertices = new Float32Array([
+          0, 2, 0,
+          0, 13, 0,
+          4, 2, 0
+        ]);
+        sailGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        sailGeo.computeVertexNormals();
+        const sail = new THREE.Mesh(sailGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+        yacht.add(sail);
+
+        yacht.position.set(220 + (s % 3) * 70, 0.5, -250 - s * 55);
+        yacht.rotation.y = Math.random() * Math.PI;
+        scene.add(yacht);
+      }
+    }
+
+    // Additional Trees & Street Lights
+    function createVegetationAndProps() {
+      const parkTreeGeo = new THREE.DodecahedronGeometry(4, 1);
+      const parkTreeMat = new THREE.MeshStandardMaterial({ color: 0x386641, roughness: 0.8 });
+      const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a2810 });
+
+      for (let i = 0; i < 90; i++) {
+        const x = (Math.random() - 0.5) * 600;
+        const z = (Math.random() - 0.5) * 700;
+
+        // Skip water and main buildings
+        if (z < -50 && x > 0 && x < 350) continue;
+        if (Math.hypot(x - 80, z - 180) < 60) continue;
+
+        const tree = new THREE.Group();
+        tree.position.set(x, 0, z);
+
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.6, 5), trunkMat);
+        trunk.position.y = 2.5;
+        tree.add(trunk);
+
+        const leaves = new THREE.Mesh(parkTreeGeo, parkTreeMat);
+        leaves.position.y = 7;
+        leaves.scale.set(1 + Math.random() * 0.5, 1.4, 1 + Math.random() * 0.5);
+        leaves.castShadow = true;
+        tree.add(leaves);
+
+        scene.add(tree);
+      }
+    }
+
+    // Swiss Flag Texture / Mesh Generator
+    function createSwissFlagMesh() {
+      const fCanvas = document.createElement('canvas');
+      fCanvas.width = 128;
+      fCanvas.height = 128;
+      const ctx = fCanvas.getContext('2d');
+      ctx.fillStyle = '#d90429';
+      ctx.fillRect(0, 0, 128, 128);
+      ctx.fillStyle = '#ffffff';
+      // Swiss Cross
+      ctx.fillRect(52, 26, 24, 76);
+      ctx.fillRect(26, 52, 76, 24);
+
+      const tex = new THREE.CanvasTexture(fCanvas);
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(5, 5),
+        new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide })
+      );
+      return mesh;
+    }
+
+    // Geneva Flag Texture / Mesh Generator (Eagle & Key)
+    function createGenevaFlagMesh() {
+      const fCanvas = document.createElement('canvas');
+      fCanvas.width = 128;
+      fCanvas.height = 128;
+      const ctx = fCanvas.getContext('2d');
+      // Left yellow half with black imperial eagle
+      ctx.fillStyle = '#ffb703';
+      ctx.fillRect(0, 0, 64, 128);
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(20, 30, 24, 68);
+
+      // Right red half with gold key of Saint Peter
+      ctx.fillStyle = '#d90429';
+      ctx.fillRect(64, 0, 64, 128);
+      ctx.fillStyle = '#ffd166';
+      ctx.fillRect(86, 30, 12, 68);
+
+      const tex = new THREE.CanvasTexture(fCanvas);
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(5, 5),
+        new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide })
+      );
+      return mesh;
+    }
+
+    // --- Cinematic Drone Spline Trajectory ---
+    function setupFlightCurves() {
+      // 3D Spline Path linking all 6 landmarks smoothly
+      const cameraPoints = [
+        // 1. Old Town & St. Pierre Cathedral
+        new THREE.Vector3(135, 78, 235),
+        new THREE.Vector3(100, 62, 190),
+        new THREE.Vector3(65, 48, 140),
+
+        // 2. Lake Geneva & Jet d'Eau
+        new THREE.Vector3(75, 32, -40),
+        new THREE.Vector3(110, 45, -120),
+        new THREE.Vector3(125, 115, -180), // Climbing alongside the 140m water jet!
+        new THREE.Vector3(60, 42, -160),
+
+        // 3. Gare Cornavin
+        new THREE.Vector3(-80, 48, -70),
+        new THREE.Vector3(-140, 52, -75),
+        new THREE.Vector3(-190, 32, -125),
+
+        // 4. UN Headquarters & Broken Chair
+        new THREE.Vector3(-140, 58, -280),
+        new THREE.Vector3(-95, 44, -360),
+        new THREE.Vector3(-125, 28, -425),
+        new THREE.Vector3(-155, 48, -440),
+
+        // 5. Place de Neuve
+        new THREE.Vector3(-120, 65, 20),
+        new THREE.Vector3(-75, 36, 120),
+        new THREE.Vector3(-95, 24, 168),
+
+        // 6. Parc des Bastions & Reformation Wall
+        new THREE.Vector3(-55, 24, 215),
+        new THREE.Vector3(-25, 18, 255),
+        new THREE.Vector3(-45, 16, 285),
+
+        // 7. Panoramic Grand Finale (Ascending high over Geneva with Mont Blanc)
+        new THREE.Vector3(0, 120, 200),
+        new THREE.Vector3(120, 165, 60),
+        new THREE.Vector3(135, 78, 235) // Loop back
+      ];
+
+      const lookAtPoints = [
+        new THREE.Vector3(70, 32, 160),
+        new THREE.Vector3(75, 30, 160),
+        new THREE.Vector3(80, 28, 150),
+
+        new THREE.Vector3(120, 50, -180),
+        new THREE.Vector3(120, 90, -180),
+        new THREE.Vector3(120, 140, -180),
+        new THREE.Vector3(80, 15, -60),
+
+        new THREE.Vector3(-180, 25, -120),
+        new THREE.Vector3(-180, 20, -120),
+        new THREE.Vector3(-180, 10, -90),
+
+        new THREE.Vector3(-140, 25, -420),
+        new THREE.Vector3(-130, 12, -325),
+        new THREE.Vector3(-140, 20, -420),
+        new THREE.Vector3(-140, 25, -420),
+
+        new THREE.Vector3(-90, 14, 170),
+        new THREE.Vector3(-90, 14, 170),
+        new THREE.Vector3(-90, 14, 170),
+
+        new THREE.Vector3(-40, 12, 270),
+        new THREE.Vector3(-40, 10, 270),
+        new THREE.Vector3(-40, 10, 270),
+
+        new THREE.Vector3(0, 20, 0),
+        new THREE.Vector3(80, 20, -180),
+        new THREE.Vector3(70, 32, 160)
+      ];
+
+      flightCurve = new THREE.CatmullRomCurve3(cameraPoints, true, 'centripetal');
+      lookAtCurve = new THREE.CatmullRomCurve3(lookAtPoints, true, 'centripetal');
+
+      // Initialize camera at tour start
+      const startPos = flightCurve.getPoint(0);
+      const startLook = lookAtCurve.getPoint(0);
+      camera.position.copy(startPos);
+      camera.lookAt(startLook);
+    }
+
+    // --- Main Animation & Render Loop ---
+    let lastTime = performance.now();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const now = performance.now();
+      const rawDelta = (now - lastTime) / 1000;
+      const delta = (rawDelta > 0 && rawDelta < 0.2) ? rawDelta : 0.016;
+      lastTime = now;
+
+      // Update Water Ripples
+      if (waterMesh) {
+        const time = now * 0.002;
+        const pos = waterMesh.geometry.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const u = pos.getX(i);
+          const v = pos.getY(i);
+          const z = Math.sin(u * 0.05 + time) * 0.8 + Math.cos(v * 0.04 + time * 1.3) * 0.6;
+          pos.setZ(i, z);
+        }
+        waterMesh.geometry.attributes.position.needsUpdate = true;
+      }
+
+      // Update Jet d'Eau Water Spout Particles
+      if (jetGeometry) {
+        const p = jetGeometry.attributes.position.array;
+        for (let i = 0; i < jetVelocities.length / 3; i++) {
+          p[i * 3 + 1] += jetVelocities[i * 3 + 1]; // Move upward
+          p[i * 3 + 0] += jetVelocities[i * 3 + 0] * (p[i * 3 + 1] / 70); // Disperse outward
+          p[i * 3 + 2] += jetVelocities[i * 3 + 2] * (p[i * 3 + 1] / 70);
+
+          // Gravity pull down at peak
+          if (p[i * 3 + 1] > 140) {
+            jetVelocities[i * 3 + 1] = -1.2 - Math.random() * 1.5;
+          }
+
+          // Reset particle at base
+          if (p[i * 3 + 1] < 1.0) {
+            p[i * 3 + 0] = 120 + (Math.random() - 0.5) * 2;
+            p[i * 3 + 1] = 1.0;
+            p[i * 3 + 2] = -180 + (Math.random() - 0.5) * 2;
+            jetVelocities[i * 3 + 1] = 2.4 + Math.random() * 2.0;
+          }
+        }
+        jetGeometry.attributes.position.needsUpdate = true;
+      }
+
+      // Move Swiss SBB Train along track
+      if (trainMesh) {
+        trainTrackProgress += delta * 18;
+        if (trainTrackProgress > 140) trainTrackProgress = -140;
+        trainMesh.position.z = trainTrackProgress;
+      }
+
+      // Flutter Flags in the Alpine Breeze
+      if (flagMeshes.length > 0) {
+        const windWave = Math.sin(now * 0.008);
+        for (let f of flagMeshes) {
+          f.rotation.y = windWave * 0.18 + Math.PI / 2;
+        }
+      }
+
+      // Gently Drift Clouds
+      if (cloudsGroup) {
+        cloudsGroup.position.x += delta * 2.5;
+        if (cloudsGroup.position.x > 800) cloudsGroup.position.x = -800;
+      }
+
+      // Camera Flight Update
+      updateCameraFlight(delta);
+
+      // Audio Synthesis Parameters
+      updateDynamicAudio();
+
+      // Update Telemetry HUD & Minimap
+      updateHUDTelemetry(now);
+      drawMinimap();
+
+      renderer.render(scene, camera);
+    }
+
+    // Update Camera based on Mode
+    function updateCameraFlight(delta) {
+      if (currentCameraMode === "tour" || currentCameraMode === "fpv") {
+        if (isPlaying) {
+          const speed = (currentCameraMode === "fpv" ? 1.8 : 1.0) * flightSpeedMultiplier;
+          tourProgress += (delta / tourDuration) * speed;
+          if (tourProgress >= 1.0) tourProgress = 0;
+        }
+
+        const camPos = flightCurve.getPoint(tourProgress);
+        const lookTarget = lookAtCurve.getPoint(tourProgress);
+
+        // Smooth Drone Gimbal & Banking Roll
+        camera.position.lerp(camPos, 0.08);
+        camera.lookAt(lookTarget);
+
+        // Banking tilt into curves
+        const bankAngle = Math.sin(tourProgress * Math.PI * 14) * 0.08;
+        camera.rotateZ(bankAngle);
+
+        // Update active landmark detection
+        updateActiveLandmarkFromProgress(tourProgress);
+
+      } else if (currentCameraMode === "orbit") {
+        const landmark = LANDMARKS[currentLandmarkIndex];
+        const orbitAngle = (performance.now() * 0.0003);
+        const orbitRadius = 90;
+        camera.position.x = landmark.pos.x + Math.cos(orbitAngle) * orbitRadius;
+        camera.position.z = landmark.pos.z + Math.sin(orbitAngle) * orbitRadius;
+        camera.position.y = landmark.pos.y + 45;
+        camera.lookAt(landmark.pos.x, landmark.pos.y + 12, landmark.pos.z);
+
+      } else if (currentCameraMode === "manual") {
+        handleManualDroneInput(delta);
+      }
+    }
+
+    // Manual Drone Piloting
+    function handleManualDroneInput(delta) {
+      const spd = manualDrone.speed * (manualDrone.keys['ShiftLeft'] ? 2.5 : 1.0);
+      const move = new THREE.Vector3();
+
+      if (manualDrone.keys['KeyW'] || manualDrone.keys['ArrowUp']) move.z -= 1;
+      if (manualDrone.keys['KeyS'] || manualDrone.keys['ArrowDown']) move.z += 1;
+      if (manualDrone.keys['KeyA'] || manualDrone.keys['ArrowLeft']) move.x -= 1;
+      if (manualDrone.keys['KeyD'] || manualDrone.keys['ArrowRight']) move.x += 1;
+      if (manualDrone.keys['Space']) move.y += 1;
+      if (manualDrone.keys['ControlLeft'] || manualDrone.keys['KeyC']) move.y -= 1;
+
+      move.normalize().multiplyScalar(spd);
+      move.applyEuler(new THREE.Euler(0, camera.rotation.y, 0));
+      camera.position.add(move);
+      camera.position.y = Math.max(camera.position.y, 3.0); // Ground collision boundary
+    }
+
+    // Landmark Detection along Tour Progress
+    function updateActiveLandmarkFromProgress(prog) {
+      const segment = 1 / LANDMARKS.length;
+      const index = Math.min(Math.floor(prog / segment), LANDMARKS.length - 1);
+      if (index !== currentLandmarkIndex) {
+        currentLandmarkIndex = index;
+        setLandmarkInfo(LANDMARKS[index], index);
+      }
+
+      // Update progress bar
+      document.getElementById('timeline-fill').style.width = (prog * 100) + '%';
+      const curSec = Math.floor(prog * tourDuration);
+      const m = String(Math.floor(curSec / 60)).padStart(2, '0');
+      const s = String(curSec % 60).padStart(2, '0');
+      document.getElementById('time-current').innerText = `${m}:${s}`;
+    }
+
+    // Display Landmark Details in HUD
+    function setLandmarkInfo(landmark, idx) {
+      document.getElementById('caption-chapter').innerText = `CHAPTER 0${idx + 1} / 07 • GENEVA 3D DRONE TOUR`;
+      document.getElementById('caption-title').innerText = landmark.nameKr;
+      document.getElementById('caption-desc').innerText = landmark.desc;
+      document.getElementById('caption-coords').innerText = `LOC: ${landmark.nameEn} • ELEV: ${landmark.elev} • GPS: ${landmark.coords}`;
+
+      // Update dock active class
+      document.querySelectorAll('.landmark-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === idx);
+      });
+    }
+
+    // Fast Jump to a Landmark
+    function jumpToLandmark(index) {
+      currentLandmarkIndex = index;
+      tourProgress = index / LANDMARKS.length;
+      setLandmarkInfo(LANDMARKS[index], index);
+
+      if (currentCameraMode === "orbit") {
+        // Just focus
+      } else {
+        const camPos = flightCurve.getPoint(tourProgress);
+        const lookTarget = lookAtCurve.getPoint(tourProgress);
+        camera.position.copy(camPos);
+        camera.lookAt(lookTarget);
+      }
+    }
+
+    // HUD Telemetry Readouts
+    function updateHUDTelemetry(now) {
+      // Altitude
+      const altMeters = Math.round(camera.position.y + 375);
+      document.getElementById('hud-alt').innerText = `${altMeters}m`;
+
+      // Speed
+      const baseSpd = (currentCameraMode === "fpv" ? 72 : 36) * flightSpeedMultiplier;
+      document.getElementById('hud-spd').innerText = `${Math.round(baseSpd + Math.sin(now * 0.005) * 3)} km/h`;
+
+      // Heading
+      const dir = new THREE.Vector3();
+      camera.getWorldDirection(dir);
+      let angle = Math.round((Math.atan2(dir.x, dir.z) * 180 / Math.PI + 360) % 360);
+      const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+      const cardinal = directions[Math.round(angle / 45) % 8];
+      document.getElementById('hud-hdg').innerText = `${angle}° ${cardinal}`;
+
+      // GPS simulation around Geneva
+      const lat = (46.2044 + camera.position.z * 0.00008).toFixed(4);
+      const lon = (6.1432 + camera.position.x * 0.00010).toFixed(4);
+      document.getElementById('hud-gps').innerText = `${lat}° N, ${lon}° E`;
+
+      // Artificial Horizon Tilt
+      const horizon = document.getElementById('hud-horizon');
+      if (horizon) {
+        const rollDeg = (camera.rotation.z * 180 / Math.PI).toFixed(1);
+        const pitchPx = (camera.rotation.x * 40).toFixed(1);
+        horizon.style.transform = `translate(-50%, calc(-50% + ${pitchPx}px)) rotate(${rollDeg}deg)`;
+      }
+
+      // Recording duration timer
+      if (isRecording) {
+        const elapsed = Math.floor((now - recordStartTime) / 1000);
+        const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const s = String(elapsed % 60).padStart(2, '0');
+        document.getElementById('rec-timer').innerText = `${m}:${s}`;
+      }
+    }
+
+    // Minimap Radar Drawing
+    function setupMinimap() {
+      const canvas = document.getElementById('minimap-canvas');
+      minimapCtx = canvas.getContext('2d');
+    }
+
+    function drawMinimap() {
+      if (!minimapCtx) return;
+      const ctx = minimapCtx;
+      const w = 160, h = 160;
+      ctx.clearRect(0, 0, w, h);
+
+      // Radar rings
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(80, 80, 35, 0, Math.PI * 2);
+      ctx.arc(80, 80, 70, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Crosshairs
+      ctx.beginPath();
+      ctx.moveTo(80, 5); ctx.lineTo(80, 155);
+      ctx.moveTo(5, 80); ctx.lineTo(155, 80);
+      ctx.stroke();
+
+      // Lake Geneva Silhouette in Minimap
+      ctx.fillStyle = 'rgba(15, 76, 92, 0.45)';
+      ctx.beginPath();
+      ctx.ellipse(100, 50, 45, 30, Math.PI / 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Landmarks Pins
+      LANDMARKS.forEach((lm, i) => {
+        // Map 3D coordinates (-400..400) to (10..150)
+        const mx = 80 + (lm.pos.x / 550) * 70;
+        const my = 80 + (lm.pos.z / 550) * 70;
+
+        ctx.fillStyle = (i === currentLandmarkIndex) ? '#e63946' : '#ffd166';
+        ctx.beginPath();
+        ctx.arc(mx, my, (i === currentLandmarkIndex) ? 4.5 : 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Drone Position & View Cone
+      const droneMx = 80 + (camera.position.x / 550) * 70;
+      const droneMy = 80 + (camera.position.z / 550) * 70;
+
+      // View cone
+      const dir = new THREE.Vector3();
+      camera.getWorldDirection(dir);
+      const angle = Math.atan2(dir.z, dir.x);
+
+      ctx.fillStyle = 'rgba(0, 240, 255, 0.25)';
+      ctx.beginPath();
+      ctx.moveTo(droneMx, droneMy);
+      ctx.arc(droneMx, droneMy, 22, angle - 0.4, angle + 0.4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Drone Dot
+      ctx.fillStyle = '#00f0ff';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(droneMx, droneMy, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // --- Web Audio Procedural Sound Synthesizer ---
+    function setupAudio() {
+      // AudioContext starts on user gesture
+      const startAudio = () => {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+
+          // 1. Drone Motor Propeller Hum (Twin oscillators modulated by speed)
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          osc1.type = 'sawtooth';
+          osc2.type = 'triangle';
+          osc1.frequency.setValueAtTime(115, audioCtx.currentTime);
+          osc2.frequency.setValueAtTime(118, audioCtx.currentTime);
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(450, audioCtx.currentTime);
+
+          droneHumGain = audioCtx.createGain();
+          droneHumGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+          osc1.connect(filter);
+          osc2.connect(filter);
+          filter.connect(droneHumGain);
+          droneHumGain.connect(audioCtx.destination);
+
+          osc1.start();
+          osc2.start();
+
+          // 2. Alpine Wind Breeze (Pink noise simulation)
+          const bufferSize = audioCtx.sampleRate * 2;
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          let b0 = 0, b1 = 0, b2 = 0;
+          for (let i = 0; i < bufferSize; i++) {
+            const white = Math.random() * 2 - 1;
+            b0 = 0.99886 * b0 + white * 0.0555179;
+            b1 = 0.99332 * b1 + white * 0.0750759;
+            b2 = 0.96900 * b2 + white * 0.1538520;
+            output[i] = (b0 + b1 + b2) * 0.06;
+          }
+
+          const whiteNoise = audioCtx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          whiteNoise.loop = true;
+
+          const windFilter = audioCtx.createBiquadFilter();
+          windFilter.type = 'bandpass';
+          windFilter.frequency.setValueAtTime(320, audioCtx.currentTime);
+          windFilter.Q.setValueAtTime(1.5, audioCtx.currentTime);
+
+          windGain = audioCtx.createGain();
+          windGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+
+          whiteNoise.connect(windFilter);
+          windFilter.connect(windGain);
+          windGain.connect(audioCtx.destination);
+          whiteNoise.start();
+        }
+        window.removeEventListener('click', startAudio);
+      };
+      window.addEventListener('click', startAudio);
+    }
+
+    function updateDynamicAudio() {
+      if (!audioCtx || isAudioMuted) return;
+
+      // Modulate drone motor hum based on flight speed & altitude
+      const distToJet = camera.position.distanceTo(new THREE.Vector3(120, 15, -180));
+      if (windGain) {
+        // Wind increases with altitude
+        const windLevel = Math.min(0.28, 0.08 + (camera.position.y / 200) * 0.2);
+        windGain.gain.setTargetAtTime(windLevel, audioCtx.currentTime, 0.2);
+      }
+    }
+
+    // --- Video Recording (MediaRecorder API) ---
+    function toggleRecording() {
+      const recordBtn = document.getElementById('btn-record');
+      const recBadge = document.getElementById('rec-badge');
+
+      if (!isRecording) {
+        // Start Recording Canvas Stream
+        const stream = renderer.domElement.captureStream(60); // 60 FPS capture
+        recordedChunks = [];
+
+        let options = { mimeType: 'video/webm;codecs=vp9' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+          options = { mimeType: 'video/webm' };
+        }
+
+        try {
+          mediaRecorder = new MediaRecorder(stream, options);
+        } catch (e) {
+          alert('This browser can’t start MediaRecorder API video recording: ' + e.message);
+          return;
+        }
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) {
+            recordedChunks.push(e.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = `geneva_3d_drone_tour_${Date.now()}.webm`;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }, 100);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        recordStartTime = performance.now();
+        recordBtn.classList.add('recording');
+        recordBtn.innerHTML = '⏹ Save video & Download';
+      } else {
+        // Stop Recording and Download
+        mediaRecorder.stop();
+        isRecording = false;
+        recordBtn.classList.remove('recording');
+        recordBtn.innerHTML = '● 3D Record video';
+      }
+    }
+
+    // --- UI Controls & Event Listeners ---
+    function setupEventListeners() {
+      // Play / Pause
+      const playBtn = document.getElementById('btn-play-pause');
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        document.getElementById('play-icon').innerText = isPlaying ? '⏸' : '▶';
+        document.getElementById('play-text').innerText = isPlaying ? 'Pause' : 'Play';
+      });
+
+      // Restart
+      document.getElementById('btn-restart').addEventListener('click', () => {
+        tourProgress = 0;
+        isPlaying = true;
+        document.getElementById('play-icon').innerText = '⏸';
+        document.getElementById('play-text').innerText = 'Pause';
+        setLandmarkInfo(LANDMARKS[0], 0);
+      });
+
+      // Record Button
+      document.getElementById('btn-record').addEventListener('click', toggleRecording);
+
+      // Audio Toggle
+      const audioBtn = document.getElementById('btn-audio');
+      audioBtn.addEventListener('click', () => {
+        isAudioMuted = !isAudioMuted;
+        if (droneHumGain && windGain) {
+          droneHumGain.gain.setValueAtTime(isAudioMuted ? 0 : 0.08, audioCtx.currentTime);
+          windGain.gain.setValueAtTime(isAudioMuted ? 0 : 0.12, audioCtx.currentTime);
+        }
+        document.getElementById('audio-icon').innerText = isAudioMuted ? '🔇' : '🔊';
+        audioBtn.innerHTML = `<span id="audio-icon">${isAudioMuted ? '🔇' : '🔊'}</span> Sound ${isAudioMuted ? 'OFF' : 'ON'}`;
+      });
+
+      // Landmark Navigation Dock Clicks
+      document.querySelectorAll('.landmark-tab').forEach((tab) => {
+        tab.addEventListener('click', (e) => {
+          const idx = parseInt(tab.getAttribute('data-landmark'));
+          jumpToLandmark(idx);
+        });
+      });
+
+      // Camera Mode Buttons
+      const modes = ['tour', 'fpv', 'orbit', 'manual'];
+      modes.forEach((m) => {
+        const btn = document.getElementById(`mode-${m}`);
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.toolset-panel:first-child .tool-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCameraMode = m;
+
+          const hint = document.getElementById('controls-hint');
+          hint.style.display = (m === 'manual') ? 'block' : 'none';
+
+          if (m === 'manual') {
+            manualDrone.pos.copy(camera.position);
+          }
+        });
+      });
+
+      // Time of Day Buttons
+      const times = [
+        { id: 'golden', bg: 0xf6af83, fog: 0xf0a775, sun: 0xffaa55, exp: 1.1 },
+        { id: 'day', bg: 0x90e0ef, fog: 0xcaf0f8, sun: 0xffffff, exp: 1.0 },
+        { id: 'blue', bg: 0x1d3557, fog: 0x243e63, sun: 0x5dade2, exp: 0.9 },
+        { id: 'night', bg: 0x07090e, fog: 0x0d131f, sun: 0x1f2438, exp: 1.3 }
+      ];
+
+      times.forEach((t) => {
+        const btn = document.getElementById(`tod-${t.id}`);
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.toolset-panel:nth-child(2) .tool-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          scene.background.setHex(t.bg);
+          scene.fog.color.setHex(t.fog);
+          sunLight.color.setHex(t.sun);
+          renderer.toneMappingExposure = t.exp;
+        });
+      });
+
+      // Speed Buttons
+      const speeds = [
+        { id: 'slow', val: 0.5 },
+        { id: 'normal', val: 1.0 },
+        { id: 'fast', val: 2.0 }
+      ];
+      speeds.forEach((s) => {
+        const btn = document.getElementById(`speed-${s.id}`);
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.toolset-panel:nth-child(3) .tool-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          flightSpeedMultiplier = s.val;
+        });
+      });
+
+      // Timeline Scrubber Click
+      const timelineBar = document.getElementById('timeline-bar');
+      timelineBar.addEventListener('click', (e) => {
+        const rect = timelineBar.getBoundingClientRect();
+        const clickRatio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        tourProgress = clickRatio;
+      });
+
+      // Manual Keyboard Listeners
+      window.addEventListener('keydown', (e) => { manualDrone.keys[e.code] = true; });
+      window.addEventListener('keyup', (e) => { manualDrone.keys[e.code] = false; });
+
+      // Manual Mouse Drag Camera Look
+      let isDragging = false;
+      let prevMouseX = 0, prevMouseY = 0;
+
+      window.addEventListener('mousedown', (e) => {
+        if (e.target.closest('#hud-overlay') && !e.target.closest('#viewport')) return;
+        isDragging = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMouseX;
+        const dy = e.clientY - prevMouseY;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+
+        if (currentCameraMode === "manual" || currentCameraMode === "orbit") {
+          camera.rotation.y -= dx * 0.004;
+          camera.rotation.x -= dy * 0.004;
+          camera.rotation.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, camera.rotation.x));
+        }
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+    }
+
+    // --- Photo Gallery & Lightbox ---
+    function setupGallery() {
+      const galleryGrid = document.getElementById('gallery-grid');
+      const galleryModal = document.getElementById('gallery-modal');
+      const lightboxModal = document.getElementById('lightbox-modal');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+
+      // Populate 4K Photographs captured by subagents
+      LANDMARKS.forEach((lm) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `
+          <img class="gallery-img" src="${lm.image}" alt="${lm.nameKr}">
+          <div class="gallery-desc">
+            <h4>${lm.nameKr}</h4>
+            <p>${lm.desc.substring(0, 80)}...</p>
+          </div>
+        `;
+
+        item.querySelector('.gallery-img').addEventListener('click', () => {
+          lightboxImg.src = lm.image;
+          lightboxCaption.innerHTML = `<strong>${lm.nameKr}</strong> (${lm.nameEn})<br><span style="color: #94a3b8; font-size: 12px;">${lm.coords}</span>`;
+          lightboxModal.style.display = 'flex';
+        });
+
+        galleryGrid.appendChild(item);
+      });
+
+      // Gallery Modal Open / Close
+      document.getElementById('btn-gallery').addEventListener('click', () => {
+        galleryModal.style.display = 'flex';
+      });
+
+      document.getElementById('modal-close-btn').addEventListener('click', () => {
+        galleryModal.style.display = 'none';
+      });
+
+      document.getElementById('lightbox-close-btn').addEventListener('click', () => {
+        lightboxModal.style.display = 'none';
+      });
+
+      // Close on backdrop click
+      galleryModal.addEventListener('click', (e) => {
+        if (e.target === galleryModal) galleryModal.style.display = 'none';
+      });
+      lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal) lightboxModal.style.display = 'none';
+      });
+    }
+  </script>
+</body>
+</html>

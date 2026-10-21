@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Genève — Vue Aérienne 3D</title>
+<style>
+  @font-face { font-family: 'GenSerif'; src: local('Didot'), local('Bodoni 72'), local('Georgia'); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0d12; }
+  body { font-family: 'GenSerif', 'Times New Roman', serif; color: #fff; }
+  #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  #vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 4;
+    background:
+      radial-gradient(ellipse at 50% 48%, rgba(0,0,0,0) 42%, rgba(0,0,0,.18) 72%, rgba(0,0,0,.48) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,0) 14%, rgba(0,0,0,0) 86%, rgba(0,0,0,.22));
+  }
+  #grain {
+    position: fixed; inset: -64px; pointer-events: none; z-index: 5; opacity: .075;
+    mix-blend-mode: overlay; background-repeat: repeat; background-size: 256px 256px;
+  }
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 8; opacity: 0; transition: opacity 1.4s ease; }
+  .hud-corner { position: absolute; font-family: 'Helvetica Neue', 'Apple SD Gothic Neo', sans-serif; font-weight: 300; letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.82); text-shadow: 0 1px 10px rgba(0,0,0,.35); }
+  #brand { top: 42px; left: 52px; font-size: 11px; display: flex; align-items: center; gap: 13px; }
+  #brand .dot { width: 5px; height: 5px; border: 1px solid rgba(255,255,255,.9); border-radius: 50%; box-shadow: 0 0 12px rgba(255,225,180,.8); }
+  #brand .sub { opacity: .52; font-size: 9px; letter-spacing: .34em; }
+  #coords { top: 44px; right: 54px; font-size: 10px; letter-spacing: .18em; text-align: right; opacity: .74; }
+  #altbox { left: 52px; bottom: 46px; font-size: 10px; letter-spacing: .2em; }
+  #altbox .val { font-family: 'Helvetica Neue', sans-serif; font-size: 22px; letter-spacing: .08em; font-weight: 200; margin-right: 6px; }
+  #speedbox { right: 54px; bottom: 46px; font-size: 10px; letter-spacing: .2em; text-align: right; }
+  #speedbox .val { font-family: 'Helvetica Neue', sans-serif; font-size: 22px; letter-spacing: .08em; font-weight: 200; margin-right: 6px; }
+  #reticle { position: fixed; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; z-index: 7; opacity: .28; pointer-events: none; }
+  #reticle:before, #reticle:after { content: ''; position: absolute; border: 0 solid rgba(255,255,255,.7); }
+  #reticle:before { left: 0; top: 0; width: 9px; height: 9px; border-left-width: 1px; border-top-width: 1px; }
+  #reticle:after { right: 0; bottom: 0; width: 9px; height: 9px; border-right-width: 1px; border-bottom-width: 1px; }
+  #reticle .b1 { position: absolute; right: 0; top: 0; width: 9px; height: 9px; border-right: 1px solid rgba(255,255,255,.7); border-top: 1px solid rgba(255,255,255,.7); }
+  #reticle .b2 { position: absolute; left: 0; bottom: 0; width: 9px; height: 9px; border-left: 1px solid rgba(255,255,255,.7); border-bottom: 1px solid rgba(255,255,255,.7); }
+  #titles { position: fixed; inset: 0; z-index: 9; pointer-events: none; }
+  .loc-title { position: absolute; left: 50%; bottom: 92px; transform: translateX(-50%); text-align: center; opacity: 0; width: 82%; }
+  .loc-title .kr { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; font-weight: 200; font-size: 27px; letter-spacing: .33em; text-indent: .33em; color: #fff; text-shadow: 0 2px 22px rgba(0,0,0,.55); }
+  .loc-title .fr { margin-top: 11px; font-family: 'Helvetica Neue', sans-serif; font-weight: 300; font-size: 10px; letter-spacing: .5em; text-indent: .5em; color: rgba(255,236,211,.78); text-transform: uppercase; }
+  .loc-title .line { width: 34px; height: 1px; margin: 15px auto 0; background: linear-gradient(to right, transparent, rgba(255,222,176,.9), transparent); }
+  #intro { position: fixed; inset: 0; z-index: 12; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, rgba(9,12,17,.15), rgba(9,12,17,.7)); opacity: 0; pointer-events: none; }
+  #intro .tiny { font-family: 'Apple SD Gothic Neo', sans-serif; font-weight: 300; font-size: 11px; letter-spacing: .62em; text-indent: .62em; color: rgba(255,241,221,.72); margin-bottom: 26px; }
+  #intro .big { font-family: 'GenSerif', serif; font-size: 92px; letter-spacing: .16em; text-indent: .16em; font-weight: 400; line-height: 1; color: #fff9ef; text-shadow: 0 4px 40px rgba(0,0,0,.5); }
+  #intro .rule { width: 78px; height: 1px; background: rgba(255,223,178,.85); margin: 30px 0 22px; }
+  #intro .sub { font-family: 'Helvetica Neue', sans-serif; font-size: 10px; letter-spacing: .52em; text-indent: .52em; color: rgba(255,255,255,.68); text-transform: uppercase; }
+  #end { position: fixed; inset: 0; z-index: 11; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(7,9,13,.1), rgba(7,9,13,.82)); }
+  #end .big { font-family: 'GenSerif', serif; font-size: 66px; letter-spacing: .2em; text-indent: .2em; color: #fff8ee; }
+  #end .kr { font-family: 'Apple SD Gothic Neo', sans-serif; font-weight: 200; font-size: 14px; letter-spacing: .55em; text-indent: .55em; color: rgba(255,255,255,.8); margin-top: 18px; }
+  #end .line { width: 52px; height: 1px; background: rgba(255,222,178,.7); margin: 25px 0 19px; }
+  #end .credit { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: .23em; color: rgba(255,255,255,.46); text-align: center; line-height: 2; }
+  #black { position: fixed; inset: 0; background: #05070a; z-index: 13; opacity: 0; pointer-events: none; }
+  #loading { position: fixed; inset: 0; z-index: 20; background: #090b10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1.2s ease; }
+  #loading .lbig { font-family: 'GenSerif', serif; font-size: 30px; letter-spacing: .3em; text-indent: .3em; color: #f3e8d6; }
+  #loading .lsub { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: .4em; color: rgba(255,255,255,.4); margin-top: 18px; }
+  #loading .bar { width: 150px; height: 1px; background: rgba(255,255,255,.12); margin-top: 26px; overflow: hidden; }
+  #loading .bar i { display: block; height: 100%; width: 0%; background: rgba(255,220,170,.85); transition: width .4s ease; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="reticle"><span class="b1"></span><span class="b2"></span></div>
+<div id="hud">
+  <div id="brand" class="hud-corner"><span class="dot"></span><span>Genève</span><span class="sub">Vue aérienne 3D</span></div>
+  <div id="coords" class="hud-corner">46.2045° N &nbsp; 6.1475° E</div>
+  <div id="altbox" class="hud-corner"><span class="val">000</span> M · ALT</div>
+  <div id="speedbox" class="hud-corner"><span class="val">000</span> KM/H</div>
+</div>
+<div id="titles"></div>
+<div id="intro">
+  <div class="tiny">제네바 · 스위스</div>
+  <div class="big">GENÈVE</div>
+  <div class="rule"></div>
+  <div class="sub">Une promenade aérienne</div>
+</div>
+<div id="end">
+  <div class="big">GENÈVE</div>
+  <div class="kr">제네바 · 스위스</div>
+  <div class="line"></div>
+  <div class="credit">UNE VUE AÉRIENNE 3D<br/>DONNÉES CARTOGRAPHIQUES · OPENSTREETMAP</div>
+</div>
+<div id="black"></div>
+<div id="loading">
+  <div class="lbig">GENÈVE</div>
+  <div class="lsub">CONSTRUCTION DE LA VILLE</div>
+  <div class="bar"><i id="bar"></i></div>
+</div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d1514" />
+    <title>Last Light — Geneva</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <canvas id="world" aria-label="Last Light Geneva battle royale game"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="scanlines" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark"><span></span><span></span><span></span></div>
+          <div>
+            <div class="brand-name">LAST<span>LIGHT</span></div>
+            <div class="brand-sub">GENÈVE // SOLO ROYALE</div>
+          </div>
+        </div>
+        <div class="match-status"><i class="live-dot"></i><span id="phase-label">PRE-MATCH LOBBY</span><b id="match-clock">00:00</b></div>
+        <div class="top-right">
+          <div class="region-chip"><span class="signal-bars"><i></i><i></i><i></i></span> EU-WEST <b>24</b></div>
+          <button class="icon-button sound-toggle" id="sound-toggle" aria-label="Toggle sound" title="Toggle sound"><span class="sound-icon">◖))</span></button>
+          <button class="icon-button" id="help-toggle" aria-label="Show controls" title="Controls">?</button>
+        </div>
+      </header>
+
+      <section class="status-strip" aria-label="Match status">
+        <div class="stat-card remaining-card"><span class="stat-icon person-icon">♟</span><div><small>ALIVE</small><strong id="alive-count">12</strong></div><span class="stat-divider"></span><div><small>ELIMS</small><strong id="kill-count">00</strong></div></div>
+        <div class="stat-card zone-card"><span class="zone-ring-icon"><i></i></span><div><small id="zone-caption">SAFE ZONE</small><strong id="zone-status">AWAITING DEPLOYMENT</strong></div></div>
+        <div class="stat-card objective-card"><span class="objective-mark">⌖</span><div><small>CURRENT SECTOR</small><strong id="sector-label">PLACE NEUVE</strong></div></div>
+      </section>
+
+      <aside class="minimap-wrap">
+        <div class="mini-head"><span>TACTICAL MAP</span><span class="mini-north">N <b>↑</b></span></div>
+        <canvas id="minimap" width="220" height="220" aria-label="Tactical map"></canvas>
+        <div class="mini-footer"><span><i class="map-dot player-dot"></i> YOU</span><span><i class="map-dot enemy-dot"></i> HOSTILES</span></div>
+      </aside>
+
+      <aside class="feed" id="kill-feed" aria-live="polite"></aside>
+
+      <div class="center-message" id="center-message" aria-live="polite"></div>
+
+      <div class="landmark-banner" id="landmark-banner">
+        <span class="landmark-pin">⌖</span><span><small>ENTERING AREA</small><strong id="landmark-name">PLACE NEUVE</strong></span>
+      </div>
+
+      <div class="pickup-toast" id="pickup-toast"></div>
+
+      <section class="bottom-hud">
+        <div class="player-vitals hud-panel">
+          <div class="vitals-top"><div class="avatar-mark">LL</div><div class="player-meta"><strong>ROGUE <span>07</span></strong><small>FIELD OPERATIVE</small></div><div class="vitals-value"><strong id="hp-value">100</strong><small>HP</small></div></div>
+          <div class="bar-label"><span>VITALS</span><span id="hp-text">100 / 100</span></div><div class="meter health-meter"><i id="health-fill"></i></div>
+          <div class="bar-label armor-label"><span>ARMOR</span><span id="armor-text">25 / 100</span></div><div class="meter armor-meter"><i id="armor-fill"></i></div>
+        </div>
+
+        <div class="hotbar hud-panel">
+          <div class="slot active-slot"><span class="slot-num">1</span><span class="weapon-icon rifle-icon"><i></i></span><span class="slot-label">M4 CARBINE</span><b class="slot-equipped">EQUIPPED</b></div>
+          <div class="ammo-block"><div class="ammo-count"><strong id="ammo-current">30</strong><span>/</span><small id="ammo-total">120</small></div><div class="ammo-caption">5.56 × 45 MM</div><div class="ammo-dots" id="ammo-dots"></div></div>
+          <div class="slot utility-slot"><span class="slot-num">2</span><span class="utility-icon">✚</span><span class="slot-label">MED KIT <b id="med-count">2</b></span></div>
+          <div class="slot utility-slot grenade-slot"><span class="slot-num">3</span><span class="utility-icon grenade-icon">✦</span><span class="slot-label">FRAG <b id="grenade-count">1</b></span></div>
+        </div>
+
+        <div class="controls-card hud-panel">
+          <div class="compass"><span>W</span><i></i><b id="bearing">000°</b><i></i><span>E</span></div>
+          <div class="quick-controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> MOVE</span><span><kbd>SHIFT</kbd> SPRINT</span><span><kbd>F</kbd> USE MED</span></div>
+        </div>
+      </section>
+
+      <div class="touch-controls" id="touch-controls" aria-label="Touch controls">
+        <div class="touch-stick" id="touch-stick" aria-label="Move joystick"><span></span></div>
+        <div class="touch-action-stack">
+          <button id="touch-reload" aria-label="Reload">R</button>
+          <button id="touch-heal" aria-label="Use med kit">+</button>
+          <button id="touch-fire" aria-label="Fire">FIRE</button>
+          <button id="touch-grenade" aria-label="Throw grenade">✦</button>
+        </div>
+      </div>
+
+      <div class="danger-warning" id="danger-warning"><span>!</span><div><b>OUTSIDE THE SAFE ZONE</b><small>RETURN TO THE CIRCLE</small></div></div>
+
+      <div class="deploy-screen" id="deploy-screen">
+        <div class="deploy-backdrop"></div>
+        <div class="deploy-content">
+          <div class="eyebrow"><span></span> OPERATION 26.10 // LEMAN</div>
+          <h1>ONE CITY.<br /><em>ONE SURVIVOR.</em></h1>
+          <p class="deploy-copy">A last stand across the old streets of Geneva.<br />The circle is closing. Make every block count.</p>
+          <div class="deploy-meta">
+            <div><small>DROP ZONE</small><strong>GENÈVE, SWITZERLAND</strong></div>
+            <div><small>OPERATIVES</small><strong><i class="live-dot"></i> 12 IN FIELD</strong></div>
+            <div><small>MODE</small><strong>SOLO // LAST ONE STANDING</strong></div>
+          </div>
+          <button class="deploy-button" id="deploy-button"><span>DEPLOY TO GENEVA</span><i>↗</i></button>
+          <div class="deploy-foot"><span>WASD TO MOVE</span><i></i><span>MOUSE TO AIM & FIRE</span><i></i><span>F TO USE MED KIT</span></div>
+        </div>
+        <div class="deploy-side-note">46°12′N&nbsp;&nbsp; 6°09′E<br />LAKE LÉMAN SECTOR</div>
+      </div>
+
+      <div class="end-screen hidden" id="end-screen">
+        <div class="end-panel"><div class="eyebrow"><span></span> MATCH COMPLETE</div><h2 id="end-title">MISSION<br /><em>FAILED.</em></h2><p id="end-copy">The streets belong to someone else tonight.</p><div class="end-stats"><div><small>ELIMINATIONS</small><strong id="end-kills">00</strong></div><div><small>SURVIVAL TIME</small><strong id="end-time">00:00</strong></div><div><small>FINAL PLACE</small><strong id="end-place">12<sup>TH</sup></strong></div></div><button class="deploy-button" id="restart-button"><span>DROP AGAIN</span><i>↻</i></button></div>
+      </div>
+
+      <div class="help-modal hidden" id="help-modal">
+        <div class="help-card"><button class="close-help" id="close-help">×</button><div class="eyebrow"><span></span> FIELD MANUAL</div><h2>CONTROLS</h2><div class="help-grid"><span><kbd>W A S D</kbd> Move</span><span><kbd>MOUSE</kbd> Aim</span><span><kbd>CLICK</kbd> Fire</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>R</kbd> Reload</span><span><kbd>F</kbd> Use med kit</span><span><kbd>G</kbd> Throw frag</span><span><kbd>ESC</kbd> Pause</span></div><p>Collect supply crates as you cross Geneva. Stay inside the blue zone when it closes, and watch your six.</p></div>
+      </div>
+      <div class="pause-screen hidden" id="pause-screen"><div class="pause-card"><div class="eyebrow"><span></span> FIELD PAUSED</div><h2>TAKE A<br /><em>BREATH.</em></h2><p>The city is still waiting.</p><button class="deploy-button" id="resume-button"><span>RESUME MISSION</span><i>▶</i></button><small>PRESS ESC TO CONTINUE</small></div></div>
+    </main>
+    <script src="game.js"></script>
+  </body>
+</html>
