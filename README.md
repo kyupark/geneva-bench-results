@@ -4,7 +4,9 @@ Same prompt, many AI coding agents, one shot each. Every model was asked to buil
 
 **Live site: https://geneva-bench.pages.dev** (every result below is playable in the browser)
 
-![Claude Opus 5.5, T2 drone flight over the Old Town](./hero-opus.jpg)
+![Best results: Opus 5.5 drone flight (T2), Muse Wonder battle royale (T3), Haiku 5.5 taxi (T4), GPT-6.1 Sol Old Town flyover (T2)](./hero-grid.jpg)
+
+_Top left to bottom right: Claude Opus 5.5 drone flight (T2), Muse Wonder Full battle royale (T3), Claude Haiku 5.5 Crazy Taxi (T4), GPT-6.1 Sol Old Town flyover (T2)._
 
 ## How it was run
 
