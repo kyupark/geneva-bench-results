@@ -90,7 +90,7 @@ ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers
   libavfilter    12.  1.102 / 12.  1.102
   libswscale     10.  1.102 / 10.  1.102
   libswresample   7.  1.102 /  7.  1.102
-Input #0, image2, from '/Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/frames_final/frame_%05d.jpg':
+Input #0, image2, from '<bench-root>/max-t2/deepseek41f-venice/work/frames_final/frame_%05d.jpg':
   Duration: 00:01:20.00, start: 0.000000, bitrate: N/A
   Stream #0:0: Video: mjpeg (Baseline), yuvj420p(pc, bt470bg/unknown/unknown), 1920x1080 [SAR 1:1 DAR 16:9], 30 fps, 30 tbr, 30 tbn
 Stream mapping:
@@ -101,7 +101,7 @@ Press [q] to stop, [?] for help
 [libx264 @ 0x7a1d410a80] using cpu capabilities: ARMv8 NEON DotProd I8MM
 [libx264 @ 0x7a1d410a80] profile High, level 5.0, 4:2:0, 8-bit
 [libx264 @ 0x7a1d410a80] 264 - core 165 r3222 b35605a - H.264/MPEG-4 AVC codec - Copyleft 2003-2025 - http://www.videolan.org/x264.html - options: cabac=1 ref=5 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=8 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=2 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=24 lookahead_threads=4 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=3 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=50 rc=crf mbtree=1 crf=16.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
-Output #0, mp4, to '/Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/geneva_drone_silent.mp4':
+Output #0, mp4, to '<bench-root>/max-t2/deepseek41f-venice/work/geneva_drone_silent.mp4':
   Metadata:
     encoder         : Lavf63.1.102
   Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(pc, bt470bg/unknown/unknown, progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 30 fps, 15360 tbn
@@ -132,7 +132,7 @@ frame= 2400 fps=5.5 q=-1.0 Lsize=  361217KiB time=00:01:19.93 bitrate=37019.4kbi
 [libx264 @ 0x7a1d410a80] ref B L0: 68.2% 22.3%  7.5%  2.0%
 [libx264 @ 0x7a1d410a80] ref B L1: 91.4%  8.6%
 [libx264 @ 0x7a1d410a80] kb/s:36985.24
-silent video written to /Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/geneva_drone_silent.mp4
+silent video written to <bench-root>/max-t2/deepseek41f-venice/work/geneva_drone_silent.mp4
 ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers
   built with Apple clang version 21.0.0 (clang-2100.3.34.2)
   configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/9.0.2 --enable-shared --cc=clang --host-cflags= --host-ldflags= --enable-gpl --enable-libaom --enable-libdav1d --enable-libharfbuzz --enable-libmp3lame --enable-libopus --enable-libsnappy --enable-libsvtav1 --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-demuxer=dash --enable-neon --enable-opencl --enable-audiotoolbox --enable-videotoolbox --disable-htmlpages
@@ -143,7 +143,7 @@ ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers
   libavfilter    12.  1.102 / 12.  1.102
   libswscale     10.  1.102 / 10.  1.102
   libswresample   7.  1.102 /  7.  1.102
-Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/geneva_drone_silent.mp4':
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '<bench-root>/max-t2/deepseek41f-venice/work/geneva_drone_silent.mp4':
   Metadata:
     major_brand     : isom
     minor_version   : 512
@@ -157,14 +157,14 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/Users/qm4/bench-geneva/max-t2/deepseek
     Side data:
       ICC Profile: (456 bytes)
 [aist#1:0/pcm_s16le @ 0x76d1044480] Guessed Channel Layout: stereo
-Input #1, wav, from '/Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/soundtrack.wav':
+Input #1, wav, from '<bench-root>/max-t2/deepseek41f-venice/work/soundtrack.wav':
   Duration: 00:01:20.00, bitrate: 1536 kb/s
   Stream #1:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 48000 Hz, stereo, s16, 1536 kb/s
 Stream mapping:
   Stream #0:0 -> #0:0 (copy)
   Stream #1:0 -> #0:1 (pcm_s16le (native) -> aac (native))
 Press [q] to stop, [?] for help
-Output #0, mp4, to '/Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/geneva_drone.mp4':
+Output #0, mp4, to '<bench-root>/max-t2/deepseek41f-venice/work/geneva_drone.mp4':
   Metadata:
     major_brand     : isom
     minor_version   : 512
@@ -184,4 +184,4 @@ frame=  931 fps=0.0 q=-1.0 size=  167680KiB time=00:00:31.23 bitrate=43979.8kbit
 [out#0/mp4 @ 0x76d1054480] video:361185KiB audio:1879KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.023973%
 frame= 2400 fps=1842 q=-1.0 Lsize=  363151KiB time=00:01:20.00 bitrate=37186.7kbits/s speed=61.4x elapsed=0:00:01.30    
 [aac @ 0x76d1401500] Qavg: 612.941
-video with audio written to /Users/qm4/bench-geneva/max-t2/deepseek41f-venice/work/geneva_drone.mp4
+video with audio written to <bench-root>/max-t2/deepseek41f-venice/work/geneva_drone.mp4

@@ -6,7 +6,7 @@ const { chromium } = require('playwright-core');
 
 const ROOT_DIR = __dirname;
 const OUTPUT_MP4 = path.join(ROOT_DIR, 'geneva_drone_tour.mp4');
-const PREVIEW_DIR = '/Users/qm4/bench-geneva/max-t2/argon/tmp/opencode/previews';
+const PREVIEW_DIR = '<bench-root>/max-t2/argon/tmp/opencode/previews';
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -194,7 +194,7 @@ async function main() {
   const duration = 30;
   const totalFrames = fps * duration;
 
-  const wavPath = '/Users/qm4/bench-geneva/max-t2/argon/tmp/opencode/geneva_audio.wav';
+  const wavPath = '<bench-root>/max-t2/argon/tmp/opencode/geneva_audio.wav';
   fs.mkdirSync(path.dirname(wavPath), { recursive: true });
   console.log('Generating stereo cinematic soundtrack...');
   generateCinematicAudioWav(wavPath, duration);

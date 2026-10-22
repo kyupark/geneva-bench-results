@@ -1,0 +1,1 @@
+{"mcpServers":{"deepseek":{"type":"stdio","command":"/opt/dsas/bin/deepseek-mcp","args":[],"env":{"DEEPSEEK_WORKSPACE":"${CLAUDE_PROJECT_DIR:-.}"}}}}
